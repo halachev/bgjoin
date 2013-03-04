@@ -10,6 +10,7 @@
 	define ('delete', delete);
 	define ('LogIn', LogIn);
 	define ('allUsers', allUsers);
+	define ('LoadMore', LoadMore);
 	define ('getUserById', getUserById);
 
 	
@@ -22,6 +23,7 @@
 		private $email;
 		private $descr;
 		private $limit;
+		private $userLastId;
 		private $method;
 		
 		
@@ -33,6 +35,7 @@
 			$_email, 
 			$_descr,
 			$_limit,
+			$_userLastId,
 			$_method) {
 			
 			$this->id = $_id;
@@ -42,6 +45,7 @@
 			$this->email = $_email;
 			$this->descr = $_descr;
 			$this->limit = $_limit;
+			$this->userLastId = $_userLastId;
 			$this->method = $_method;
 			
 			//$method = $_SERVER['REQUEST_METHOD'];
@@ -57,8 +61,11 @@
 				$this->LogIn();  
 				break;
 			  case allUsers:
-				$this->users($_limit);  
-				break;					
+				$this->users();  
+				break;	
+			case LoadMore:
+				$this->LoadMore();  
+				break;
 			  case delete:
 				$this->delete();  
 				break;			
@@ -72,12 +79,12 @@
 			
 		}
 		
-		function users($limit)
+		function users()
 		{
-			if ($limit > 0)
-				$results = mysql_query("select * from users order by id desc limit $limit");
+			if ($this->limit > 0)
+				$results = mysql_query("select * from users order by id  limit $this->limit");
 			else
-				$results = mysql_query("select * from users order by id desc");
+				$results = mysql_query("select * from users order by id ");
 			
 			$data = array();
 			
@@ -194,6 +201,23 @@
 		{
 		
 		}
+		
+		
+		function LoadMore()
+		{
+			$last_id = $this->userLastId;
+			$sql = mysql_query("SELECT * FROM users WHERE id > '$last_id' ORDER BY id LIMIT $this->limit");
+			
+			$data = array();
+			
+			while($row=mysql_fetch_array($sql))
+			{
+				  $data[] = $row;
+			} 
+			
+			echo json_safe_encode($data);
+			
+		}
 
 	}
 	
@@ -205,17 +229,19 @@
 	$email = $_POST['email'];
 	$descr = $_POST['descr'];	
 	$limit = $_POST['limit'];	
+	$userLastId = $_POST['userLastId'];
 	$method = $_POST['method'];
 	
 	$user = new User(
-		$id, 
-		$sessionId,
-		$username, 
-		$password, 
-		$email, 
-		$descr, 
-		$limit,
-		$method);
+				$id, 
+				$sessionId,
+				$username, 
+				$password, 
+				$email, 
+				$descr, 
+				$limit,
+				$userLastId,
+				$method);
 	
 ?>
 

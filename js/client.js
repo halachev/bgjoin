@@ -1,5 +1,5 @@
 ﻿/*
-url - http://newlove.nh.zonebg.com
+url - http://joinme.nh.zonebg.com
 writen by Nurietin Mehmedov © 2013
 All right reserver ...
  */
@@ -11,8 +11,9 @@ $(document).ready(function () {
 	//global session
 	var sessionId = localStorage.getItem('sessionId');
 	var currUser = localStorage.getItem('profileId');
+	localStorage.removeItem('lastId');
 	
-	FIRST_MAX_USERS = 5; 
+	FIRST_MAX_USERS = 10; 
 	FIRST_MAX_EVENTS = 10;
 	
 	var ERROR_INSERT_EXIST_NAME = 1;
@@ -169,7 +170,7 @@ $(document).ready(function () {
 			
 			localStorage.removeItem('sessionId');
 			localStorage.removeItem('profileId');
-			location = "http://newlove.nh.zonebg.com/";
+			location = "http://joinme.nh.zonebg.com/";
 			
 		},
 		
@@ -587,7 +588,7 @@ $(document).ready(function () {
 					sessionId = $.sha1(user.username + user.password);
 					localStorage.setItem('sessionId', sessionId);
 					localStorage.setItem('profileId', JSON.stringify(user));
-					location = "http://newlove.nh.zonebg.com/";
+					location = "http://joinme.nh.zonebg.com/";
 				}
 				
 				
@@ -617,5 +618,68 @@ $(document).ready(function () {
 		}
 		
 	}
+	
+	function lastPosts() 
+	{ 
+		$('div#lastPostsLoader').html('<img src="images/ajax-loader.gif">');
+		
+		var lastId = localStorage.getItem('lastId');
+		
+		if (lastId == null)
+		{
+			// for first time we have to store last id
+			myAjax("user.php", {
+					limit: FIRST_MAX_USERS,
+					method : "allUsers"
+				}, function (_data) {
+					var id = 0;
+					for (i in _data)
+					{
+					  var user = _data[i];
+					  id = user.id;
+					  
+					}
+					
+					localStorage.setItem('lastId', id);
+				});
+		}
+		else
+		{
+			var data = {
+				limit: FIRST_MAX_USERS, 
+				userLastId: lastId,
+				method: 'LoadMore'
+			}
+			
+			myAjax("user.php", data, function (_data) {
+				
+				
+				var html = user.ShowUsers(_data);
+				$('#rightHtml').html(html);				
+				user.LoadImages();
+				
+				var id = 0;
+				for (i in _data)
+				{
+					var u = _data[i];
+					id = u.id;
+			    }
+				
+				
+				localStorage.setItem('lastId', id);
+				$('div#lastPostsLoader').html("");
+			})
+			
+		}
+		 
+		
+	}; 
+	
+	$(window).scroll(function(){		
+        if  ($(window).scrollTop() == $(document).height() - $(window).height()){
+           
+		   lastPosts();
+        }
+	});
 	
 });
