@@ -1,0 +1,19 @@
+﻿<div id="uploaderform">
+<form action="services/upload.php" method="post" enctype="multipart/form-data" name="UploadForm" id="UploadForm">
+    <h1>Изберете файл!</h1>
+    <p>Не по голяма от 1MB!</p>
+    
+    <label>Файлове
+    <span class="small"><a href="#" id="AddMoreFileBox">Още файлове</a></span>
+    </label>
+    <div id="AddFileInputBox"><input id="fileInputBox" style="margin-bottom: 5px;" type="file"  name="file[]"/></div>
+    <div class="sep_s"></div>
+    
+    <button type="submit" class="button" id="SubmitButton">Качи</button>
+    
+    <div id="progressbox"><div id="progressbar"></div ><div id="statustxt">0%</div ></div>
+</form>
+</div>
+<div id="uploadResults">		
+    <div id="output"></div>
+</div>
