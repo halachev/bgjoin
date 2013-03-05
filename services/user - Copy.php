@@ -1,7 +1,9 @@
-ï»¿<?php
+<?php
    
 	include "connect.php";
 	include "json_unicode.php";
+	
+	header('content-type text/html charset=utf-8');
 	
 	define ('insert', insert);
 	define ('edit', edit);
@@ -98,24 +100,24 @@
 		function insert()
 		{
 			
-			$username = convertToCyrillic(filter($this->username));
+			$username = filter($this->username);
 			$password = filter($this->password);
 			$email = filter($this->email);
 			
 			
 			if ((!$username) || (!$password) || (!$email))
 			{
-				$data = array("error_message" => "Ð’ÑÐ¸Ñ‡ÐºÐ¸ Ð¿Ð¾Ð»ÐµÑ‚Ð° Ð·Ð°Ð´ÑŠÐ»Ð¶Ð¸Ñ‚ÐµÐ»Ð½Ð¸!");
+				$data = array("error_message" => "Âñè÷êè ïîëåòà çàäúëæèòåëíè!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
-			//Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð·Ð° ÑÑŠÑ‰ÐµÑÐ²ÑƒÐ²Ð°Ñ‰Ð¾ Ð¸Ð¼Ðµ
+			//ïðîâåðêà çà ñúùåñâóâàùî èìå
 			$count = $this->ExistUserName($username);
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "Ð˜Ð¼ÐµÑ‚Ð¾ Ðµ Ð·Ð°ÐµÑ‚Ð¾!");				
+				$data = array("error_message" => "Èìåòî å çàåòî!");				
 				echo json_safe_encode($data);
 			
 			}
@@ -124,7 +126,7 @@
 			{
 				$results = mysql_query("insert into users (username, password, email) values('$username', '$password', '$email') ");
 			
-				// Ð²Ñ€ÑŠÑ‰Ð°Ð¼Ðµ Ð½Ð¾Ð²Ð¸Ñ Ð¾Ð±ÐµÐºÑ‚ Ð½Ð° ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°
+				// âðúùàìå íîâèÿ îáåêò íà êëèåíòà
 				$newId = mysql_insert_id();							
 				echo $this->getUserById($newId);
 			}
@@ -136,7 +138,6 @@
 		  $id = $this->id;
 		  $email = filter($this->email);
 		  $descr = filter($this->descr);	
-		  $descr = convertToCyrillic($descr);
 		   
 		  $result = mysql_query("update users set descr='$descr', email='$email' where id='$id'");
 		 
@@ -172,7 +173,7 @@
 			$count = mysql_num_rows($results);
 			if (!$count) 
 			{
-			    $data = array("error_message" => "ÐÐµÐ²Ð°Ð»Ð¸Ð´ÐµÐ½ Ð¿Ð¾Ñ‚Ñ€ÐµÐ±Ð¸Ñ‚ÐµÐ»!");
+			    $data = array("error_message" => "Íåâàëèäåí ïîòðåáèòåë!");
 				echo json_safe_encode($data);
 				exit;
 			}
@@ -253,14 +254,7 @@
     $data = mysql_real_escape_string($data);
  
     return $data;
-	}	
-
-    function convertToCyrillic($_descr)
-	{
-	  $desc = mb_convert_encoding($_descr,'cp1251','utf8');		
-	  mb_internal_encoding('cp1251');
-      return $desc;
-	}	
+}				
 				
 	
 ?>
