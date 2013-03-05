@@ -69,11 +69,12 @@ float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:#fff; backg
 }
 /*-------------search_tab----------------*/
 .search_tab{
-width:367px;
-height:207px;
+opacity: 0.9;
+width:auto;
+height:100px;
 background:url(../images/search_tab_bg.png) no-repeat center;
 float:right;
-margin:70px 50px 0 0;
+margin:20px 100px 0 0;
 }
 .search_title{
 color:#cf0a09;
@@ -81,11 +82,11 @@ font-size:22px;
 padding:10px 0 0 15px;
 }
 .search_form{
-width:350px;
+width:300px;
 padding:5px 0 5px 15px;
 }
 .form_row{
-width:350px;
+width:300;
 float:left;
 padding:10px 0 10px 0;
 }
@@ -93,7 +94,7 @@ label.small{width:50px;float:left;padding:3px 5px 0 5px;text-align:left;}
 label.large{width:70px;float:left;padding:3px 5px 0 0;text-align:left;}
 input.small_input{
 float:left;
-width:100px;
+width:170px;
 height:19px;
 border:1px #dfdfdf solid;
 }
@@ -198,7 +199,7 @@ margin:10px 10px 0 0;
 text-align:center;
 line-height:21px;
 color:#fff;
-background:url(../mages/view_all.gif) no-repeat center;
+background:url(../images/view_all.gif) no-repeat center;
 }
 a.more {
 display:block;

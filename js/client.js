@@ -13,7 +13,7 @@ $(document).ready(function () {
 	var currUser = localStorage.getItem('profileId');
 	localStorage.removeItem('lastId');
 	
-	FIRST_MAX_USERS = 10; 
+	FIRST_MAX_USERS = 10;
 	FIRST_MAX_EVENTS = 10;
 	
 	var ERROR_INSERT_EXIST_NAME = 1;
@@ -24,42 +24,46 @@ $(document).ready(function () {
 	var user = {
 		
 		GetLastUsers : function () {
+			
 			myAjax("user.php", {
-				limit: FIRST_MAX_USERS,
+				limit : FIRST_MAX_USERS,
 				method : "allUsers"
 			}, function (_data) {
+				
 				var html = user.ShowUsers(_data);
 				$('#rightHtml').html(html);
 				
 				user.LoadImages();
-			
+				$('#main-content').append('<a style="float: right;padding: 10px;" href="#LoadMore" >ЗАРЕДИ</a>');
+				
 			});
 			
 		},
 		
 		GetLastUserNotes : function (_html) {
 			myAjax("user.php", {
-				limit: FIRST_MAX_EVENTS,
-				method : "allUsers"}, function (_data) {
+				limit : FIRST_MAX_EVENTS,
+				method : "allUsers"
+			}, function (_data) {
 				
 				var html = user.ShowUserNotes(_data);
-								
+				
 				var main_box = "";
-			
+				
 				if (currUser == null)
-					main_box = 
-					'<div class="main_box">' +
-					'<div class="title">Най-лесният начин да се забавляваш!</div>' +
-					'<div class="left_banner_content">' +
-					'<p>'+ 
+					main_box =
+						'<div class="main_box">' +
+						'<div class="title">Най-лесният начин да се забавляваш!</div>' +
+						'<div class="left_banner_content">' +
+						'<p>' +
 						'Присъедини се към това което търсиш.<br/>' +
 						'Социална мрежа за хора с общи интереси!' +
 						'Край на скуката!<br/>' +
 						'Бъди различен последвай ме ...</p>' +
-					'</p>' +					
-					'</div>';
+						'</p>' +
+						'</div>';
 				
-				$('#leftHtml').html(main_box);				
+				$('#leftHtml').html(main_box);
 				$('#leftHtml').append(html);
 				
 			});
@@ -69,27 +73,27 @@ $(document).ready(function () {
 		profile : function () {
 			$.get('ui/profile.html', function (login_data) {
 				
-				system.content().html(login_data);	
+				system.content().html(login_data);
 				
 				var data = JSON.parse(currUser);
 				
-				var descr = "";				
+				var descr = "";
 				if (data.descr != null)
 					descr = data.descr;
 				
-				var html = 
-				'<span id="UserImageContainer-' + data.id + '"></span>' +
-				'<div class="main_box">' +
-				'<div class="title">' + data.username + '</div>' +
-				'<div class="left_banner_content">' +
-				'<p>Email: ' + data.email + '</p>' +
-				'<p>Описансие: <br/>' + descr + '</p>' +
-				
-				'<a href="#edit-user">Редакция</a> |' +
-				'<a href="#add-image">Качи снимка</a> |' +
-				'<a href="#delete-user">Изтриване</a>' +	
-				
-				'</div>';
+				var html =
+					'<span id="UserImageContainer-' + data.id + '"></span>' +
+					'<div class="main_box">' +
+					'<div class="title">' + data.username + '</div>' +
+					'<div class="left_banner_content">' +
+					'<p>Email: ' + data.email + '</p>' +
+					'<p>Описансие: <br/>' + descr + '</p>' +
+					
+					'<a href="#edit-user">Редакция</a> |' +
+					'<a href="#add-image">Качи снимка</a> |' +
+					'<a href="#delete-user">Изтриване</a>' +
+					
+					'</div>';
 				$('#user-profile').html(html);
 				
 				user.LoadImages(true);
@@ -97,72 +101,125 @@ $(document).ready(function () {
 			});
 			
 		},
-		LoadImages: function(_model)
-		{
+		LoadImages : function (_model) {
 			
-			  // var data = JSON.parse(currUser);
+			var userImage = {				
+				method : 'LoadImages'
+			}
+			
+			//get user images ...
+			myAjax('userImages.php', userImage, function (_userImages) {
 				
-				var userImage = {
-					//userId: data.id, 
-					method: 'LoadImages'
+				var newhtml = '';
+				for (i in _userImages) {
+					var image = _userImages[i];
+					
+					if (_model) {
+						newhtml = '<a href="' + image.ImageName + '"  target="_blank"><img src="' + image.ImageName + '" width="75" /></a>';
+						
+						$('#UserImageContainer-' + image.UserID + '').append('<span class="main_box">' + newhtml + '</span>');
+					} else {
+						newhtml = '<a href="#SelectedUser" id=' + user.id + '><img src="' + image.ImageName + '" width="75" /></a>';
+						$('#UserImageContainer-' + image.UserID + '').html(newhtml);
+					}
 				}
 				
-				//get user images ...
-				myAjax('userImages.php', userImage, function (_userImages){
-					
-					var newhtml = '';
-					for (i in _userImages)
-					{
-						var image = _userImages[i];
-						
-						if (_model)
-						{
-							newhtml = '<a href="'+ image.ImageName +'"  target="_blank"><img src="'+ image.ImageName +'" width="75" /></a>';
-						
-							$('#UserImageContainer-' + image.UserID +'').append('<span class="main_box">' + newhtml + '</span>');
-						}
-						else
-						{
-						    newhtml = '<a href="#SelectedUser" id=' + user.id + '><img src="'+ image.ImageName +'" width="75" /></a>';						
-							$('#UserImageContainer-' + image.UserID +'').html(newhtml);
-						}
-					}
-					
-				});
-		
+			});
+			
 		},
 		
-		UserProfile: function (_id)
-		{
+		lastPosts : function () {
+			
+			system.Loader(true);
+			
+			var lastId = localStorage.getItem('lastId');
+			
+			if (lastId == null) {
+				// for the first time we have to store last id
+				myAjax("user.php", {
+					limit : FIRST_MAX_USERS,
+					method : "allUsers"
+				}, function (_data) {
+					var id = 0;
+					for (i in _data) {
+						var user = _data[i];
+						id = user.id;						
+					}
+					
+					localStorage.setItem('lastId', id);
+					LoadMore(id);
+				});
+			} else {
+				LoadMore(lastId);
 				
+			}
+			
+			function LoadMore(_lastId) {
+				
+				var data = {
+					limit : FIRST_MAX_USERS,
+					userLastId : _lastId,
+					method : 'LoadMore'
+				}
+				
+				myAjax("user.php", data, function (_data) {
+					
+					
+					var html = user.ShowUserNotes(_data);
+					
+					$('#leftHtml').html(html);
+						
+					
+					var html = user.ShowUsers(_data);					
+					$('#rightHtml').html(html);
+					user.LoadImages();
+					
+					var id = 0;
+					for (i in _data) {
+						var u = _data[i];
+						id = u.id;
+					}
+					
+					localStorage.setItem('lastId', id);
+					system.Loader(false);
+				})
+			}
+			
+		},
+		
+		UserProfile : function (_id) {
+			
 			$.get('ui/profile.html', function (login_data) {
 				
-				system.content().html(login_data);	
+				system.content().html(login_data);
 				
-				myAjax("user.php", 
-				{id: _id, sessionId: sessionId, method: "getUserById" }, function (_data){
+				myAjax("user.php", {
+					id : _id,
+					sessionId : sessionId,
+					method : "getUserById"
+				}, function (_data) {
 					
-					var data = $.parseJSON(JSON.stringify(_data))[0];				    					
-					var descr = "";				
+					var data = $.parseJSON(JSON.stringify(_data))[0];
+					var descr = "";
 					
 					if (data.descr != null)
 						descr = data.descr;
 					
-					var html = 
-					'<span id="UserImageContainer-' + data.id + '"></span>' + 
-					'<div class="main_box">' +
-					'<div class="title">' + data.username + '</div>' +
-					'<div class="left_banner_content">' +
-					'<p>Email: ' + data.email + '</p>' +
-					'<p>Описансие: <br/>' + descr + '</p>' +				
-					
-					'</div>';
+					var html =
+						'<span id="UserImageContainer-' + data.id + '"></span>' +
+						'<div class="main_box">' +
+						'<div class="title">' + data.username + '</div>' +
+						'<div class="left_banner_content">' +
+						'<p>Email: ' + data.email + '</p>' +
+						'<p>Описансие: <br/>' + descr + '</p>' +
+						
+						'</div>';
 					$('#user-profile').html(html);
 					
 					user.LoadImages(true);
 					
 				});
-							
+				
 			});
 		},
 		
@@ -180,20 +237,21 @@ $(document).ready(function () {
 				'<div class="blue_title">Последни потребители</div>';
 			
 			for (i in users) {
-			
-				var user = users[i];				
 				
-				if (i == FIRST_MAX_USERS) break;
-								
+				var user = users[i];
+				
+				if (i == FIRST_MAX_USERS)
+					break;
+				
 				html +=
-					'<div class="member_tab">' +
-					'<a href="#SelectedUser" id=' + user.id + '>' +
-					'<div id="UserImageContainer-' + user.id + '"></div>' +
-					'<div class="member_details">' +
-					'<span><a href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></span><br />' +
-					'<p>' + user.email + '</p>' +
-					'<a href="#SelectedUser" id=' + user.id + ' class="read_more">Повече</a></div>' +
-					'</div>';
+				'<div class="member_tab">' +
+				'<a href="#SelectedUser" id=' + user.id + '>' +
+				'<div id="UserImageContainer-' + user.id + '"></div>' +
+				'<div class="member_details">' +
+				'<span><a href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></span><br />' +
+				'<p>' + user.email + '</p>' +
+				'<a href="#SelectedUser" id=' + user.id + ' class="read_more">Повече</a></div>' +
+				'</div>';
 				
 			}
 			
@@ -209,7 +267,8 @@ $(document).ready(function () {
 			for (i in notes) {
 				var note = notes[i];
 				
-				if (i == FIRST_MAX_EVENTS) break;
+				if (i == FIRST_MAX_EVENTS)
+					break;
 				
 				html +=
 				'<ul class="list">' +
@@ -220,7 +279,6 @@ $(document).ready(function () {
 				'</ul>';
 				
 			}
-			
 			
 			return html;
 			
@@ -241,10 +299,8 @@ $(document).ready(function () {
 			
 			if (!system.testUserName(data.username))
 				return;
-			
 			else if (!system.testPassword(data.password, data.RePassword))
-			  return;
-			
+				return;
 			else if (!system.testEmail(data.email)) {
 				system.error($('#register-email'), 'Невалиден email адрес!');
 				return false;
@@ -256,19 +312,17 @@ $(document).ready(function () {
 			
 		},
 		
-		edit: function ()
-		{
+		edit : function () {
 			
 			$.get('ui/edit.html', function (login_data) {
 				$('#modal-form').html(login_data);
 				
-				var data = 
-				{
+				var data = {
 					username : $('#edit-user'),
 					email : $('#edit-email'),
-					descr : $('#edit-descr')						
+					descr : $('#edit-descr')
 				};
-					
+				
 				var user = JSON.parse(currUser);
 				
 				data.username.val(user.username);
@@ -278,14 +332,13 @@ $(document).ready(function () {
 				$('#btnEdit').click(function (e) {
 					
 					var editData = {
-						id: user.id,
-						sessionId: sessionId,
+						id : user.id,
+						sessionId : sessionId,
 						username : data.username.val(),
 						email : data.email.val(),
 						descr : data.descr.val(),
 						method : "edit"
 					};
-					
 					
 					myAjax("user.php", editData, function () {
 						//
@@ -295,25 +348,22 @@ $(document).ready(function () {
 			});
 			
 			system.ShowDialog($('#modal-form'), 'Редакция');
-		
+			
 		},
 		
-		addImage: function ()
-		{							
-			var x = screen.width/2 - 700/2;
-			var y = screen.height/2 - 450/2;
-			window.open('file-uploader/index.php', "Качване на снимка",'"location=1,status=1,scrollbars=1, height=485,width=700,left='+x+',top='+y);
-					
+		addImage : function () {
+			var x = screen.width / 2 - 700 / 2;
+			var y = screen.height / 2 - 450 / 2;
+			window.open('file-uploader/index.php', "Качване на снимка", '"location=1,status=1,scrollbars=1, height=485,width=700,left=' + x + ',top=' + y);
+			
 		},
 		
-		remove: function ()
-		{
-		   var c = confirm("Сигурен ли сте, че искате да изтриете профила?");
-		   
-		   if (c)
-		   {
-			 //delete
-		   }
+		remove : function () {
+			var c = confirm("Сигурен ли сте, че искате да изтриете профила?");
+			
+			if (c) {
+				//delete
+			}
 		},
 		
 	}
@@ -328,15 +378,15 @@ $(document).ready(function () {
 				$('#my-events-id').hide()
 				$('#exit-id').hide();
 				$('#register-id').show();
-				$('#login-id').show();				
-				$('#how-it-work-id').show();	
+				$('#login-id').show();
+				$('#how-it-work-id').show();
 			} else {
 				$('#profile-id').show();
 				$('#my-events-id').show()
 				$('#exit-id').show();
 				$('#register-id').hide();
 				$('#login-id').hide();
-				$('#how-it-work-id').hide();				
+				$('#how-it-work-id').hide();
 			}
 			
 			system.initContent();
@@ -348,7 +398,7 @@ $(document).ready(function () {
 		},
 		
 		initContent : function () {
-							
+			
 			var html =
 				'<div class="center_bg">' +
 				
@@ -359,14 +409,22 @@ $(document).ready(function () {
 				'<div class="clear"></div>' +
 				
 				'</div>';
-			
+						
 			user.GetLastUserNotes(); // assigned to leftHtml
 			user.GetLastUsers(); // assigned to rightHtml
 			
 			this.content().html(html);
 			
 		},
-				
+		
+		Loader : function (state) {
+			if (state)
+				$('div#lastPostsLoader').html('<img src="images/ajax-loader.gif">');
+			else
+				$('div#lastPostsLoader').html("");
+			
+		},
+		
 		ShowLoginForm : function () {
 			$.get('ui/login.html', function (login_data) {
 				$('#modal-form').html(login_data);
@@ -428,19 +486,8 @@ $(document).ready(function () {
 				'<div class="search_tab">' +
 				'<div class="search_title">Търси</div>' +
 				'<div class="search_form">' +
-				'<div class="form_row">' +
-				'<label class="small">Търся:</label>' +
 				'<input type="text" class="small_input" />' +
-				'</div>' +
-				'<div class="form_row">' +
-				'<label class="large">Пол:</label>' +
-				'<input type="text" class="large_input"  />' +
-				'<input type="checkbox" class="checkbox" />' +
-				'<label class="small">+ photo</label>' +
-				'</div>' +
-				'<div class="form_row">' +
 				'<input type="image" src="images/search.gif" class="search_bt" />' +
-				'</div>' +
 				'</div>' +
 				'</div>';
 			
@@ -449,38 +496,28 @@ $(document).ready(function () {
 		},
 		
 		testUserName : function (_name) {
-					
-			if ((_name.length <= 2) || (_name == ""))
-			{
+			
+			if ((_name.length <= 2) || (_name == "")) {
 				system.error($('#register-user'), 'Невалидно потребителско име!');
 				return false;
-			}
-			else
+			} else
 				return true;
 			
 		},
 		
 		testPassword : function (_first, _second) {
 			
-			if (_first == '')
-			{
+			if (_first == '') {
 				system.error($('#register-password'), 'Въведете парола');
 				return false;
-			}
-			
-			else if (_second == '')
-			{
+			} else if (_second == '') {
 				system.error($('#register-re-password'), 'Повторете паролата отново');
 				return false;
-			}
-			
-			else if (_first != _second)
-			{
+			} else if (_first != _second) {
 				system.error($('#error-message'), 'Паролите не съвпадат!');
 				return false;
-			}
-			else
-			  return true;
+			} else
+				return true;
 		},
 		
 		testEmail : function (emailAddress) {
@@ -538,49 +575,51 @@ $(document).ready(function () {
 	});
 	
 	//profile events
-	$("a[href=#edit-user]").live("click", function () {	
+	$("a[href=#edit-user]").live("click", function () {
 		user.edit();
 	});
-		
-	$("a[href=#add-image]").live("click", function () {	
+	
+	$("a[href=#add-image]").live("click", function () {
 		user.addImage();
 	});
 	
-	$("a[href=#delete-user]").live("click", function () {	
+	$("a[href=#delete-user]").live("click", function () {
 		user.remove();
 	});
 	
-	$("a[href=#SelectedUser]").live("click", function (e) {	
+	$("a[href=#SelectedUser]").live("click", function (e) {
 		
-		if (currUser == null)
-		{
+		if (currUser == null) {
 			system.ShowRegisterForm();
 			return;
 		}
-		var _id = $(this).attr('id'); 		
+		var _id = $(this).attr('id');
 		user.UserProfile(_id);
 	});
-		
+	
+	$("a[href=#LoadMore]").live("click", function (e) {
+		user.lastPosts();
+	});
 	
 	//public functions out of objects
 	function myAjax(_file, _data, results) {
 		
 		$.ajax({
 			url : serviceURL + '/' + _file,
-			type : 'POST',			
+			type : 'POST',
 			dataType : "json",
 			data : _data,
 			
 			success : function (data) {
 				
-				if ((_data.method == "insert") 
-					|| (_data.method == "edit") 
-					|| (_data.method == "LogIn")) {
-					
+				if ((_data.method == "insert")
+					 || (_data.method == "edit")
+					 || (_data.method == "LogIn")) {
 					
 					var obj = $.parseJSON(JSON.stringify(data));
-									
-					if (!CheckServerError(obj)) return;
+					
+					if (!CheckServerError(obj))
+						return;
 					
 					//set session id for user
 					var user = obj[0];
@@ -591,12 +630,11 @@ $(document).ready(function () {
 					location = "http://joinme.nh.zonebg.com/";
 				}
 				
-				
 				results(data);
 			},
 			
 			error : function (err) {
-				alert(err.result);
+				//alert(err.result);
 			}
 			
 		});
@@ -606,80 +644,24 @@ $(document).ready(function () {
 			if (typeof obj.error_message != 'undefined') {
 				if ((obj.error_message != "")) {
 					$(".error").hide();
-					var err = JSON.parse(JSON.stringify(obj));					
-					var err_message = err.error_message;					
+					var err = JSON.parse(JSON.stringify(obj));
+					var err_message = err.error_message;
 					system.error($('#error-message'), err_message);
 					return false;
 				}
-			}
-			else
-			  return true;
+			} else
+				return true;
 			
 		}
 		
 	}
 	
-	function lastPosts() 
-	{ 
-		$('div#lastPostsLoader').html('<img src="images/ajax-loader.gif">');
+	$(window).scroll(function () {
 		
-		var lastId = localStorage.getItem('lastId');
-		
-		if (lastId == null)
-		{
-			// for first time we have to store last id
-			myAjax("user.php", {
-					limit: FIRST_MAX_USERS,
-					method : "allUsers"
-				}, function (_data) {
-					var id = 0;
-					for (i in _data)
-					{
-					  var user = _data[i];
-					  id = user.id;
-					  
-					}
-					
-					localStorage.setItem('lastId', id);
-				});
+		if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+			user.lastPosts();
+			user.lastPosts();
 		}
-		else
-		{
-			var data = {
-				limit: FIRST_MAX_USERS, 
-				userLastId: lastId,
-				method: 'LoadMore'
-			}
-			
-			myAjax("user.php", data, function (_data) {
-				
-				
-				var html = user.ShowUsers(_data);
-				$('#rightHtml').html(html);				
-				user.LoadImages();
-				
-				var id = 0;
-				for (i in _data)
-				{
-					var u = _data[i];
-					id = u.id;
-			    }
-				
-				
-				localStorage.setItem('lastId', id);
-				$('div#lastPostsLoader').html("");
-			})
-			
-		}
-		 
-		
-	}; 
-	
-	$(window).scroll(function(){		
-        if  ($(window).scrollTop() == $(document).height() - $(window).height()){
-           
-		   lastPosts();
-        }
 	});
 	
 });
