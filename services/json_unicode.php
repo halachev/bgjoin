@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 	function json_safe_encode($var)
 	{

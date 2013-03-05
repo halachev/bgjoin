@@ -80,7 +80,7 @@
 		function users()
 		{
 			if ($this->limit > 0)
-				$results = mysql_query("select * from users order by id  limit $this->limit");
+				$results = mysql_query("select * from users order by id limit $this->limit");
 			else
 				$results = mysql_query("select * from users order by id ");
 			
