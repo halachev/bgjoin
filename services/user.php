@@ -1,4 +1,4 @@
-п»ї<?php
+<?php
    
 	include "connect.php";
 	include "json_unicode.php";
@@ -105,17 +105,17 @@
 			
 			if ((!$username) || (!$password) || (!$email))
 			{
-				$data = array("error_message" => "Р’СЃРёС‡РєРё РїРѕР»РµС‚Р° Р·Р°РґСЉР»Р¶РёС‚РµР»РЅРё!");
+				$data = array("error_message" => "Всички полета задължителни!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
-			//РїСЂРѕРІРµСЂРєР° Р·Р° СЃСЉС‰РµСЃРІСѓРІР°С‰Рѕ РёРјРµ
+			//проверка за същесвуващо име
 			$count = $this->ExistUserName($username);
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "РРјРµС‚Рѕ Рµ Р·Р°РµС‚Рѕ!");				
+				$data = array("error_message" => "Името е заето!");				
 				echo json_safe_encode($data);
 			
 			}
@@ -124,7 +124,7 @@
 			{
 				$results = mysql_query("insert into users (username, password, email) values('$username', '$password', '$email') ");
 			
-				// РІСЂСЉС‰Р°РјРµ РЅРѕРІРёСЏ РѕР±РµРєС‚ РЅР° РєР»РёРµРЅС‚Р°
+				// връщаме новия обект на клиента
 				$newId = mysql_insert_id();							
 				echo $this->getUserById($newId);
 			}
@@ -172,7 +172,7 @@
 			$count = mysql_num_rows($results);
 			if (!$count) 
 			{
-			    $data = array("error_message" => "РќРµРІР°Р»РёРґРµРЅ РїРѕС‚СЂРµР±РёС‚РµР»!");
+			    $data = array("error_message" => "Невалиден потребител!");
 				echo json_safe_encode($data);
 				exit;
 			}

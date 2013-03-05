@@ -34,7 +34,7 @@ $(document).ready(function () {
 				$('#rightHtml').html(html);
 				
 				user.LoadImages();
-				$('#main-content').append('<a style="float: right;padding: 10px;" href="#LoadMore" >ЗАРЕДИ</a>');
+				$('#main-content').append('<center><a href="#LoadMore" class="button_view">Показване на още</a></center>');
 				
 			});
 			
@@ -55,12 +55,10 @@ $(document).ready(function () {
 						'<div class="main_box">' +
 						'<div class="title">Най-лесният начин да се забавляваш!</div>' +
 						'<div class="left_banner_content">' +
-						'<p>' +
-						'Присъедини се към това което търсиш.<br/>' +
-						'Социална мрежа за хора с общи интереси!' +
-						'Край на скуката!<br/>' +
-						'Бъди различен последвай ме ...</p>' +
-						'</p>' +
+						'<br/><p>Присъедини се към това което търсиш.<p/>' +
+						'<p>Социална мрежа за хора с общи интереси!<p>' +						
+						'<p>Бъди различен последвай ме ...</p>' +
+						
 						'</div>';
 				
 				$('#leftHtml').html(main_box);
@@ -82,16 +80,18 @@ $(document).ready(function () {
 					descr = data.descr;
 				
 				var html =
+					
+					'<a href="#delete-user" class="button_view">Изтриване</a>' +
+					'<a href="#edit-user" class="button_view">Редакция</a>' +
+					'<a href="#add-image" class="button_view">Качи снимка</a>' +
+					
 					'<span id="UserImageContainer-' + data.id + '"></span>' +
+					
 					'<div class="main_box">' +
 					'<div class="title">' + data.username + '</div>' +
 					'<div class="left_banner_content">' +
 					'<p>Email: ' + data.email + '</p>' +
 					'<p>Описансие: <br/>' + descr + '</p>' +
-					
-					'<a href="#edit-user">Редакция</a> |' +
-					'<a href="#add-image">Качи снимка</a> |' +
-					'<a href="#delete-user">Изтриване</a>' +
 					
 					'</div>';
 				$('#user-profile').html(html);
@@ -103,7 +103,7 @@ $(document).ready(function () {
 		},
 		LoadImages : function (_model) {
 			
-			var userImage = {				
+			var userImage = {
 				method : 'LoadImages'
 			}
 			
@@ -115,11 +115,11 @@ $(document).ready(function () {
 					var image = _userImages[i];
 					
 					if (_model) {
-						newhtml = '<a href="' + image.ImageName + '"  target="_blank"><img src="' + image.ImageName + '" width="75" /></a>';
+						newhtml = '<a href="' + image.ImageName + '"  target="_blank"><img src="' + image.ThumbName + '" width="75" /></a>';
 						
 						$('#UserImageContainer-' + image.UserID + '').append('<span class="main_box">' + newhtml + '</span>');
 					} else {
-						newhtml = '<a href="#SelectedUser" id=' + user.id + '><img src="' + image.ImageName + '" width="75" /></a>';
+						newhtml = '<a href="#SelectedUser" id=' + user.id + '><img src="' + image.ThumbName + '" width="75" /></a>';
 						$('#UserImageContainer-' + image.UserID + '').html(newhtml);
 					}
 				}
@@ -143,7 +143,7 @@ $(document).ready(function () {
 					var id = 0;
 					for (i in _data) {
 						var user = _data[i];
-						id = user.id;						
+						id = user.id;
 					}
 					
 					localStorage.setItem('lastId', id);
@@ -164,13 +164,11 @@ $(document).ready(function () {
 				
 				myAjax("user.php", data, function (_data) {
 					
-					
 					var html = user.ShowUserNotes(_data);
 					
 					$('#leftHtml').html(html);
-						
 					
-					var html = user.ShowUsers(_data);					
+					var html = user.ShowUsers(_data);
 					$('#rightHtml').html(html);
 					user.LoadImages();
 					
@@ -234,7 +232,7 @@ $(document).ready(function () {
 		ShowUsers : function (users) {
 			
 			var html = '<div class="right_content">' +
-				'<div class="blue_title">Последни потребители</div>';
+				'<div class="blue_title">Потребители</div>';
 			
 			for (i in users) {
 				
@@ -250,6 +248,7 @@ $(document).ready(function () {
 				'<div class="member_details">' +
 				'<span><a href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></span><br />' +
 				'<p>' + user.email + '</p>' +
+				'<p>' + user.descr + '</p>' +
 				'<a href="#SelectedUser" id=' + user.id + ' class="read_more">Повече</a></div>' +
 				'</div>';
 				
@@ -405,11 +404,10 @@ $(document).ready(function () {
 				'<div id="leftHtml"></div>' +
 				'<div id="rightHtml"></div>' +
 				
-				'<a href="#" class="view_all">Всички</a>' +
 				'<div class="clear"></div>' +
 				
 				'</div>';
-						
+			
 			user.GetLastUserNotes(); // assigned to leftHtml
 			user.GetLastUsers(); // assigned to rightHtml
 			
@@ -487,7 +485,7 @@ $(document).ready(function () {
 				'<div class="search_title">Търси</div>' +
 				'<div class="search_form">' +
 				'<input type="text" class="small_input" />' +
-				'<input type="image" src="images/search.gif" class="search_bt" />' +
+				'<a href="#search-post" class="search_bt" ><img src="images/search.gif" /></a>' +
 				'</div>' +
 				'</div>';
 			
@@ -547,6 +545,7 @@ $(document).ready(function () {
 		system.init();
 	});
 	
+	
 	$('#how-it-work-id').click(function (e) {
 		system.how_it_work();
 	});
@@ -572,6 +571,10 @@ $(document).ready(function () {
 	
 	$('#exit-id').click(function (e) {
 		user.LogOut();
+	});
+	
+	$("a[href=#search-post]").live("click", function () {
+		$('#rightHtml').html("");
 	});
 	
 	//profile events

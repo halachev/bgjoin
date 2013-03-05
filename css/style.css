@@ -189,8 +189,8 @@ line-height:21px;
 color:#fff;
 background:url(../images/read_more.gif) no-repeat center;
 }
-a.view_all {
-width:66px;
+a.button_view {
+width:120px;
 height:21px;
 display:block;
 text-decoration:none;
@@ -199,8 +199,18 @@ margin:10px 10px 0 0;
 text-align:center;
 line-height:21px;
 color:#fff;
-background:url(../images/view_all.gif) no-repeat center;
+background: #d11614;
 }
+
+a.button_view:hover {
+background: #d34614;
+}
+
+button{
+  color: #fff;
+  background: #d34614;
+}
+
 a.more {
 display:block;
 text-decoration:none;
