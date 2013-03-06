@@ -28,7 +28,8 @@ padding:5px 10px 0 0;
 clear:both;
 }
 #main_container{
-
+border-radius: 15px 15px 15px 15px;
+box-shadow: 0 -3px 3px 0 rgba(0,0,0,.15);
 width:1000px;
 height:auto;
 margin:auto;
@@ -46,8 +47,8 @@ padding:15px 0 0 15px;
 /*----------------------menu-------------------------*/
 #menu{
 
-width:600px;
-padding:35px 0 0 25px;
+width:auto;
+padding:15px 0 0 25px;
 margin:auto;
 float:right;
 }
@@ -58,7 +59,7 @@ list-style:none;padding:0px; float:right; margin:0px;display:block; font-weight:
 list-style:none;display:inline;float:left;width:auto;padding:0 7px 0 7px;font-size:16px;
 }
 #menu ul li a{
-float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:#2d2d2d; 
+float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:#786655; 
 }
 #menu ul li a:hover{
 float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:red; background:url(../images/menu_heart.gif) no-repeat left;
@@ -68,6 +69,8 @@ float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:#fff; backg
 }
 /*-------------search_tab----------------*/
 .search_tab{
+border-radius: 15px 15px 15px 15px;
+box-shadow: 0 -3px 3px 0 rgba(0,0,0,.15);
 opacity: 0.9;
 width:auto;
 height:100px;
@@ -113,6 +116,7 @@ float:left;
 }
 /*-------------------------------*/
 #center_content{
+
 width:809px;
 margin:auto;
 clear:both;
@@ -141,12 +145,14 @@ width:235px;
 padding:0 0 0 15px;
 }
 .title{
+
 color:#cf0a09;
 clear:both;
 font-size:18px;
 padding:10px 0 0 15px;
 }
 .blue_title{
+
 color:#5dafe7;
 clear:both;
 font-size:18px;
@@ -239,6 +245,7 @@ padding:5px 0 0 0;
 }
 /*-----------------------------footer------------------*/
 #footer{
+
 width:1000pxpx;
 height:60px;
 margin:auto;

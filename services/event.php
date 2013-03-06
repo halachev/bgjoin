@@ -1,6 +1,7 @@
-<?php
+ï»¿<?php
    
 	include "connect.php";
+	include "utils.php";
 	include "json_unicode.php";
 	
 	define ('insert', insert);
@@ -100,17 +101,17 @@
 			
 			if ((!$name) || (!$date) || (!$descr))
 			{
-				$data = array("error_message" => "Âñè÷êè ïîëåòà çàäúëæèòåëíè!");
+				$data = array("error_message" => "Ð’ÑÐ¸Ñ‡ÐºÐ¸ Ð¿Ð¾Ð»ÐµÑ‚Ð° Ð·Ð°Ð´ÑŠÐ»Ð¶Ð¸Ñ‚ÐµÐ»Ð½Ð¸!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
-			//ïðîâåðêà çà ñúùåñâóâàùî èìå
+			//Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð·Ð° ÑÑŠÑ‰ÐµÑÐ²ÑƒÐ²Ð°Ñ‰Ð¾ Ð¸Ð¼Ðµ
 			$count = $this->ExistEventName();
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "Èìåòî å çàåòî!");				
+				$data = array("error_message" => "Ð˜Ð¼ÐµÑ‚Ð¾ Ðµ Ð·Ð°ÐµÑ‚Ð¾!");				
 				echo json_safe_encode($data);
 			
 			}
@@ -119,7 +120,7 @@
 			{
 				$results = mysql_query("insert into events (name, date, descr, int_id, user_id) values('$name', '$date', '$descr', '$int_id', '$user_id') ");
 			
-				// âðúùàìå íîâèÿ îáåêò íà êëèåíòà
+				// Ð²Ñ€ÑŠÑ‰Ð°Ð¼Ðµ Ð½Ð¾Ð²Ð¸Ñ Ð¾Ð±ÐµÐºÑ‚ Ð½Ð° ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°
 				$newId = mysql_insert_id();							
 				echo $this->getEventById($newId);
 			}
@@ -211,29 +212,7 @@
 				$int_id, 				
 				$user_id,
 				$limit,
-				$method);
-				
-
-   function filter($data) {
-    //$data = trim(htmlentities(strip_tags($data),ENT_QUOTES,"UTF-8")); 
-    $data = trim($data);    
- 
-    if (get_magic_quotes_gpc())
-        $data = stripslashes($data);
- 
-    $data = mysql_real_escape_string($data);
- 
-    return $data;
-	}	
-
-    function convertToCyrillic($_str)
-	{
-	  $_str = mb_convert_encoding($_str,'cp1251','utf8');		
-	  mb_internal_encoding('cp1251');
-      return $_str;
-	}	
-				
-	
+				$method);	
 ?>
 
 

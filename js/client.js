@@ -6,6 +6,7 @@
 
 //base url
 serviceURL = '/services';
+pageUrl = 'http://bgjoin.nh.zonebg.com';
 
 //global session
 var sessionId = localStorage.getItem('sessionId');
@@ -44,6 +45,10 @@ $(document).ready(function () {
 	
 	$('#my-events-id').click(function (e) {
 		system.my_events();
+	});
+	
+	$('#my-ints-id').click(function (e) {
+		system.ints();
 	});
 	
 	$('#profile-id').click(function (e) {

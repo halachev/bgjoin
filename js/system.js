@@ -174,6 +174,41 @@ var system = {
 		});
 	},
 	
+	ints: function () {
+		system.Loader(true);
+		$.get('ui/my-ints.html', function (login_data) {
+			
+			system.content().html(login_data);
+			
+			var data = {				
+				method: 'interests'
+			}
+			
+			myAjax('ints.php', data, function (_data) {				
+				var html = system.ShowInts(_data);
+				
+				$('#my-ints-list').html(html);
+				system.Loader(false);
+			});
+			
+		});
+		
+	},
+	
+	
+	ShowInts : function (ints) {
+		
+		var html = '';	
+		
+		for (i in ints) {
+			var interes = ints[i];
+			html += '<ul><a href="#" ><p class="small">' + interes.name + '</p></a></ul>';							
+		}
+		
+		return html;
+		
+	},
+	
 	contacts : function () {
 		$.get('ui/contact.html', function (login_data) {
 			

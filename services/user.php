@@ -1,6 +1,7 @@
 <?php
    
 	include "connect.php";
+	include "utils.php";
 	include "json_unicode.php";
 	
 	define ('insert', insert);
@@ -240,28 +241,7 @@
 				$descr, 
 				$limit,
 				$userLastId,
-				$method);
-				
-
-   function filter($data) {
-    //$data = trim(htmlentities(strip_tags($data),ENT_QUOTES,"UTF-8")); 
-    $data = trim($data);    
- 
-    if (get_magic_quotes_gpc())
-        $data = stripslashes($data);
- 
-    $data = mysql_real_escape_string($data);
- 
-    return $data;
-	}	
-
-    function convertToCyrillic($_descr)
-	{
-	  $desc = mb_convert_encoding($_descr,'cp1251','utf8');		
-	  mb_internal_encoding('cp1251');
-      return $desc;
-	}	
-				
+				$method);		
 	
 ?>
 

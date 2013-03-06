@@ -7,7 +7,7 @@ var user = {
 	},
 	
 	GetLastUsers : function () {
-		
+		system.Loader(true);
 		myAjax("user.php", {
 			limit : FIRST_MAX_USERS,
 			method : "allUsers"
@@ -17,12 +17,13 @@ var user = {
 			$('#rightHtml').html(html);
 			
 			user.LoadImages();
-			
+			system.Loader(false);
 		});
 		
 	},
 	
 	GetLastUserNotes : function (_html) {
+		system.Loader(true);
 		myAjax("event.php", {
 			limit : FIRST_MAX_EVENTS,
 			method : "events"
@@ -45,12 +46,13 @@ var user = {
 			
 			$('#leftHtml').html(main_box);
 			$('#leftHtml').append(html);
-			
+			system.Loader(false);
 		});
 		
 	},
 	
 	profile : function () {
+				
 		$.get('ui/profile.html', function (login_data) {
 			
 			system.content().html(login_data);
@@ -68,14 +70,14 @@ var user = {
 				'<a href="#add-image" class="button_view">Качи снимка</a>' +
 				
 				'<span id="UserImageContainer-' + data.id + '"></span>' +
+				'<span id="deff-user-image-' + data.id + '"><img src="images/user.png" width="35" /></span>' +
+			
 				
-				'<div class="main_box">' +
-				'<div class="title">' + data.username + '</div>' +
-				'<div class="left_banner_content">' +
+				'<div class="blue_title">' + data.username + '</div>' +			
 				'<p>Email: ' + data.email + '</p>' +
-				'<p>Описансие: <br/>' + descr + '</p>' +
+				'<p>Описансие: <br/>' + descr + '</p>';
 				
-				'</div>';
+				
 			$('#user-profile').html(html);
 			
 			user.LoadImages(true);
@@ -83,8 +85,9 @@ var user = {
 		});
 		
 	},
+	
 	LoadImages : function (_model) {
-		
+		system.Loader(true);
 		var userImage = {
 			method : 'LoadImages'
 		}
@@ -97,15 +100,21 @@ var user = {
 				var image = _userImages[i];
 				
 				if (_model) {
-					newhtml = '<a href="' + image.ImageName + '"  target="_blank"><img src="' + image.ThumbName + '" width="75" /></a>';
-					
-					$('#UserImageContainer-' + image.UserID + '').append('<span class="main_box">' + newhtml + '</span>');
-				} else {
+					newhtml = '<a href="' + image.ImageName + '"  target="_blank"><img src="' + image.ThumbName + '" width="75" /></a>';					
+					//update UserImageContainer content
+					$('#UserImageContainer-' + image.UserID + '').html('<span>' + newhtml + '</span>');
+				    //clear default image
+					$('#deff-user-image-' + image.UserID + '').html("");
+				} else {					
+										
 					newhtml = '<a href="#SelectedUser" id=' + user.id + '><img src="' + image.ThumbName + '" width="75" /></a>';
+					//update UserImageContainer content
 					$('#UserImageContainer-' + image.UserID + '').html(newhtml);
+					//clear default image
+					$('#deff-user-image-' + image.UserID + '').html("");
 				}
 			}
-			
+			system.Loader(false);
 		});
 		
 	},
@@ -154,7 +163,7 @@ var user = {
 				user.LoadImages();
 				
 				$('#rightHtml').hide();
-				$('#rightHtml').fadeIn('slow');
+				$('#rightHtml').fadeIn(2000);
 				
 				var id = 0;
 				for (i in _data) {
@@ -191,14 +200,11 @@ var user = {
 				
 				var html =
 					'<span id="UserImageContainer-' + data.id + '"></span>' +
-					'<div class="main_box">' +
-					'<div class="title">' + data.username + '</div>' +
-					'<div class="left_banner_content">' +
-					'<p>Email: ' + data.email + '</p>' +
-					'<p>Описансие: <br/>' + descr + '</p>' +
-					
-					'</div>';
-					
+					'<span id="deff-user-image-' + data.id + '"><img src="images/user.png" width="35" /></span>' +
+								
+					'<div class="blue_title">' + data.username + '</div>' +									
+					'<p>Описансие: <br/>' + descr + '</p>';
+										
 				$('#user-profile').html(html);				
 				user.LoadImages(true);
 				
@@ -211,29 +217,31 @@ var user = {
 		
 		localStorage.removeItem('sessionId');
 		localStorage.removeItem('profileId');
-		location = "http://bgjoin.com/";
+		location = pageUrl;
 		
 	},
 	
 	ShowUsers : function (users) {
 		
 		var html = '<div class="right_content">' +
-			'<div class="blue_title">Потребители</div>';
+			'<div class="title">Потребители <br/><img src="images/users-icon.png" /></div><br/>';
 		
 		for (i in users) {
 			
 			var user = users[i];
 			
-			if (i == FIRST_MAX_USERS)
-				break;
+			if (i == FIRST_MAX_USERS) break;
 			
 			html +=
 			'<div class="member_tab">' +
-			'<a href="#SelectedUser" id=' + user.id + '>' +
+			'<a href="#SelectedUser" id=' + user.id + '></а>' +
+			//тук закачаме снимка 
 			'<div id="UserImageContainer-' + user.id + '"></div>' +
+			//тук закачаме снимка по подразбиране
+			'<div id="deff-user-image-' + user.id + '"><img src="images/user.png" width="35"/></div>' +
+			
 			'<div class="member_details">' +
-			'<span><a href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></span><br />' +
-			'<p>' + user.email + '</p>' +
+			'<span><a class="blue_title" href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></span><br />' +			
 			'<p>' + user.descr + '</p>' +
 			'<a href="#SelectedUser" id=' + user.id + ' class="read_more">Повече</a></div>' +
 			'</div>';
@@ -247,7 +255,7 @@ var user = {
 	ShowUserEvents : function (events) {
 		
 		var html = '<div class="left_content"> ' +
-			'<div class="blue_title">Последни предложения</div>';
+			'<div class="title">Последни предложения <br/><img src="images/event_icon.png" /></div><br/>';
 		
 		for (i in events) {
 			var event = events[i];
@@ -257,7 +265,7 @@ var user = {
 			
 				html +=
 				'<ul class="list">' +
-				'<a href="#" ><p class="small">' + event.name + '</p></a>' + 
+				'<li><a href="#" ><p>' + event.name + '</p></a></li>' + 
 				
 				'</ul>';
 			
@@ -386,13 +394,9 @@ var user = {
 			return;
 		
 		myAjax("event.php", data, function (_data) {
-			var data = $.parseJSON(JSON.stringify(_data));
-			alert(JSON.stringify(_data));
-			//if (!CheckServerError(_data))
-			//return;
-		
-			var event = data[0];
-			//alert(event.name);
+			//var data = $.parseJSON(JSON.stringify(_data));				
+			//var event = data[0];
+			location = pageUrl;
 		});
 	},
 	
@@ -406,7 +410,7 @@ var user = {
 		sessionId = $.sha1(user.username + user.password);
 		localStorage.setItem('sessionId', sessionId);
 		localStorage.setItem('profileId', JSON.stringify(user));
-		location = "http://bgjoin.com/";
+		location = pageUrl;
 		
 	}
 	
