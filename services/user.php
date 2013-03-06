@@ -80,9 +80,9 @@
 		function users()
 		{
 			if ($this->limit > 0)
-				$results = mysql_query("select * from users order by id limit $this->limit");
+				$results = mysql_query("select * from users order by id desc limit $this->limit");
 			else
-				$results = mysql_query("select * from users order by id ");
+				$results = mysql_query("select * from users order by id desc ");
 			
 			$data = array();
 			
@@ -205,7 +205,7 @@
 		function LoadMore()
 		{
 			$last_id = $this->userLastId;
-			$sql = mysql_query("SELECT * FROM users WHERE id > '$last_id' ORDER BY id LIMIT $this->limit");
+			$sql = mysql_query("SELECT * FROM users WHERE id < '$last_id' ORDER BY id desc LIMIT $this->limit");
 			
 			$data = array();
 			

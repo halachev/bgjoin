@@ -29,7 +29,6 @@ var system = {
 	},
 	
 	initContent : function () {
-		
 		var html =
 			'<div class="center_bg">' +
 			
@@ -44,6 +43,8 @@ var system = {
 		user.GetLastUsers(); // assigned to rightHtml
 		
 		this.content().html(html);
+		
+		this.content().append('<center><a href="#LoadMore" class="button_view">Показване на още</a></center>');
 		
 	},
 	
@@ -65,7 +66,9 @@ var system = {
 					password : $('#login-password').val(),
 					method : "LogIn"
 				};
-				myAjax("user.php", data);
+				myAjax("user.php", data, function (_data) {
+					user.UserStorage(_data);
+				});
 			});
 		});
 		
@@ -125,10 +128,10 @@ var system = {
 		
 	},
 	
-	testUserName : function (_name) {
+	testString : function (_name, _element, _text) {
 		
 		if ((_name.length <= 2) || (_name == "")) {
-			system.error($('#register-user'), 'Невалидно потребителско име!');
+			system.error(_element, _text);
 			return false;
 		} else
 			return true;
@@ -164,6 +167,9 @@ var system = {
 		$.get('ui/my-events.html', function (login_data) {
 			
 			system.content().html(login_data);
+			$('#add-event-id').click(function () {
+				user.addEvent();
+			})
 			
 		});
 	},

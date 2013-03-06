@@ -9,25 +9,6 @@ function myAjax(_file, _data, results) {
 		data : _data,
 		
 		success : function (data) {
-			
-			if ((_data.method == "insert")
-				 || (_data.method == "edit")
-				 || (_data.method == "LogIn")) {
-				
-				var obj = $.parseJSON(JSON.stringify(data));
-				
-				if (!CheckServerError(obj))
-					return;
-				
-				//set session id for user
-				var user = obj[0];
-				
-				sessionId = $.sha1(user.username + user.password);
-				localStorage.setItem('sessionId', sessionId);
-				localStorage.setItem('profileId', JSON.stringify(user));
-				location = "http://bgjoin.com/";
-			}
-			
 			results(data);
 		},
 		
@@ -37,20 +18,20 @@ function myAjax(_file, _data, results) {
 		
 	});
 	
-	function CheckServerError(obj) {
-		
-		if (typeof obj.error_message != 'undefined') {
-			if ((obj.error_message != "")) {
-				$(".error").hide();
-				var err = JSON.parse(JSON.stringify(obj));
-				var err_message = err.error_message;
-				system.error($('#error-message'), err_message);
-				return false;
-			}
-		} else
-			return true;
-		
-	}
+}
+
+function CheckServerError(obj) {
+	
+	if (typeof obj.error_message != 'undefined') {
+		if ((obj.error_message != "")) {
+			$(".error").hide();
+			var err = JSON.parse(JSON.stringify(obj));
+			var err_message = err.error_message;
+			system.error($('#error-message'), err_message);
+			return false;
+		}
+	} else
+		return true;
 	
 }
 

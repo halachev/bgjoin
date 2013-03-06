@@ -1,5 +1,10 @@
 ﻿//user oject
 var user = {
+	currentUser : function () {
+		
+		var data = JSON.parse(currUser);		
+		return data;
+	},
 	
 	GetLastUsers : function () {
 		
@@ -12,19 +17,18 @@ var user = {
 			$('#rightHtml').html(html);
 			
 			user.LoadImages();
-			$('#main-content').append('<center><a href="#LoadMore" class="button_view">Показване на още</a></center>');
 			
 		});
 		
 	},
 	
 	GetLastUserNotes : function (_html) {
-		myAjax("user.php", {
+		myAjax("event.php", {
 			limit : FIRST_MAX_EVENTS,
-			method : "allUsers"
+			method : "events"
 		}, function (_data) {
-			
-			var html = user.ShowUserNotes(_data);
+						
+			var html = user.ShowUserEvents(_data);
 			
 			var main_box = "";
 			
@@ -51,7 +55,7 @@ var user = {
 			
 			system.content().html(login_data);
 			
-			var data = JSON.parse(currUser);
+			var data = user.currentUser();
 			
 			var descr = "";
 			if (data.descr != null)
@@ -106,7 +110,7 @@ var user = {
 		
 	},
 	
-	lastPosts : function () {
+	lastUserPosts : function () {
 		
 		system.Loader(true);
 		
@@ -142,13 +146,15 @@ var user = {
 			
 			myAjax("user.php", data, function (_data) {
 				
-				var html = user.ShowUserNotes(_data);
-				
-				$('#leftHtml').html(html);
+				var html = user.ShowUserEvents(_data);
 				
 				var html = user.ShowUsers(_data);
+				
 				$('#rightHtml').html(html);
 				user.LoadImages();
+				
+				$('#rightHtml').hide();
+				$('#rightHtml').fadeIn('slow');
 				
 				var id = 0;
 				for (i in _data) {
@@ -181,6 +187,8 @@ var user = {
 				if (data.descr != null)
 					descr = data.descr;
 				
+				html = '';
+				
 				var html =
 					'<span id="UserImageContainer-' + data.id + '"></span>' +
 					'<div class="main_box">' +
@@ -190,8 +198,8 @@ var user = {
 					'<p>Описансие: <br/>' + descr + '</p>' +
 					
 					'</div>';
-				$('#user-profile').html(html);
-				
+					
+				$('#user-profile').html(html);				
 				user.LoadImages(true);
 				
 			});
@@ -236,24 +244,22 @@ var user = {
 		
 	},
 	
-	ShowUserNotes : function (notes) {
+	ShowUserEvents : function (events) {
 		
 		var html = '<div class="left_content"> ' +
 			'<div class="blue_title">Последни предложения</div>';
 		
-		for (i in notes) {
-			var note = notes[i];
+		for (i in events) {
+			var event = events[i];
 			
 			if (i == FIRST_MAX_EVENTS)
 				break;
 			
-			html +=
-			'<ul class="list">' +
-			'<li><a href="#">' + note.username + '</a></li>' +
-			'</ul>' +
-			'<ul class="list">' +
-			'<li><a href="#">' + note.email + '</a></li>' +
-			'</ul>';
+				html +=
+				'<ul class="list">' +
+				'<a href="#" ><p class="small">' + event.name + '</p></a>' + 
+				
+				'</ul>';
 			
 		}
 		
@@ -274,7 +280,8 @@ var user = {
 		//check validation for user
 		$(".error").hide();
 		
-		if (!system.testUserName(data.username))
+		if (!system.testString(data.username, $('#register-user'),
+				'Невалидно потребителско име!'))
 			return;
 		else if (!system.testPassword(data.password, data.RePassword))
 			return;
@@ -283,8 +290,8 @@ var user = {
 			return false;
 		};
 		
-		myAjax("user.php", data, function () {
-			//
+		myAjax("user.php", data, function (_data) {
+			user.UserStorage(_data);
 		});
 		
 	},
@@ -300,16 +307,16 @@ var user = {
 				descr : $('#edit-descr')
 			};
 			
-			var user = JSON.parse(currUser);
+			var _user = user.currentUser();
 			
-			data.username.val(user.username);
-			data.email.val(user.email);
-			data.descr.val(user.descr);
+			data.username.val(_user.username);
+			data.email.val(_user.email);
+			data.descr.val(_user.descr);
 			
 			$('#btnEdit').click(function (e) {
 				
 				var editData = {
-					id : user.id,
+					id : _user.id,
 					sessionId : sessionId,
 					username : data.username.val(),
 					email : data.email.val(),
@@ -317,8 +324,8 @@ var user = {
 					method : "edit"
 				};
 				
-				myAjax("user.php", editData, function () {
-					//
+				myAjax("user.php", editData, function (_data) {
+					user.UserStorage(_data);
 				});
 				
 			});
@@ -342,5 +349,65 @@ var user = {
 			//delete
 		}
 	},
+	
+	addEvent : function () {
+		
+		$.get('ui/add-event.html', function (login_data) {
+			$('#modal-form').html(login_data);
+			system.ShowDialog($('#modal-form'), 'Ново събитие');
+			$('#event-date').datepicker();
+			$('#btn-add-event').click(function () {
+				
+				user.event_insert();
+			})
+			
+		});
+	},
+	
+	event_insert : function () {
+		
+		var data = {
+			sessionId: sessionId,
+			name : $('#event-name').val(),
+			date : $('#event-date').val(),
+			descr : $('#event-descr').val(),
+			int_id : 1,
+			user_id : user.currentUser().id,
+			method : "insert"
+		};
+		
+		
+		//check validation for user
+		$(".error").hide();
+		
+		if (!system.testString(data.name, $('#event-name'), 'Попълнете полето заглавие!'))
+			return;
+		else if (!system.testString(data.descr, $('#event-descr'), 'Попълнете полето описание!'))
+			return;
+		
+		myAjax("event.php", data, function (_data) {
+			var data = $.parseJSON(JSON.stringify(_data));
+			alert(JSON.stringify(_data));
+			//if (!CheckServerError(_data))
+			//return;
+		
+			var event = data[0];
+			//alert(event.name);
+		});
+	},
+	
+	UserStorage : function (data) {
+		
+		var _data = $.parseJSON(JSON.stringify(data));
+		if (!CheckServerError(_data))
+			return;
+		
+		var user = _data[0];
+		sessionId = $.sha1(user.username + user.password);
+		localStorage.setItem('sessionId', sessionId);
+		localStorage.setItem('profileId', JSON.stringify(user));
+		location = "http://bgjoin.com/";
+		
+	}
 	
 }

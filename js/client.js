@@ -20,7 +20,7 @@ var ERROR_INSERT_REQUARED = 2;
 var ERROR_LOGIN = 3;
 
 $(document).ready(function () {
-	
+		
 	//start application
 	system.init();
 	
@@ -99,7 +99,7 @@ $(document).ready(function () {
 	});
 	
 	$("a[href=#LoadMore]").live("click", function (e) {
-		user.lastPosts();
+		user.lastUserPosts();
 	});
 	
 	
