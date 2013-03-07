@@ -108,12 +108,13 @@ var system = {
 			modal : true,
 			show : 'fadeIn',
 			resizable : false,
-			dialogClass : 'dialog-box',
+			dialogClass : 'dialog-box',			
 			buttons : {
 				"Close" : function () {
 					$(this).dialog("close");
 				}				
-			}
+			},
+			
 		});
 	},
 	
@@ -125,7 +126,8 @@ var system = {
 			//show : 'fadeIn',
 			resizable: false,
 			//draggable: false,
-			width: 'auto',	  			
+			width: 'auto',	  
+			position: 'top'			
 		});
 	},
 	

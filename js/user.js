@@ -15,8 +15,7 @@ var user = {
 			
 			var html = user.ShowUsers(_data);
 			$('#rightHtml').html(html);
-			
-			user.LoadImages();
+				
 			system.Loader(false);
 		});
 		
@@ -54,73 +53,11 @@ var user = {
 	
 	profile : function () {
 				
-		$.get('ui/profile.html', function (login_data) {
-			
-			system.content().html(login_data);
-			
-			var data = user.currentUser();
-			
-			var descr = "";
-			if (data.descr != null)
-				descr = data.descr;
-			
-			var html =
-				
-				'<a href="#delete-user" class="button_view">Изтриване</a>' +
-				'<a href="#edit-user" class="button_view">Редакция</a>' +
-				'<a href="#add-image" class="button_view">Качи снимка</a>' +
-				
-				'<span id="UserImageContainer-' + data.id + '"></span></div>' +
-				'<span id="deff-user-image-' + data.id + '"><img src="images/user.png" width="35" /></span>' +
-			
-				
-				'<div class="blue_title">' + data.username + '</div>' +			
-				'<p>Email: ' + data.email + '</p>' +
-				'<p>Описансие: <br/>' + descr + '</p>';
-				
-				
-			$('#user-profile').html(html);
-			
-			user.LoadImages(true);
-			
-		});
+		var data = user.currentUser();
+		user.UserProfile(data.id);
 		
 	},
-	
-	LoadImages : function (_model) {
-		system.Loader(true);
-		var userImage = {
-			method : 'LoadImages'
-		}
 		
-		//get user images ...
-		myAjax('userImages.php', userImage, function (_userImages) {
-			
-			var newhtml = '';
-			for (i in _userImages) {
-				var image = _userImages[i];
-				
-				if (_model) {
-					newhtml = '<a id="image-dialog" href="' + image.ImageName + '" ><img src="' + image.ThumbName + '" width="75" /></a></div>';					
-					//update UserImageContainer content				
-					$('#UserImageContainer-' + image.UserID + '').append('<span style="padding: 10px;">' + newhtml + '</span>');
-				    //clear default image
-					$('#deff-user-image-' + image.UserID + '').html("");
-				} else {					
-										
-					newhtml = '<a href="#SelectedUser" id=' + user.id + '><img src="' + image.ThumbName + '" width="75" /></a>';
-					//update UserImageContainer content
-					$('#UserImageContainer-' + image.UserID + '').html(newhtml);
-					//clear default image
-					$('#deff-user-image-' + image.UserID + '').html("");
-				}
-			}
-				
-			system.Loader(false);
-		});
-		
-	},
-	
 	lastUserPosts : function () {
 		
 		system.Loader(true);
@@ -162,7 +99,7 @@ var user = {
 				var html = user.ShowUsers(_data);
 				
 				$('#rightHtml').html(html);
-				user.LoadImages();
+				
 				
 				$('#rightHtml').hide();
 				$('#rightHtml').fadeIn(2000);
@@ -189,28 +126,30 @@ var user = {
 			myAjax("user.php", {
 				id : _id,
 				sessionId : sessionId,
-				method : "getUserById"
-			}, function (_data) {
+				method : "getUserById"}, function (_data) {
 				
-				var _user = $.parseJSON(JSON.stringify(_data))[0];
-				var _descr = "";
+				var html = '';
 				
-				if (typeof _user == 'undefined') return;
+				for (i in _data)
+				{
+					var _user = $.parseJSON(JSON.stringify(_data))[i];
+				    
+					var _descr = "";
 				
-				if (_user.descr != null)
-					_descr = _user.descr;
+					if (typeof _user == 'undefined') return;
+					
+					if (_user.descr != null)
+					if (_user.ThumbName != null)
+						html += '<a href="' + _user.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + _user.ThumbName + '" width="75"/></a>';
+					else
+						html = '<img src="images/user.png" width="35"/>';
+					
+				}
 				
-				html = '';
-				
-				var html =
-					'<span id="UserImageContainer-' + _user.id + '"></span>' +
-					'<span id="deff-user-image-' + _user.id + '"><img src="images/user.png" width="35" /></span>' +
-								
-					'<div class="blue_title">' + _user.username + '</div>' +									
+			    html += '<div class="blue_title">' + _user.username + '</div>' +									
 					'<p>Описансие: <br/>' + _descr + '</p>';
-										
-				$('#user-profile').html(html);				
-				user.LoadImages(true);
+			
+				$('#user-profile').html(html);								
 				
 			});
 			
@@ -226,34 +165,32 @@ var user = {
 	},
 	
 	ShowUsers : function (users) {
-		
 		var html = '<div class="right_content">' +
 			'<div class="title">Потребители <br/><img src="images/users-icon.png" /></div><br/>';
-		
+
 		for (i in users) {
-			
+
 			var user = users[i];
 			
 			if (i == FIRST_MAX_USERS) break;
-			
+
 			html +=
-			'<div class="member_tab">' +
-			'<a href="#SelectedUser" id=' + user.id + '></а>' +
-			//тук закачаме снимка 
-			'<div id="UserImageContainer-' + user.id + '"></div>' +
-			//тук закачаме снимка по подразбиране
-			'<div id="deff-user-image-' + user.id + '"><img src="images/user.png" width="35"/></div>' +
+			'<div class="member_tab">' +								
+			'<div class="member_details">';
 			
-			'<div class="member_details">' +
-			'<span><a class="blue_title" href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></span><br />' +			
+			if (user.ImageName != null)
+				html += '<a href="#SelectedUser" id=' + user.id + '><img src="' + user.ImageName + '" width="75"/></а>'
+			else
+				html += '<a href="#SelectedUser" id=' + user.id + '><img src="images/user.png" width="35"/></а>';
+							
+			html += '<div><a class="blue_title" href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></div>' +			
 			'<p>' + user.descr + '</p>' +
 			'<a href="#SelectedUser" id=' + user.id + ' class="read_more">Повече</a></div>' +
 			'</div>';
-			
+
 		}
-		
+
 		return html;
-		
 	},
 	
 	ShowUserEvents : function (events) {

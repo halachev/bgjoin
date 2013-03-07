@@ -113,6 +113,7 @@ $(document).ready(function () {
 			return;
 		}
 		var _id = $(this).attr('id');
+		
 		user.UserProfile(_id);
 	});
 	
@@ -123,7 +124,7 @@ $(document).ready(function () {
 	$('#image-dialog').live('click', function (event){	
 		
 		event.preventDefault();	
-		url = $(this).attr('href');
+		url = $(this).attr('href');		
 		var html = '<img src=' + url + ' />';		
 		$('#modal-form').html(html);
 		system.ShowImageDialog($('#modal-form'), 'Снимка');
