@@ -21,10 +21,9 @@ var ERROR_INSERT_REQUARED = 2;
 var ERROR_LOGIN = 3;
 
 $(document).ready(function () {
-		
+
 	//start application
 	system.init();
-	
 	//handle user events
 	$('#home-id').click(function (e) {
 		system.init();
@@ -121,5 +120,18 @@ $(document).ready(function () {
 		user.lastUserPosts();
 	});
 	
+	$('#image-dialog').live('click', function (event){	
+		
+		event.preventDefault();	
+		url = $(this).attr('href');
+		var html = '<img src=' + url + ' />';		
+		$('#modal-form').html(html);
+		system.ShowImageDialog($('#modal-form'), 'Снимка');
+			
+			
+	});
 	
 });
+
+
+

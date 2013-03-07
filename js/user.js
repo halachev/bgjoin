@@ -70,7 +70,7 @@ var user = {
 				'<a href="#edit-user" class="button_view">Редакция</a>' +
 				'<a href="#add-image" class="button_view">Качи снимка</a>' +
 				
-				'<span id="UserImageContainer-' + data.id + '"></span>' +
+				'<span id="UserImageContainer-' + data.id + '"></span></div>' +
 				'<span id="deff-user-image-' + data.id + '"><img src="images/user.png" width="35" /></span>' +
 			
 				
@@ -101,7 +101,7 @@ var user = {
 				var image = _userImages[i];
 				
 				if (_model) {
-					newhtml = '<a href="' + image.ImageName + '"  target="_blank"><img src="' + image.ThumbName + '" width="75" /></a>';					
+					newhtml = '<a id="image-dialog" href="' + image.ImageName + '" ><img src="' + image.ThumbName + '" width="75" /></a></div>';					
 					//update UserImageContainer content				
 					$('#UserImageContainer-' + image.UserID + '').append('<span style="padding: 10px;">' + newhtml + '</span>');
 				    //clear default image
@@ -115,6 +115,7 @@ var user = {
 					$('#deff-user-image-' + image.UserID + '').html("");
 				}
 			}
+				
 			system.Loader(false);
 		});
 		
@@ -191,20 +192,22 @@ var user = {
 				method : "getUserById"
 			}, function (_data) {
 				
-				var data = $.parseJSON(JSON.stringify(_data))[0];
-				var descr = "";
+				var _user = $.parseJSON(JSON.stringify(_data))[0];
+				var _descr = "";
 				
-				if (data.descr != null)
-					descr = data.descr;
+				if (typeof _user == 'undefined') return;
+				
+				if (_user.descr != null)
+					_descr = _user.descr;
 				
 				html = '';
 				
 				var html =
-					'<span id="UserImageContainer-' + data.id + '"></span>' +
-					'<span id="deff-user-image-' + data.id + '"><img src="images/user.png" width="35" /></span>' +
+					'<span id="UserImageContainer-' + _user.id + '"></span>' +
+					'<span id="deff-user-image-' + _user.id + '"><img src="images/user.png" width="35" /></span>' +
 								
-					'<div class="blue_title">' + data.username + '</div>' +									
-					'<p>Описансие: <br/>' + descr + '</p>';
+					'<div class="blue_title">' + _user.username + '</div>' +									
+					'<p>Описансие: <br/>' + _descr + '</p>';
 										
 				$('#user-profile').html(html);				
 				user.LoadImages(true);

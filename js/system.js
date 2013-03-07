@@ -83,7 +83,7 @@ var system = {
 			
 		});
 		
-		this.ShowDialog($('#modal-form'), 'Вход');
+		system.ShowDialog($('#modal-form'), 'Вход');
 		
 		
 		function onLogin()
@@ -114,6 +114,18 @@ var system = {
 					$(this).dialog("close");
 				}				
 			}
+		});
+	},
+	
+	
+	ShowImageDialog : function (_id, title) {
+		_id.dialog({
+			title : title,
+			modal : true,
+			//show : 'fadeIn',
+			resizable: false,
+			//draggable: false,
+			width: 'auto',	  			
 		});
 	},
 	
