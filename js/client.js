@@ -43,9 +43,14 @@ $(document).ready(function () {
 		system.ShowRegisterForm();
 	});
 	
-	$('#my-events-id').click(function (e) {
-		system.my_events();
+	$('#my-requests-id').click(function (e) {
+		user.my_requests();
 	});
+	
+	$('#my-events-id').click(function (e) {
+		user.my_events();
+	});
+	
 	
 	$('#my-ints-id').click(function (e) {
 		system.ints();
@@ -62,7 +67,7 @@ $(document).ready(function () {
 	});
 	
 	$("a[href=#search-post]").live("click", function () {
-		$('#rightHtml').html("");
+		user.GetLastUsers();
 	});
 	
 	$('#contact-id').click(function (e) {
@@ -91,6 +96,15 @@ $(document).ready(function () {
 	
 	$("a[href=#delete-user]").live("click", function () {
 		user.remove();
+	});
+	
+	$("a[href=#selectedEvent]").live("click", function () {
+		if (currUser == null) {
+			system.ShowRegisterForm();
+			return;
+		}
+		var _id = $(this).attr('id');		
+		user.viewEvent(_id);
 	});
 	
 	$("a[href=#SelectedUser]").live("click", function (e) {

@@ -5,15 +5,17 @@ var system = {
 		
 		system.search();
 		if (sessionId == null) {
-			$('#profile-id').hide();
-			$('#my-events-id').hide()
+			$('#profile-id').hide();			
+			$('#my-requests-id').hide();
+			$('#my-events-id').hide();
 			$('#exit-id').hide();
 			$('#register-id').show();
 			$('#login-id').show();
 			$('#how-it-work-id').show();
 		} else {
 			$('#profile-id').show();
-			$('#my-events-id').show()
+			$('#my-requests-id').show();
+			$('#my-events-id').show();
 			$('#exit-id').show();
 			$('#register-id').hide();
 			$('#login-id').hide();
@@ -21,6 +23,12 @@ var system = {
 		}
 		
 		system.initContent();
+	},
+	
+	currentUser : function () {
+		
+		var data = JSON.parse(currUser);		
+		return data;
 	},
 	
 	content : function () {
@@ -39,7 +47,7 @@ var system = {
 			
 			'</div>';
 		
-		user.GetLastUserNotes(); // assigned to leftHtml
+		user.GetLastUserEvents(); // assigned to leftHtml
 		user.GetLastUsers(); // assigned to rightHtml
 		
 		this.content().html(html);
@@ -57,11 +65,31 @@ var system = {
 	},
 	
 	ShowLoginForm : function () {
+		
 		$.get('ui/login.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			
+			$("#login-password").keypress(function () {				
+				if (event.which == 13) {
+				   $('#error-message').html('<p class="title">Моля, изчакайте...</p>');
+				   onLogin();					
+				}
+			});
+			
 			$('#btnLogin').click(function (e) {
-				var data = {
+				$('#error-message').html('<p class="title">Моля, изчакайте...</p>');
+				onLogin();
+			});
+			
+		});
+		
+		this.ShowDialog($('#modal-form'), 'Вход');
+		
+		
+		function onLogin()
+		{
+			
+			var data = {
 					username : $('#login-name').val(),
 					password : $('#login-password').val(),
 					method : "LogIn"
@@ -69,10 +97,8 @@ var system = {
 				myAjax("user.php", data, function (_data) {
 					user.UserStorage(_data);
 				});
-			});
-		});
 		
-		this.ShowDialog($('#modal-form'), 'Вход');
+		}
 		
 	},
 	
@@ -86,7 +112,7 @@ var system = {
 			buttons : {
 				"Close" : function () {
 					$(this).dialog("close");
-				}
+				}				
 			}
 		});
 	},
@@ -163,28 +189,18 @@ var system = {
 		_element.after('<span class="error">' + _message + '</span>');
 	},
 	
-	my_events : function () {
-		$.get('ui/my-events.html', function (login_data) {
-			
-			system.content().html(login_data);
-			$('#add-event-id').click(function () {
-				user.addEvent();
-			})
-			
-		});
-	},
 	
-	ints: function () {
+	ints : function () {
 		system.Loader(true);
 		$.get('ui/my-ints.html', function (login_data) {
 			
 			system.content().html(login_data);
 			
-			var data = {				
-				method: 'interests'
+			var data = {
+				method : 'interests'
 			}
 			
-			myAjax('ints.php', data, function (_data) {				
+			myAjax('ints.php', data, function (_data) {
 				var html = system.ShowInts(_data);
 				
 				$('#my-ints-list').html(html);
@@ -195,14 +211,13 @@ var system = {
 		
 	},
 	
-	
 	ShowInts : function (ints) {
 		
-		var html = '';	
+		var html = '';
 		
 		for (i in ints) {
 			var interes = ints[i];
-			html += '<ul><a href="#" ><p class="small">' + interes.name + '</p></a></ul>';							
+			html += '<a href="#" class="blue_title"><p>' + interes.name + '</p></a>';			
 		}
 		
 		return html;

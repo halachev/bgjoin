@@ -5,12 +5,17 @@ font-family:Arial, Helvetica, sans-serif;
 font-size:12px;
 color:#454241;
 }
+a{
+	text-decoration: none;	
+}
+a:hover{
+	color: red;
+}
 p{
 margin:0px;
 padding:3px 0 3px 0;
 line-height:15px;
-text-align:justify;
-font-size:11px;
+font-size:14px;
 }
 p.left{
 float:left;width:270px;line-height:17px;
@@ -18,7 +23,6 @@ float:left;width:270px;line-height:17px;
 h1{
 color:#cf0a09;
 font-size:18px;
-padding:10px 0 0 15px;
 }
 img.photo{
 float:left;
@@ -62,10 +66,10 @@ list-style:none;display:inline;float:left;width:auto;padding:0 7px 0 7px;font-si
 float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:#786655; 
 }
 #menu ul li a:hover{
-float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:red; background:url(../images/menu_heart.gif) no-repeat left;
+float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:red; background:url(../images/star.gif) no-repeat left;
 }
 #menu ul li a.current{
-float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:#fff; background:url(../images/menu_heart.gif) no-repeat left;
+float:left;text-decoration:none;padding:0 0 0 17px; margin:0px;color:#fff; background:url(../images/star.gif) no-repeat left;
 }
 /*-------------search_tab----------------*/
 .search_tab{
@@ -133,13 +137,16 @@ height:auto;
 float:left;
 padding:10px 0 10px 20px;
 }
+
 .main_box{
+opacity: 0.9;
 padding: 10px;
 margin: 10px;
 width:379px;
-height:127px;
-background:url(../images/left_banner.png) no-repeat center;
+height:150px;
+background:#f1f1f1;
 }
+
 .left_banner_content{
 width:235px;
 padding:0 0 0 15px;

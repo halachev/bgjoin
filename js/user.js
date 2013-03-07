@@ -22,7 +22,7 @@ var user = {
 		
 	},
 	
-	GetLastUserNotes : function (_html) {
+	GetLastUserEvents : function (_html) {
 		system.Loader(true);
 		myAjax("event.php", {
 			limit : FIRST_MAX_EVENTS,
@@ -43,8 +43,9 @@ var user = {
 					'<p>Бъди различен последвай ме ...</p>' +
 					
 					'</div>';
-			
-			$('#leftHtml').html(main_box);
+
+							
+			$('#leftHtml').html('<br/>' + main_box);
 			$('#leftHtml').append(html);
 			system.Loader(false);
 		});
@@ -101,8 +102,8 @@ var user = {
 				
 				if (_model) {
 					newhtml = '<a href="' + image.ImageName + '"  target="_blank"><img src="' + image.ThumbName + '" width="75" /></a>';					
-					//update UserImageContainer content
-					$('#UserImageContainer-' + image.UserID + '').html('<span>' + newhtml + '</span>');
+					//update UserImageContainer content				
+					$('#UserImageContainer-' + image.UserID + '').append('<span style="padding: 10px;">' + newhtml + '</span>');
 				    //clear default image
 					$('#deff-user-image-' + image.UserID + '').html("");
 				} else {					
@@ -265,7 +266,7 @@ var user = {
 			
 				html +=
 				'<ul class="list">' +
-				'<li><a href="#" ><p>' + event.name + '</p></a></li>' + 
+				'<li><a href="#selectedEvent" id='+ event.id + '><p>' + event.name + '</p></a></li>' + 
 				
 				'</ul>';
 			
@@ -364,9 +365,28 @@ var user = {
 			$('#modal-form').html(login_data);
 			system.ShowDialog($('#modal-form'), 'Ново събитие');
 			$('#event-date').datepicker();
-			$('#btn-add-event').click(function () {
+			
+			var data = {
+				sessionId: sessionId,
+				method: 'interests'
+			}
+			$('#error-message').html('<h1>Зарежда ...</h1>');
+			myAjax('ints.php', data, function (_data) {
 				
-				user.event_insert();
+				var interestsValues = "";
+				for (i in _data)
+				{
+					var interest = _data[i];
+					interestsValues += '<option value="' + interest.id + '">' + interest.name + '</option>';
+				}
+									
+				$('#event-interest').html(interestsValues);
+				$('#error-message').hide('slow');				
+			})
+			
+			
+			$('#btn-add-event').click(function () {				
+				user.event_insert();				
 			})
 			
 		});
@@ -379,7 +399,7 @@ var user = {
 			name : $('#event-name').val(),
 			date : $('#event-date').val(),
 			descr : $('#event-descr').val(),
-			int_id : 1,
+			int_id : $('#event-interest').val(),
 			user_id : user.currentUser().id,
 			method : "insert"
 		};
@@ -396,8 +416,139 @@ var user = {
 		myAjax("event.php", data, function (_data) {
 			//var data = $.parseJSON(JSON.stringify(_data));				
 			//var event = data[0];
-			location = pageUrl;
+			$('#my-events-list').append("<h1>Успешно дабавихте вашето събитие!</h1>");								
+			$('#modal-form').dialog("close");
 		});
+	},
+	
+	my_events : function () {
+		system.Loader(true);
+		$.get('ui/my-events.html', function (login_data) {
+			
+			system.content().html(login_data);
+			
+			var data = {
+				sessionId: sessionId,
+				user_id: system.currentUser().id,
+				method: 'MyEvents'
+			};
+			
+			myAjax('event.php', data, function (_data){
+				
+				var html = "";
+				
+				for (i in _data)
+				{
+					event = _data[i];
+					html += '<a href="#" class="blue_title"><p>' + event.name + '</p></a>';
+				}
+				
+				$('#my-events-list').html(html);
+				system.Loader(false);
+			})
+			
+			$('#add-event-id').click(function () {
+				user.addEvent();				
+			})
+			
+		});
+	},
+	
+	viewEvent : function (_eventId) {
+		
+		$.get('ui/view-event.html', function (login_data) {
+			
+			system.content().html(login_data);
+			
+			var data = {
+				sessionId : sessionId,
+				id : _eventId,
+				method : 'getEventById'
+			};
+			
+			myAjax("event.php", data, function (_data) {
+				
+				var event = $.parseJSON(JSON.stringify(_data))[0];
+				var html =
+					
+					'<a href="#make-event-request" class="button_view">Заявка</a>' +
+					'<p class="blue_title">' + event.name + '</p>' +
+					'<p><b>Дата:</b><br/>' + event.date + '</p>' +
+					'<p><b>Описание:</b><br/>' + event.descr + '</p>' +
+					'<p class="blue_title"">Изберете бутона заявка, ако проявявате интерес към това събитие.</p>';
+				
+				$('#event-detail').html(html);
+				localStorage.setItem('user_id', event.user_id);
+			})
+			
+			$("a[href=#make-event-request]").live("click", function (e) {
+				
+				var html = '<p>кратко описание:</p><br/>' + 
+					'<textarea rows="3" cols="30" id="request-descr"></textarea><br/>' + 
+					'<input type="button" id="request-id" value="Изпрати">';
+					
+				$('#modal-form').html(html);
+				system.ShowDialog($('#modal-form'), 'Изпращане');
+				
+				$('#request-id').click(function () {
+					
+					$('#event-detail').append('<h1>Изпратихте заявка към потребителя.<br/>Успех!</h1>');
+					
+					var user_id = localStorage.getItem('user_id');
+					
+					var data = {
+						sessionId: sessionId,
+						sender_user_id: system.currentUser().id, 
+						user_id: user_id,
+						event_id: _eventId,
+						descr: $('#request-descr').val(),
+						method: 'insert'
+					}
+					
+					myAjax('request.php', data, function (_data){
+						
+						var request = $.parseJSON(JSON.stringify(_data))[0];
+						localStorage.removeItem('user_id');
+						$('#modal-form').dialog("close");
+					});
+				});
+								
+			})
+			
+		});
+		
+	},
+	
+	
+	my_requests: function ()
+	{
+		system.Loader(true);
+		$.get('ui/my-requests.html', function (login_data) {
+			
+			system.content().html(login_data);
+			
+			var data = {
+				sessionId: sessionId, 
+				user_id: user.currentUser().id,
+				method: 'MyRequests'
+			}
+			myAjax('request.php', data, function (_data) {
+				
+				var html = "";
+				
+				for (i in _data)
+				{
+					request = _data[i];
+					html += '<a href="#" class="blue_title"><p>' + request.descr + '</p></a>';
+				}
+				
+				$('#my-request-list').html(html);
+				system.Loader(false);
+				
+			})
+			
+		});
+	
 	},
 	
 	UserStorage : function (data) {

@@ -5,60 +5,53 @@
 	include "json_unicode.php";
 	
 	define ('insert', insert);
-	define ('edit', edit);
 	define ('delete', delete);
-	define ('events', events);
+	define ('requests', requests);
 	define ('LoadMore', LoadMore);
-	define ('MyEvents', MyEvents);
-	define ('getEventById', getEventById);
+	define ('MyRequests', MyRequests);
+	define ('getRequestById', getRequestById);
 
 	
-	class Event 
+	class Request 
 	{
 		private $id;
 		private $sessionId;
-		private $name;
-		private $date;
-		private $descr;
-		private $int_id;		
+		private $sender_user_id;
 		private $user_id;
+		private $event_id;
+		private $descr;		
 		private $limit;
 		private $method;
 		
 		
 	    function __construct(
 			$_id, 	
-		    $_sessionId,		
-			$_name, 
-			$_date, 
-			$_descr, 			
-			$_int_id,
+		    $_sessionId,	
+			$_sender_user_id,			
 			$_user_id,
+			$_event_id, 	
+			$_descr, 	
 			$_limit,
 			$_method) {
 			
 			$this->id = $_id;
-			$this->sessionId = $_sessionId;
-			$this->name = $_name;
-			$this->date = $_date;
-			$this->descr = $_descr;
-			$this->int_id = $_int_id;
+			$this->sessionId = $_sessionId;	
+			$this->sender_user_id = $_sender_user_id;
 			$this->user_id = $_user_id;
+			$this->event_id = $_event_id;			
+			$this->descr = $_descr;						
 			$this->limit = $_limit;			
 			$this->method = $_method;
 			
 			switch ($_method) {
 			  case insert:
 				$this->insert();  
+				break;										
+			  case requests:
+				$this->requests();  
 				break;	
-			  case edit:
-				$this->edit();  
-				break;							 
-			  case events:
-				$this->events();  
-				break;	
-			  case MyEvents:
-				$this->MyEvents();  
+			  case MyRequests:
+				$this->MyRequests();  
 				break;
 			  case LoadMore:
 				$this->LoadMore();  
@@ -66,8 +59,8 @@
 			  case delete:
 				$this->delete();  
 				break;			
-			  case getEventById:
-				echo $this->getEventById($_id);  
+			  case getRequestById:
+				echo $this->getRequestById($_id);  
 				break;							
 			  default:
 				throw new Exception('Invalid REQUEST_METHOD');
@@ -79,9 +72,9 @@
 		function events()
 		{
 			if ($this->limit > 0)
-				$results = mysql_query("select * from events order by id desc limit $this->limit");
+				$results = mysql_query("select * from requests order by id desc limit $this->limit");
 			else
-				$results = mysql_query("select * from events order by id desc ");
+				$results = mysql_query("select * from requests order by id desc ");
 			
 			$data = array();
 			
@@ -97,21 +90,21 @@
 		function insert()
 		{
 			
-			$name = convertToCyrillic(filter($this->name));
-			$date = $this->date;
-			$descr = convertToCyrillic(filter($this->descr));
-			$int_id = $this->int_id;
 			$user_id = $this->user_id;
+			$sender_user_id = $this->sender_user_id;
+			$event_id = $this->event_id;
+			$descr = convertToCyrillic(filter($this->descr));			
 			
-			if ((!$name) || (!$date) || (!$descr))
+			
+			if ((!$user_id) || (!$event_id) || (!$descr))
 			{
 				$data = array("error_message" => "Всички полета задължителни!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
-			//проверка за същесвуващо име
-			$count = $this->ExistEventName();
+			//проверка за същесвуваща заявка
+			$count = $this->ExistRequest();
 			
 			if ($count > 0) 
 			{
@@ -122,28 +115,16 @@
 			
 			else
 			{
-				$results = mysql_query("insert into events (name, date, descr, int_id, user_id) values('$name', '$date', '$descr', '$int_id', '$user_id') ");
+				$results = mysql_query("insert into requests (sender_user_id, user_id, event_id, descr) values('$sender_user_id', '$user_id', '$event_id', '$descr') ");
 			
 				// връщаме новия обект на клиента
 				$newId = mysql_insert_id();							
-				echo $this->getEventById($newId);
+				echo $this->getRequestById($newId);
 			}
 		}
 		
 		
-		function edit()
-		{
-		  $id = $this->id;
-		  $name = filter($this->name);
-		  $date = filter($this->date);	
-		  $descr = convertToCyrillic($this->descr);
-		   
-		  $result = mysql_query("update events set name='$name', date='$date', descr='$descr' where id='$id'");
-		 
-		  echo $this->getUserById($id);
-		}
-		
-		function getEventById($id)
+		function getRequestById($id)
 		{
 			if (($this->sessionId == "") && ($this->method != insert))
 			{
@@ -151,7 +132,7 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select * from events where id='$id'");
+			$results = mysql_query("select * from requests where id='$id'");
 			
 			$data = array();
 			
@@ -163,10 +144,11 @@
 		}
 		
 			
-		function ExistEventName()
+		function ExistRequest()
 		{
-		    $name = $this->name;
-			$results = mysql_query("select name from events where name='$name'");
+		    $user_id = $this->user_id;
+			$event_id = $this->event_id;
+			$results = mysql_query("select name from requests where user_id='$name' and event_id='$event_id'");
 			
 			return mysql_num_rows($results);
 		}
@@ -176,15 +158,15 @@
 		
 		}
 		
-		function MyEvents()
+		function MyRequests()
 		{
 		
-			echo $this->getEventByUserId($this->user_id);
+			echo $this->getRequestByUserId($this->user_id);
 			
 		}
 		
 		
-		function getEventByUserId($id)
+		function getRequestByUserId($id)
 		{
 			if ($this->sessionId == "")
 			{
@@ -192,7 +174,7 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select * from events where user_id='$id'");
+			$results = mysql_query("select * from requests where user_id='$id'");
 			
 			$data = array();
 			
@@ -223,23 +205,21 @@
 	
 	
 	$id = $_POST['id'];
-	$sessionId = $_POST['sessionId'];
-	$name = $_POST['name'];
-	$date = $_POST['date'];
-	$descr = $_POST['descr'];
-	$int_id = $_POST['int_id'];	
+	$sessionId = $_POST['sessionId'];	
+	$sender_user_id = $_POST['sender_user_id'];		
 	$user_id = $_POST['user_id'];	
+	$event_id = $_POST['event_id'];
+	$descr = $_POST['descr'];	
 	$limit = $_POST['limit'];		
 	$method = $_POST['method'];
 	
-	$event = new Event(
+	$Request = new Request(
 				$id, 
-				$sessionId,
-				$name, 
-				$date, 
-				$descr, 
-				$int_id, 				
+				$sessionId,	
+				$sender_user_id,			
 				$user_id,
+				$event_id,
+				$descr,
 				$limit,
 				$method);	
 ?>
