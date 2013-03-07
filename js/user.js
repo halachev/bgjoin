@@ -2,7 +2,7 @@
 var user = {
 	currentUser : function () {
 		
-		var data = JSON.parse(currUser);		
+		var data = JSON.parse(currUser);
 		return data;
 	},
 	
@@ -15,7 +15,7 @@ var user = {
 			
 			var html = user.ShowUsers(_data);
 			$('#rightHtml').html(html);
-				
+			
 			system.Loader(false);
 		});
 		
@@ -27,7 +27,7 @@ var user = {
 			limit : FIRST_MAX_EVENTS,
 			method : "events"
 		}, function (_data) {
-						
+			
 			var html = user.ShowUserEvents(_data);
 			
 			var main_box = "";
@@ -42,8 +42,7 @@ var user = {
 					'<p>Бъди различен последвай ме ...</p>' +
 					
 					'</div>';
-
-							
+			
 			$('#leftHtml').html('<br/>' + main_box);
 			$('#leftHtml').append(html);
 			system.Loader(false);
@@ -52,12 +51,11 @@ var user = {
 	},
 	
 	profile : function () {
-				
+		
 		var data = user.currentUser();
-		user.UserProfile(data.id);
-		
+		user.UserProfile(data.id, true);
 	},
-		
+	
 	lastUserPosts : function () {
 		
 		system.Loader(true);
@@ -100,7 +98,6 @@ var user = {
 				
 				$('#rightHtml').html(html);
 				
-				
 				$('#rightHtml').hide();
 				$('#rightHtml').fadeIn(2000);
 				
@@ -117,7 +114,7 @@ var user = {
 		
 	},
 	
-	UserProfile : function (_id) {
+	UserProfile : function (_id, isCurrentView) {
 		
 		$.get('ui/profile.html', function (login_data) {
 			
@@ -126,19 +123,29 @@ var user = {
 			myAjax("user.php", {
 				id : _id,
 				sessionId : sessionId,
-				method : "getUserById"}, function (_data) {
+				method : "getUserById"
+			}, function (_data) {
 				
 				var html = '';
 				
-				for (i in _data)
-				{
-					var _user = $.parseJSON(JSON.stringify(_data))[i];
-				    
-					var _descr = "";
+				if (isCurrentView) {
+					
+					html = '<a href="#delete-user" class="button_view">Изтриване</a>' +
+						'<a href="#edit-user" class="button_view">Редакция</a>' +
+						'<a href="#add-image" class="button_view">Качи снимка</a>';
+				}
 				
-					if (typeof _user == 'undefined') return;
+				for (i in _data) {
+					var _user = $.parseJSON(JSON.stringify(_data))[i];
+					
+					var _descr = "";
+					
+					if (typeof _user == 'undefined')
+						return;
 					
 					if (_user.descr != null)
+						_descr = _user.descr;
+					
 					if (_user.ThumbName != null)
 						html += '<a href="' + _user.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + _user.ThumbName + '" width="75"/></a>';
 					else
@@ -146,10 +153,10 @@ var user = {
 					
 				}
 				
-			    html += '<div class="blue_title">' + _user.username + '</div>' +									
-					'<p>Описансие: <br/>' + _descr + '</p>';
-			
-				$('#user-profile').html(html);								
+				html += '<div class="blue_title">' + _user.username + '</div>' +
+				'<p>Описансие: <br/>' + _descr + '</p>';
+				
+				$('#user-profile').html(html);
 				
 			});
 			
@@ -167,29 +174,30 @@ var user = {
 	ShowUsers : function (users) {
 		var html = '<div class="right_content">' +
 			'<div class="title">Потребители <br/><img src="images/users-icon.png" /></div><br/>';
-
+		
 		for (i in users) {
-
+			
 			var user = users[i];
 			
-			if (i == FIRST_MAX_USERS) break;
-
+			if (i == FIRST_MAX_USERS)
+				break;
+			
 			html +=
-			'<div class="member_tab">' +								
+			'<div class="member_tab">' +
 			'<div class="member_details">';
 			
 			if (user.ImageName != null)
-				html += '<a href="#SelectedUser" id=' + user.id + '><img src="' + user.ImageName + '" width="75"/></а>'
+				html += '<a href="#SelectedUser" id=' + user.id + '><img src="' + user.ImageName + '" width="75"/></а>';
 			else
 				html += '<a href="#SelectedUser" id=' + user.id + '><img src="images/user.png" width="35"/></а>';
-							
-			html += '<div><a class="blue_title" href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></div>' +			
+			
+			html += '<div><a class="blue_title" href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></div>' +
 			'<p>' + user.descr + '</p>' +
 			'<a href="#SelectedUser" id=' + user.id + ' class="read_more">Повече</a></div>' +
 			'</div>';
-
+			
 		}
-
+		
 		return html;
 	},
 	
@@ -204,11 +212,11 @@ var user = {
 			if (i == FIRST_MAX_EVENTS)
 				break;
 			
-				html +=
-				'<ul class="list">' +
-				'<li><a href="#selectedEvent" id='+ event.id + '><p>' + event.name + '</p></a></li>' + 
-				
-				'</ul>';
+			html +=
+			'<ul class="list">' +
+			'<li><a href="#selectedEvent" id=' + event.id + '><p>' + event.name + '</p></a></li>' +
+			
+			'</ul>';
 			
 		}
 		
@@ -240,7 +248,7 @@ var user = {
 		};
 		
 		myAjax("user.php", data, function (_data) {
-			user.UserStorage(_data);
+			user.UserStorage(_data, true);
 		});
 		
 	},
@@ -274,7 +282,8 @@ var user = {
 				};
 				
 				myAjax("user.php", editData, function (_data) {
-					user.UserStorage(_data);
+					user.UserStorage(_data, false);
+					$('#modal-form').dialog("close");
 				});
 				
 			});
@@ -307,26 +316,24 @@ var user = {
 			$('#event-date').datepicker();
 			
 			var data = {
-				sessionId: sessionId,
-				method: 'interests'
+				sessionId : sessionId,
+				method : 'interests'
 			}
 			$('#error-message').html('<h1>Зарежда ...</h1>');
 			myAjax('ints.php', data, function (_data) {
 				
 				var interestsValues = "";
-				for (i in _data)
-				{
+				for (i in _data) {
 					var interest = _data[i];
 					interestsValues += '<option value="' + interest.id + '">' + interest.name + '</option>';
 				}
-									
+				
 				$('#event-interest').html(interestsValues);
-				$('#error-message').hide('slow');				
+				$('#error-message').hide('slow');
 			})
 			
-			
-			$('#btn-add-event').click(function () {				
-				user.event_insert();				
+			$('#btn-add-event').click(function () {
+				user.event_insert();
 			})
 			
 		});
@@ -335,7 +342,7 @@ var user = {
 	event_insert : function () {
 		
 		var data = {
-			sessionId: sessionId,
+			sessionId : sessionId,
 			name : $('#event-name').val(),
 			date : $('#event-date').val(),
 			descr : $('#event-descr').val(),
@@ -343,7 +350,6 @@ var user = {
 			user_id : user.currentUser().id,
 			method : "insert"
 		};
-		
 		
 		//check validation for user
 		$(".error").hide();
@@ -354,9 +360,9 @@ var user = {
 			return;
 		
 		myAjax("event.php", data, function (_data) {
-			//var data = $.parseJSON(JSON.stringify(_data));				
+			//var data = $.parseJSON(JSON.stringify(_data));
 			//var event = data[0];
-			$('#my-events-list').append("<h1>Успешно дабавихте вашето събитие!</h1>");								
+			$('#my-events-list').append("<h1>Успешно дабавихте вашето събитие!</h1>");
 			$('#modal-form').dialog("close");
 		});
 	},
@@ -368,17 +374,16 @@ var user = {
 			system.content().html(login_data);
 			
 			var data = {
-				sessionId: sessionId,
-				user_id: system.currentUser().id,
-				method: 'MyEvents'
+				sessionId : sessionId,
+				user_id : system.currentUser().id,
+				method : 'MyEvents'
 			};
 			
-			myAjax('event.php', data, function (_data){
+			myAjax('event.php', data, function (_data) {
 				
 				var html = "";
 				
-				for (i in _data)
-				{
+				for (i in _data) {
 					event = _data[i];
 					html += '<a href="#" class="blue_title"><p>' + event.name + '</p></a>';
 				}
@@ -388,7 +393,7 @@ var user = {
 			})
 			
 			$('#add-event-id').click(function () {
-				user.addEvent();				
+				user.addEvent();
 			})
 			
 		});
@@ -423,10 +428,10 @@ var user = {
 			
 			$("a[href=#make-event-request]").live("click", function (e) {
 				
-				var html = '<p>кратко описание:</p><br/>' + 
-					'<textarea rows="3" cols="30" id="request-descr"></textarea><br/>' + 
+				var html = '<p>кратко описание:</p><br/>' +
+					'<textarea rows="3" cols="30" id="request-descr"></textarea><br/>' +
 					'<input type="button" id="request-id" value="Изпрати">';
-					
+				
 				$('#modal-form').html(html);
 				system.ShowDialog($('#modal-form'), 'Изпращане');
 				
@@ -437,47 +442,44 @@ var user = {
 					var user_id = localStorage.getItem('user_id');
 					
 					var data = {
-						sessionId: sessionId,
-						sender_user_id: system.currentUser().id, 
-						user_id: user_id,
-						event_id: _eventId,
-						descr: $('#request-descr').val(),
-						method: 'insert'
+						sessionId : sessionId,
+						sender_user_id : system.currentUser().id,
+						user_id : user_id,
+						event_id : _eventId,
+						descr : $('#request-descr').val(),
+						method : 'insert'
 					}
 					
-					myAjax('request.php', data, function (_data){
+					myAjax('request.php', data, function (_data) {
 						
 						var request = $.parseJSON(JSON.stringify(_data))[0];
 						localStorage.removeItem('user_id');
 						$('#modal-form').dialog("close");
 					});
 				});
-								
+				
 			})
 			
 		});
 		
 	},
 	
-	
-	my_requests: function ()
-	{
+	my_requests : function () {
 		system.Loader(true);
 		$.get('ui/my-requests.html', function (login_data) {
 			
 			system.content().html(login_data);
 			
 			var data = {
-				sessionId: sessionId, 
-				user_id: user.currentUser().id,
-				method: 'MyRequests'
+				sessionId : sessionId,
+				user_id : user.currentUser().id,
+				method : 'MyRequests'
 			}
 			myAjax('request.php', data, function (_data) {
 				
 				var html = "";
 				
-				for (i in _data)
-				{
+				for (i in _data) {
 					request = _data[i];
 					html += '<a href="#" class="blue_title"><p>' + request.descr + '</p></a>';
 				}
@@ -488,10 +490,10 @@ var user = {
 			})
 			
 		});
-	
+		
 	},
 	
-	UserStorage : function (data) {
+	UserStorage : function (data, canRefresh) {
 		
 		var _data = $.parseJSON(JSON.stringify(data));
 		if (!CheckServerError(_data))
@@ -501,7 +503,9 @@ var user = {
 		sessionId = $.sha1(user.username + user.password);
 		localStorage.setItem('sessionId', sessionId);
 		localStorage.setItem('profileId', JSON.stringify(user));
-		location = pageUrl;
+		
+		if (canRefresh)
+			location = pageUrl;
 		
 	}
 	

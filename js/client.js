@@ -1,7 +1,7 @@
 ﻿/*
-	url - http://joinme.nh.zonebg.com
-	writen by Nurietin Mehmedov © 2013
-	All right reserver ...
+url - http://joinme.nh.zonebg.com
+writen by Nurietin Mehmedov © 2013
+All right reserver ...
  */
 
 //base url
@@ -21,7 +21,7 @@ var ERROR_INSERT_REQUARED = 2;
 var ERROR_LOGIN = 3;
 
 $(document).ready(function () {
-
+	
 	//start application
 	system.init();
 	//handle user events
@@ -49,7 +49,6 @@ $(document).ready(function () {
 	$('#my-events-id').click(function (e) {
 		user.my_events();
 	});
-	
 	
 	$('#my-ints-id').click(function (e) {
 		system.ints();
@@ -102,7 +101,7 @@ $(document).ready(function () {
 			system.ShowRegisterForm();
 			return;
 		}
-		var _id = $(this).attr('id');		
+		var _id = $(this).attr('id');
 		user.viewEvent(_id);
 	});
 	
@@ -114,25 +113,21 @@ $(document).ready(function () {
 		}
 		var _id = $(this).attr('id');
 		
-		user.UserProfile(_id);
+		user.UserProfile(_id, false);
 	});
 	
 	$("a[href=#LoadMore]").live("click", function (e) {
 		user.lastUserPosts();
 	});
 	
-	$('#image-dialog').live('click', function (event){	
+	$('#image-dialog').live('click', function (event) {
 		
-		event.preventDefault();	
-		url = $(this).attr('href');		
-		var html = '<img src=' + url + ' />';		
+		event.preventDefault();
+		url = $(this).attr('href');
+		var html = '<img src=' + url + ' />';
 		$('#modal-form').html(html);
 		system.ShowImageDialog($('#modal-form'), 'Снимка');
-			
-			
+		
 	});
 	
 });
-
-
-

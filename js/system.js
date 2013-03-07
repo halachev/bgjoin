@@ -5,7 +5,7 @@ var system = {
 		
 		system.search();
 		if (sessionId == null) {
-			$('#profile-id').hide();			
+			$('#profile-id').hide();
 			$('#my-requests-id').hide();
 			$('#my-events-id').hide();
 			$('#exit-id').hide();
@@ -27,7 +27,7 @@ var system = {
 	
 	currentUser : function () {
 		
-		var data = JSON.parse(currUser);		
+		var data = JSON.parse(currUser);
 		return data;
 	},
 	
@@ -69,10 +69,10 @@ var system = {
 		$.get('ui/login.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			
-			$("#login-password").keypress(function () {				
+			$("#login-password").keypress(function () {
 				if (event.which == 13) {
-				   $('#error-message').html('<p class="title">Моля, изчакайте...</p>');
-				   onLogin();					
+					$('#error-message').html('<p class="title">Моля, изчакайте...</p>');
+					onLogin();
 				}
 			});
 			
@@ -85,19 +85,17 @@ var system = {
 		
 		system.ShowDialog($('#modal-form'), 'Вход');
 		
-		
-		function onLogin()
-		{
+		function onLogin() {
 			
 			var data = {
-					username : $('#login-name').val(),
-					password : $('#login-password').val(),
-					method : "LogIn"
-				};
-				myAjax("user.php", data, function (_data) {
-					user.UserStorage(_data);
-				});
-		
+				username : $('#login-name').val(),
+				password : $('#login-password').val(),
+				method : "LogIn"
+			};
+			myAjax("user.php", data, function (_data) {
+				user.UserStorage(_data, true);
+			});
+			
 		}
 		
 	},
@@ -108,26 +106,25 @@ var system = {
 			modal : true,
 			show : 'fadeIn',
 			resizable : false,
-			dialogClass : 'dialog-box',			
+			dialogClass : 'dialog-box',
 			buttons : {
 				"Close" : function () {
 					$(this).dialog("close");
-				}				
+				}
 			},
 			
 		});
 	},
-	
 	
 	ShowImageDialog : function (_id, title) {
 		_id.dialog({
 			title : title,
 			modal : true,
 			//show : 'fadeIn',
-			resizable: false,
+			resizable : false,
 			//draggable: false,
-			width: 'auto',	  
-			position: 'top'			
+			width : 'auto',
+			position : 'top'
 		});
 	},
 	
@@ -203,7 +200,6 @@ var system = {
 		_element.after('<span class="error">' + _message + '</span>');
 	},
 	
-	
 	ints : function () {
 		system.Loader(true);
 		$.get('ui/my-ints.html', function (login_data) {
@@ -231,7 +227,7 @@ var system = {
 		
 		for (i in ints) {
 			var interes = ints[i];
-			html += '<a href="#" class="blue_title"><p>' + interes.name + '</p></a>';			
+			html += '<a href="#" class="blue_title"><p>' + interes.name + '</p></a>';
 		}
 		
 		return html;
