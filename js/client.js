@@ -20,11 +20,16 @@ var ERROR_INSERT_EXIST_NAME = 1;
 var ERROR_INSERT_REQUARED = 2;
 var ERROR_LOGIN = 3;
 
+//variants of uploaded images
+var user_image = 1;
+var event_image = 2;
+
 $(document).ready(function () {
 	
 	//start application
 	system.init();
-	//handle user events
+	
+	//handle main user events
 	$('#home-id').click(function (e) {
 		system.init();
 	});
@@ -83,39 +88,6 @@ $(document).ready(function () {
 		system.about();
 	});
 	
-	//profile events
-	$("a[href=#edit-user]").live("click", function () {
-		user.edit();
-	});
-	
-	$("a[href=#add-image]").live("click", function () {
-		user.addImage();
-	});
-	
-	$("a[href=#delete-user]").live("click", function () {
-		user.remove();
-	});
-	
-	$("a[href=#selectedEvent]").live("click", function () {
-		if (currUser == null) {
-			system.ShowRegisterForm();
-			return;
-		}
-		var _id = $(this).attr('id');
-		user.viewEvent(_id);
-	});
-	
-	$("a[href=#SelectedUser]").live("click", function (e) {
-		
-		if (currUser == null) {
-			system.ShowRegisterForm();
-			return;
-		}
-		var _id = $(this).attr('id');
-		
-		user.UserProfile(_id, false);
-	});
-	
 	$("a[href=#LoadMore]").live("click", function (e) {
 		user.lastUserPosts();
 	});
@@ -128,6 +100,17 @@ $(document).ready(function () {
 		$('#modal-form').html(html);
 		system.ShowImageDialog($('#modal-form'), 'Снимка');
 		
+	});
+	
+	$("a[href=#SelectedUser]").live("click", function (e) {
+		
+		if (currUser == null) {
+			system.ShowRegisterForm();
+			return;
+		}
+		
+		var _id = $(this).attr('id');
+		user.UserProfile(_id, false);
 	});
 	
 });

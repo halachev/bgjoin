@@ -7,15 +7,15 @@
 <script type="text/javascript" src="js/jquery.form.js"></script>
 
 
-<script type="text/javascript" src="js/client.js"></script>
-<script type="text/javascript" src="js/system.js"></script>
-<script type="text/javascript" src="js/user.js"></script>
-<script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="../js/client.js"></script>
+<script type="text/javascript" src="../js/system.js"></script>
+<script type="text/javascript" src="../js/user.js"></script>
+<script type="text/javascript" src="../js/utils.js"></script>
 
 <script type="text/javascript"> 
 $(document).ready(function() { 
-	serviceURL = 'http://bgjoin.nh.zonebg.com/services';
-		
+	
+
 	//elements
 	var progressbox 		= $('#progressbox'); //progress bar wrapper
 	var progressbar 		= $('#progressbar'); //progress bar element
@@ -79,35 +79,10 @@ $(document).ready(function() {
 			progressbox.hide(); // hide progressbar
 			$("#uploaderform").slideUp(); // hide form after upload
 			
-			var currUser = localStorage.getItem('profileId');
-			var user = JSON.parse(currUser);
+			var _user = user.currentUser();		
+						
+			user.updateImage(response.responseText, _user.id, user_image);
 			
-			var data = "";
-			var images = JSON.parse(response.responseText);
-			for (i in images) {
-				var image = images[i];
-				
-				data = {
-					id : image.id,
-					userId : user.id,
-					method : 'edit'
-				};
-				
-				$.ajax({
-					url : serviceURL + '/' + 'userImages.php',
-					type : 'POST',
-					dataType : "json",
-					data : data,
-					success : function (_data) {
-						//
-					},
-					error : function (err) {
-						alert("error");
-					}
-					
-				});
-				
-			}
 			//update element with received data
 			output.html('<center><h1 class="small">Снимката беше добавена!</h1><br/><a href="#close" >Затвори</a></center>');
 			

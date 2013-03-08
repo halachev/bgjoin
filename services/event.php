@@ -79,9 +79,11 @@
 		function events()
 		{
 			if ($this->limit > 0)
-				$results = mysql_query("select * from events order by id desc limit $this->limit");
+				$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type from events e
+						left outer join images  i on (i.objectid = e.id) order by id desc limit $this->limit");
 			else
-				$results = mysql_query("select * from events order by id desc ");
+				$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type from events e
+						left outer join images  i on (i.objectid = e.id) order by id desc ");
 			
 			$data = array();
 			
@@ -151,7 +153,8 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select * from events where id='$id'");
+			$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type from events e
+						left outer join images  i on (i.objectid = e.id)  where e.id='$id'");
 			
 			$data = array();
 			

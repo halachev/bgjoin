@@ -227,7 +227,7 @@ var system = {
 		
 		for (i in ints) {
 			var interes = ints[i];
-			html += '<a href="#" class="blue_title"><p>' + interes.name + '</p></a>';
+			html += '<a href="#"><p class="data-text">' + interes.name + '</p></a>';
 		}
 		
 		return html;

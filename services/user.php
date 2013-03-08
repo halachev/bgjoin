@@ -8,7 +8,7 @@
 	define ('edit', edit);
 	define ('delete', delete);
 	define ('LogIn', LogIn);
-	define ('allUsers', allUsers);
+	define ('users', users);
 	define ('LoadMore', LoadMore);
 	define ('getUserById', getUserById);
 
@@ -59,7 +59,7 @@
 			  case LogIn:
 				$this->LogIn();  
 				break;
-			  case allUsers:
+			  case users:
 				$this->users();  
 				break;	
 			case LoadMore:
@@ -81,11 +81,11 @@
 		function users()
 		{
 			if ($this->limit > 0)
-				$results = mysql_query("select u.*,  i.UserID, i.ImageName, i.ThumbName from users u
-						left outer join user_images  i on (i.UserID = u.id) order by u.id desc limit $this->limit");
+				$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+						left outer join images  i on (i.objectid = u.id) order by u.id desc limit $this->limit");
 			else
-				$results = mysql_query("select u.*,  i.UserID, i.ImageName, i.ThumbName from users u
-					left outer join user_images  i on (i.UserID = u.id) order by u.id desc ");
+				$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+					left outer join images  i on (i.objectid = u.id) order by u.id desc ");
 			
 			$data = array();
 			
@@ -154,8 +154,8 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select u.*,  i.UserID, i.ImageName, i.ThumbName  from users u
-						left outer join user_images  i on (i.UserID = u.id) where u.id='$id'");
+			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+						left outer join images  i on (i.objectid = u.id) where u.id='$id'");
 			
 			$data = array();
 			
@@ -172,8 +172,8 @@
 			$username = filter($this->username);
 			$password = filter($this->password);
 			
-			$results = mysql_query("select u.*,  i.UserID, i.ImageName, i.ThumbName  from users u
-						left outer join user_images  i on (i.UserID = u.id) where u.username='$username' and u.password='$password' ");
+			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+						left outer join images  i on (i.objectid = u.id) where u.username='$username' and u.password='$password' ");
 			$count = mysql_num_rows($results);
 			if (!$count) 
 			{

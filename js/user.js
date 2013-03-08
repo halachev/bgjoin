@@ -9,8 +9,8 @@ var user = {
 	GetLastUsers : function () {
 		system.Loader(true);
 		myAjax("user.php", {
-			limit : FIRST_MAX_USERS,
-			method : "allUsers"
+			limit : FIRST_MAX_USERS,			
+			method : "users"
 		}, function (_data) {
 			
 			var html = user.ShowUsers(_data);
@@ -56,6 +56,69 @@ var user = {
 		user.UserProfile(data.id, true);
 	},
 	
+	UserProfile : function (_id, IsMyProfile) {
+		
+		$.get('ui/profile.html', function (login_data) {
+			
+			system.content().html(login_data);
+			
+			myAjax("user.php", {
+				id : _id,
+				sessionId : sessionId,
+				method : "getUserById"
+			}, function (_data) {
+				
+				
+				var html = '';
+				
+				if (IsMyProfile) {
+					
+					html = '<a href="#delete-user" class="button_view">Изтриване</a>' +
+						'<a href="#edit-user" class="button_view">Редакция</a>' +
+						'<a href="#add-image" class="button_view">Качи снимка</a>';
+				}
+				
+				for (i in _data) {
+					var _user = $.parseJSON(JSON.stringify(_data))[i];
+					
+					var _descr = "";
+					
+					if (typeof _user == 'undefined')
+						return;
+					
+					if (_user.descr != null)
+						_descr = _user.descr;
+					
+					if (_user.ThumbName != null)
+						html += '<a href="' + _user.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + _user.ThumbName + '" width="75"/></a>';
+					else
+						html = '<img src="images/user.png" width="35"/>';
+					
+				}
+				
+				//profile events
+				$("a[href=#edit-user]").live("click", function () {
+					user.edit();
+				});
+				
+				$("a[href=#add-image]").live("click", function () {
+					user.addImage(user_image);
+				});
+				
+				$("a[href=#delete-user]").live("click", function () {
+					user.remove();
+				});
+				
+				html += '<div class="blue_title">' + _user.username + '</div>' +
+				'<p>Описансие: <br/>' + _descr + '</p>';
+				
+				$('#user-profile').html(html);
+				
+			});
+			
+		});
+	},
+	
 	lastUserPosts : function () {
 		
 		system.Loader(true);
@@ -66,7 +129,7 @@ var user = {
 			// for the first time we have to store last id
 			myAjax("user.php", {
 				limit : FIRST_MAX_USERS,
-				method : "allUsers"
+				method : "users"
 			}, function (_data) {
 				var id = 0;
 				for (i in _data) {
@@ -114,55 +177,6 @@ var user = {
 		
 	},
 	
-	UserProfile : function (_id, isCurrentView) {
-		
-		$.get('ui/profile.html', function (login_data) {
-			
-			system.content().html(login_data);
-			
-			myAjax("user.php", {
-				id : _id,
-				sessionId : sessionId,
-				method : "getUserById"
-			}, function (_data) {
-				
-				var html = '';
-				
-				if (isCurrentView) {
-					
-					html = '<a href="#delete-user" class="button_view">Изтриване</a>' +
-						'<a href="#edit-user" class="button_view">Редакция</a>' +
-						'<a href="#add-image" class="button_view">Качи снимка</a>';
-				}
-				
-				for (i in _data) {
-					var _user = $.parseJSON(JSON.stringify(_data))[i];
-					
-					var _descr = "";
-					
-					if (typeof _user == 'undefined')
-						return;
-					
-					if (_user.descr != null)
-						_descr = _user.descr;
-					
-					if (_user.ThumbName != null)
-						html += '<a href="' + _user.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + _user.ThumbName + '" width="75"/></a>';
-					else
-						html = '<img src="images/user.png" width="35"/>';
-					
-				}
-				
-				html += '<div class="blue_title">' + _user.username + '</div>' +
-				'<p>Описансие: <br/>' + _descr + '</p>';
-				
-				$('#user-profile').html(html);
-				
-			});
-			
-		});
-	},
-	
 	LogOut : function () {
 		
 		localStorage.removeItem('sessionId');
@@ -172,6 +186,7 @@ var user = {
 	},
 	
 	ShowUsers : function (users) {
+	
 		var html = '<div class="right_content">' +
 			'<div class="title">Потребители <br/><img src="images/users-icon.png" /></div><br/>';
 		
@@ -181,18 +196,21 @@ var user = {
 			
 			if (i == FIRST_MAX_USERS)
 				break;
+			var descr = "";
+			if (user.descr != null)
+				descr = user.descr;
 			
 			html +=
 			'<div class="member_tab">' +
 			'<div class="member_details">';
 			
 			if (user.ImageName != null)
-				html += '<a href="#SelectedUser" id=' + user.id + '><img src="' + user.ImageName + '" width="75"/></а>';
+				html += '<a href="#SelectedUser" id=' + user.id + '><img class="data-text" src="' + user.ImageName + '" width="75"/></а>';
 			else
-				html += '<a href="#SelectedUser" id=' + user.id + '><img src="images/user.png" width="35"/></а>';
+				html += '<a href="#SelectedUser" id=' + user.id + '><img class="data-text" src="images/user.png" width="35"/></а>';
 			
-			html += '<div><a class="blue_title" href="#SelectedUser" id=' + user.id + '>' + user.username + '</a></div>' +
-			'<p>' + user.descr + '</p>' +
+			html += '<div><a href="#SelectedUser" id=' + user.id + '>' + '<p class="data-text">' + user.username + '</p></a></div>' +
+			'<p style="padding: 15px;">' + descr + '</p>' +
 			'<a href="#SelectedUser" id=' + user.id + ' class="read_more">Повече</a></div>' +
 			'</div>';
 			
@@ -204,21 +222,35 @@ var user = {
 	ShowUserEvents : function (events) {
 		
 		var html = '<div class="left_content"> ' +
-			'<div class="title">Последни предложения <br/><img src="images/event_icon.png" /></div><br/>';
-		
+			'<div class="title">Последни предложения <br/>' +
+			'<img src="images/event_icon.png" /></div><br/>';
+			
 		for (i in events) {
 			var event = events[i];
 			
 			if (i == FIRST_MAX_EVENTS)
 				break;
+				
+			var image = "";
 			
-			html +=
-			'<ul class="list">' +
-			'<li><a href="#selectedEvent" id=' + event.id + '><p>' + event.name + '</p></a></li>' +
-			
-			'</ul>';
+			if (event.ImageName != null)
+				image = '<img class="title" src="' + event.ImageName + '" width="75"/>'; 
+				
+			html +=  
+				
+			'<a href="#selectedEvent" id=' + event.id + '>' +			
+			'<p class="data-text">' + event.name + '</p>' + image + '</a><br/><br/>';
 			
 		}
+		
+		$("a[href=#selectedEvent]").live("click", function () {
+			if (currUser == null) {
+				system.ShowRegisterForm();
+				return;
+			}
+			var _id = $(this).attr('id');
+			user.viewEvent(_id);
+		});
 		
 		return html;
 		
@@ -293,10 +325,18 @@ var user = {
 		
 	},
 	
-	addImage : function () {
+	addImage : function (_uploatType) {
 		var x = screen.width / 2 - 700 / 2;
 		var y = screen.height / 2 - 450 / 2;
-		window.open('file-uploader/index.php', "Качване на снимка", '"location=1,status=1,scrollbars=1, height=485,width=700,left=' + x + ',top=' + y);
+		
+		var uploadDir = "";
+		
+		if (_uploatType == user_image)
+			uploadDir = 'file-uploader/';
+		else if (_uploatType == event_image)
+			uploadDir = 'event-uploader/';
+		
+		window.open(uploadDir + 'index.php', "Качване на снимка", '"location=1,status=1,scrollbars=1, height=485,width=700,left=' + x + ',top=' + y);
 		
 	},
 	
@@ -332,6 +372,10 @@ var user = {
 				$('#error-message').hide('slow');
 			})
 			
+			$('#add-event-image').click(function () {
+				user.addImage(event_image);
+			})
+			
 			$('#btn-add-event').click(function () {
 				user.event_insert();
 			})
@@ -360,10 +404,18 @@ var user = {
 			return;
 		
 		myAjax("event.php", data, function (_data) {
-			//var data = $.parseJSON(JSON.stringify(_data));
-			//var event = data[0];
+			var data = $.parseJSON(JSON.stringify(_data));
+			var event = data[0];
+			
 			$('#my-events-list').append("<h1>Успешно дабавихте вашето събитие!</h1>");
 			$('#modal-form').dialog("close");
+				
+			//update image objectid and type by event
+			//read eventResponse from localStorage 
+			var eventResponse = localStorage.getItem('eventResponse');			
+			user.updateImage(eventResponse, event.id, event_image);
+			//
+						
 		});
 	},
 	
@@ -385,7 +437,7 @@ var user = {
 				
 				for (i in _data) {
 					event = _data[i];
-					html += '<a href="#" class="blue_title"><p>' + event.name + '</p></a>';
+					html += '<a href="#" class="blue_title"><p class="data-text">' + event.name + '</p></a>';
 				}
 				
 				$('#my-events-list').html(html);
@@ -411,12 +463,19 @@ var user = {
 				method : 'getEventById'
 			};
 			
+			var image = "";
 			myAjax("event.php", data, function (_data) {
 				
 				var event = $.parseJSON(JSON.stringify(_data))[0];
+				
+				if (event.ThumbName != null)
+						image += '<a href="' + event.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + event.ThumbName + '" width="75"/></a>';
+				
+				
 				var html =
 					
 					'<a href="#make-event-request" class="button_view">Заявка</a>' +
+					image + 
 					'<p class="blue_title">' + event.name + '</p>' +
 					'<p><b>Дата:</b><br/>' + event.date + '</p>' +
 					'<p><b>Описание:</b><br/>' + event.descr + '</p>' +
@@ -481,7 +540,7 @@ var user = {
 				
 				for (i in _data) {
 					request = _data[i];
-					html += '<a href="#" class="blue_title"><p>' + request.descr + '</p></a>';
+					html += '<a href="#" class="blue_title"><p class="data-text">' + request.descr + '</p></a>';
 				}
 				
 				$('#my-request-list').html(html);
@@ -491,6 +550,33 @@ var user = {
 			
 		});
 		
+	},
+	
+	updateImage : function (response, objectid, _type) {
+		
+		for (i in response) {
+			
+			var image = JSON.parse(response)[i];		
+			
+			data = {
+				id : image.id,
+				objectid : objectid,
+				type: _type,
+				method : 'edit'
+			};
+						
+			myAjax('images.php', data, function (_data){
+				//image was added!!!
+				
+			});			
+		};
+		
+	},
+	
+	storeEventResponse: function (response)
+	{		
+        	
+		localStorage.setItem('eventResponse', response);
 	},
 	
 	UserStorage : function (data, canRefresh) {
