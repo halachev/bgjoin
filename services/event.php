@@ -135,14 +135,16 @@
 		
 		function edit()
 		{
+		
 		  $id = $this->id;
-		  $name = filter($this->name);
+		  $name = convertToCyrillic(filter($this->name));
 		  $date = filter($this->date);	
-		  $descr = convertToCyrillic($this->descr);
+		  $descr = filter($this->descr);	
+		  $descr = convertToCyrillic($descr);
 		   
 		  $result = mysql_query("update events set name='$name', date='$date', descr='$descr' where id='$id'");
 		 
-		  echo $this->getUserById($id);
+		  echo $this->getEventById($id);
 		}
 		
 		function getEventById($id)
@@ -153,8 +155,10 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type from events e
-						left outer join images  i on (i.objectid = e.id)  where e.id='$id'");
+			$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type, ints.int_name from events e
+						left outer join images  i on (i.objectid = e.id) 
+						left outer join interests  ints on (ints.id = e.int_id)  
+						where e.id='$id'");
 			
 			$data = array();
 			
@@ -176,7 +180,19 @@
 		
 		function delete()
 		{
-		
+			
+			if (($this->id <= 0) || ($this->sessionId == null))
+			{
+			    $data = array("system error" => "Възникна проблем!Моля, обърнете се към администратора.");
+				
+				return json_safe_encode($data);				
+			}
+			
+			$id = $this->id;
+			 
+			$results = mysql_query("delete from events where id='$id'");
+			$results = mysql_query("delete from images where objectid='$id' and type=2");
+			echo json_encode($results);			
 		}
 		
 		function MyEvents()

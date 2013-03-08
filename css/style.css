@@ -135,7 +135,8 @@ padding:55px 0 0 0;
 width:400px;
 height:auto;
 float:left;
-padding:10px 0 10px 20px;
+padding:10px 0 10px 15px;
+
 }
 
 .main_box{
@@ -150,6 +151,7 @@ background:#f1f1f1;
 .left_banner_content{
 width:235px;
 padding:0 0 0 15px;
+
 }
 .title{
 
@@ -306,11 +308,12 @@ color:#2d2d2d;
 clear:both;
 font-size:18px;
 padding:10px 0 0 15px;
+
 }
 
 .data-text:hover
 {
-	opacity: 0.5;	
+	opacity: 0.7;	
 }
 
 #image-dialog:hover

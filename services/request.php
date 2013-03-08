@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
    
 	include "connect.php";
 	include "utils.php";
@@ -96,19 +96,26 @@
 			$descr = convertToCyrillic(filter($this->descr));			
 			
 			
-			if ((!$user_id) || (!$event_id) || (!$descr))
+			if ($sender_user_id == $user_id)
 			{
-				$data = array("error_message" => "Ð’ÑÐ¸Ñ‡ÐºÐ¸ Ð¿Ð¾Ð»ÐµÑ‚Ð° Ð·Ð°Ð´ÑŠÐ»Ð¶Ð¸Ñ‚ÐµÐ»Ð½Ð¸!");
+				$data = array("error_message" => "íå ìîæå äà ïðàâèòå çàÿâêè êúì âàøè ñúáèòèÿ!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
-			//Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð·Ð° ÑÑŠÑ‰ÐµÑÐ²ÑƒÐ²Ð°Ñ‰Ð° Ð·Ð°ÑÐ²ÐºÐ°
+			if ((!$user_id) || (!$event_id) || (!$descr))
+			{
+				$data = array("error_message" => "Âñè÷êè ïîëåòà çàäúëæèòåëíè!");
+				echo json_safe_encode($data);
+				exit;				
+			}
+			
+			//ïðîâåðêà çà ñúùåñâóâàùà çàÿâêà
 			$count = $this->ExistRequest();
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "Ð˜Ð¼ÐµÑ‚Ð¾ Ðµ Ð·Ð°ÐµÑ‚Ð¾!");				
+				$data = array("error_message" => "Èìåòî å çàåòî!");				
 				echo json_safe_encode($data);
 			
 			}
@@ -117,7 +124,7 @@
 			{
 				$results = mysql_query("insert into requests (sender_user_id, user_id, event_id, descr) values('$sender_user_id', '$user_id', '$event_id', '$descr') ");
 			
-				// Ð²Ñ€ÑŠÑ‰Ð°Ð¼Ðµ Ð½Ð¾Ð²Ð¸Ñ Ð¾Ð±ÐµÐºÑ‚ Ð½Ð° ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°
+				// âðúùàìå íîâèÿ îáåêò íà êëèåíòà
 				$newId = mysql_insert_id();							
 				echo $this->getRequestById($newId);
 			}
@@ -188,7 +195,7 @@
 		function LoadMore()
 		{
 			$last_id = $this->userLastId;
-			$sql = mysql_query("SELECT * FROM events WHERE id < '$last_id' ORDER BY id desc LIMIT $this->limit");
+			$sql = mysql_query("select * from events where id < '$last_id' ORDER BY id desc LIMIT $this->limit");
 			
 			$data = array();
 			

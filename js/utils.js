@@ -8,7 +8,7 @@ function myAjax(_file, _data, results) {
 		dataType : "json",
 		data : _data,
 		
-		success : function (data) {
+		success : function (data) {			
 			results(data);
 		},
 		
@@ -27,6 +27,7 @@ function CheckServerError(obj) {
 			$(".error").hide();
 			var err = JSON.parse(JSON.stringify(obj));
 			var err_message = err.error_message;
+			
 			system.error($('#error-message'), err_message);
 			return false;
 		}

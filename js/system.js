@@ -154,12 +154,22 @@ var system = {
 		
 		var shtml =
 			'<div class="search_tab">' +
-			'<div class="search_title">Търси</div>' +
+			'<div class="search_title">Търси</div>&nbsp;&nbsp;&nbsp;&nbsp;' +
+			'<input type="radio" name="group1" id="search-event" value="1">Събитие'+
+			'<input type="radio" name="group1" id="search-user" value="2" checked>Потребител<br>'+
 			'<div class="search_form">' +
 			'<input type="text" class="small_input" />' +
-			'<a href="#search-post" class="search_bt" ><img src="images/search.gif" /></a>' +
+			'<a href="#search-post" class="search_bt" >&nbsp;&nbsp;<img src="images/search.gif" /></a>' +
 			'</div>' +
 			'</div>';
+		
+		$("#search-event").live("click", function (e) {
+			//
+		});
+		
+		$("#search-user").live("click", function (e) {
+			//
+		});
 		
 		$('#search-id').html(shtml);
 		
