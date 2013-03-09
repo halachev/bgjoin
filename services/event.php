@@ -78,12 +78,14 @@
 		
 		function events()
 		{
+			
+			$currTime = date("Y-m-d H:i:s", time());
 			if ($this->limit > 0)
 				$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type from events e
-						left outer join images  i on (i.objectid = e.id) order by id desc limit $this->limit");
+						left outer join images  i on (i.objectid = e.id) where '$currTime' <= e.date order by id desc limit $this->limit");
 			else
 				$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type from events e
-						left outer join images  i on (i.objectid = e.id) order by id desc ");
+						left outer join images  i on (i.objectid = e.id) where '$currTime' <= e.date order by id desc ");
 			
 			$data = array();
 			
@@ -137,8 +139,8 @@
 		{
 		
 		  $id = $this->id;
-		  $name = convertToCyrillic(filter($this->name));
-		  $date = filter($this->date);	
+		  $name = convertToCyrillic(filter($this->name));		 
+		  $date = date("Y-m-d H:i:s", strtotime($this->date));
 		  $descr = filter($this->descr);	
 		  $descr = convertToCyrillic($descr);
 		   

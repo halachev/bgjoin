@@ -25,7 +25,8 @@ var user_image = 1;
 var event_image = 2;
 
 $(document).ready(function () {
-	
+
+	gethash();
 	//start application
 	system.init();
 	
@@ -59,8 +60,7 @@ $(document).ready(function () {
 		system.ints();
 	});
 	
-	$('#profile-id').click(function (e) {
-		
+	$('#profile-id').click(function (e) {		
 		user.profile();
 		
 	});
@@ -112,5 +112,6 @@ $(document).ready(function () {
 		var _id = $(this).attr('id');
 		user.UserProfile(_id, false);
 	});
+	
 	
 });

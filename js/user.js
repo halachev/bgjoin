@@ -1,13 +1,22 @@
 ﻿//user oject
+
 var user = {
+	
 	currentUser : function () {
 		
 		var data = JSON.parse(currUser);
 		return data;
 	},
 	
+	InitServerTime : function () {
+		myAjax('time.php', "", function (data) {
+			localStorage.setItem("serverTime", data.serverTime);
+		});
+	},
+	
 	GetLastUsers : function () {
 		system.Loader(true);
+		
 		myAjax("user.php", {
 			limit : FIRST_MAX_USERS,
 			method : "users"
@@ -112,8 +121,6 @@ var user = {
 				$("a[href=#delete-user]").live("click", function () {
 					user.remove();
 				});
-				
-				
 				
 			});
 			
@@ -355,7 +362,7 @@ var user = {
 		$.get('ui/add-event.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			system.ShowDialog($('#modal-form'), 'Ново събитие');
-			$('#event-date').datepicker();
+			$('#event-date').datetimepicker();
 			
 			var data = {
 				sessionId : sessionId,
@@ -428,6 +435,9 @@ var user = {
 			
 			system.content().html(login_data);
 			
+			user.InitServerTime();
+			serverDateTime = localStorage.getItem("serverTime");
+			
 			var data = {
 				sessionId : sessionId,
 				user_id : system.currentUser().id,
@@ -441,7 +451,14 @@ var user = {
 				for (i in _data) {
 					event = _data[i];
 					
-					html += '<a href="#my_event-view" id="' + event.id + '"><p class="data-text">' + event.name + '</p></a>';
+					var style = "";
+					if (event.date >= serverDateTime)
+						style = "class = data-text";
+					else
+						style = "class = data-text-line-through";						
+					
+					html += '<a href="#my_event-view" id="' + event.id + '"><p ' + style + '>' + event.name + ' - '+ event.date + '</p></a>';
+					
 				}
 				
 				$('#my-events-list').html(html);
@@ -512,7 +529,7 @@ var user = {
 				
 				$.get('ui/edit-event.html', function (login_data) {
 					$('#modal-form').html(login_data);
-					$('#event-date').datepicker();
+					$('#event-date').datetimepicker();
 					
 					var data = {
 						sessionId : sessionId,
@@ -566,7 +583,7 @@ var user = {
 					return;
 				
 				var data = {
-					sessionId : sessionId,					
+					sessionId : sessionId,
 					id : _eventId,
 					method : 'delete'
 				};

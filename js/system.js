@@ -37,6 +37,7 @@ var system = {
 	},
 	
 	initContent : function () {
+			
 		this.content().html('<center><a href="#LoadMore" class="button_view">Показване на още</a></center>');
 		
 		var html =

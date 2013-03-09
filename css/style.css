@@ -316,6 +316,16 @@ padding:10px 0 0 15px;
 	opacity: 0.7;	
 }
 
+.data-text-line-through{
+
+color:red;
+clear:both;
+font-size:18px;
+padding:10px 0 0 15px;
+text-decoration:line-through;
+
+}
+
 #image-dialog:hover
 {
 	opacity: 0.7;
