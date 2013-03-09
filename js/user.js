@@ -266,7 +266,8 @@ var user = {
 	},
 	
 	registerUser : function () {
-		
+		$('#btnRegister').attr("disabled", "disabled");
+		$('#error-message').html("<p>Регистрация, моля изчакайте ...</p>");
 		var data = {
 			username : $('#register-user').val(),
 			password : $('#register-password').val(),
@@ -290,6 +291,7 @@ var user = {
 		
 		myAjax("user.php", data, function (_data) {
 			user.UserStorage(_data, true);
+			$('#error-message').html("");
 		});
 		
 	},
@@ -403,6 +405,19 @@ var user = {
 			user_id : user.currentUser().id,
 			method : "insert"
 		};
+				
+		if (data.name.length > 50)
+		{		    
+			system.error($('#event-name'), '<p>Максимална дължина на заглавие 50 знака!</p>');			
+			return false;
+		}
+		
+		
+		if (data.descr.length > 250)
+		{		    
+			system.error($('#event-descr'), '<p>Максимална дължина на описание 250 знака!</p>');			
+			return false;
+		}
 		
 		//check validation for user
 		$(".error").hide();

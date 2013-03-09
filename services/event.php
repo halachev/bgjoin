@@ -102,10 +102,25 @@
 		{
 			
 			$name = convertToCyrillic(filter($this->name));
-			$date = $this->date;
+			$date = date("Y-m-d H:i:s", strtotime($this->date));
 			$descr = convertToCyrillic(filter($this->descr));
 			$int_id = $this->int_id;
 			$user_id = $this->user_id;
+			
+			if (strlen ($name > 50))
+			{
+				$data = array("error_message" => "Максимална дължина на заглавие 50 знака");
+				echo json_safe_encode($data);
+				exit;				
+			}
+			
+			
+			if (strlen ($descr > 250))
+			{
+				$data = array("error_message" => "Максимална дължина на описание 250 знака");
+				echo json_safe_encode($data);
+				exit;				
+			}
 			
 			if ((!$name) || (!$date) || (!$descr))
 			{

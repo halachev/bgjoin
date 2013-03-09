@@ -75,12 +75,14 @@ var system = {
 			
 			$("#login-password").keypress(function () {
 				if (event.which == 13) {
+					$('#btnLogin').attr("disabled", "disabled");
 					$('#error-message').html('<p class="title">Моля, изчакайте...</p>');
 					onLogin();
 				}
 			});
 			
 			$('#btnLogin').click(function (e) {
+				$('#btnLogin').attr("disabled", "disabled");
 				$('#error-message').html('<p class="title">Моля, изчакайте...</p>');
 				onLogin();
 			});
@@ -96,7 +98,13 @@ var system = {
 				password : $('#login-password').val(),
 				method : "LogIn"
 			};
-			myAjax("user.php", data, function (_data) {
+			myAjax("user.php", data, function (_data) {			
+				
+			
+				if (_data.error_message != "")
+					
+					$('#btnLogin').removeAttr("disabled");                    ("disabled", "disabled");
+				
 				user.UserStorage(_data, true);
 			});
 			
@@ -211,6 +219,7 @@ var system = {
 	
 	error : function (_element, _message) {
 		
+		$('#new-event-form span').empty();
 		_element.after('<span class="error">' + _message + '</span>');
 	},
 	

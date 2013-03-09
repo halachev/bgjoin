@@ -3,6 +3,7 @@
 	include "connect.php";
 	include "utils.php";
 	include "json_unicode.php";
+	include "email/class.phpmailer.php";    
 	
 	define ('insert', insert);
 	define ('edit', edit);
@@ -11,7 +12,6 @@
 	define ('users', users);
 	define ('LoadMore', LoadMore);
 	define ('getUserById', getUserById);
-
 	
 	class User 
 	{
@@ -127,6 +127,8 @@
 			{
 				$results = mysql_query("insert into users (username, password, email) values('$username', '$password', '$email') ");
 			
+				$this->sendMail();
+				
 				// връщаме новия обект на клиента
 				$newId = mysql_insert_id();							
 				echo $this->getUserById($newId);
@@ -220,6 +222,60 @@
 			} 
 			
 			echo json_safe_encode($data);
+			
+		}
+		
+		function sendMail()
+		{
+			
+			$mail = new PHPMailer();
+			 
+			 
+			$username = convertToCyrillic(filter($this->username));
+			$password = filter($this->password);
+			$email = filter($this->email);
+			
+			$body = '<html><body>		
+			<p>Добре дошли в bgjoin.com</p>
+			<h2>Данни за вашият акаунт!</h2>
+			<p>Потребител:'.$username.'</p>
+			<p>Парола:'.$password.'</p>
+			<p>Благодарим! От екипа на <a href="http://bgjoin.com/">bgjoin</a></p>
+			</body></html>';
+						
+			$body  = eregi_replace("[\]",'',$body);
+
+			$mail->IsSMTP(); 
+					
+			$mail->SMTPAuth   = true;                  
+			$mail->SMTPSecure = "ssl";                 
+			$mail->Host       = "smtp.gmail.com";      
+			$mail->Port       = 465;                   
+			$mail->Username   = "bgjoin@gmail.com";  
+			$mail->Password   = "palladium1";            
+			$mail->CharSet = 'windows-1251'; 
+			
+			$ourEmail = 'info@bgjoin.com';
+			
+			$mail->SetFrom($ourEmail, 'bgjoin');
+
+			$mail->AddReplyTo($ourEmail, "bgjoin");
+
+			$mail->Subject  = "Регистрация в bgjoin.com";
+		    
+			// optional, comment out and test
+			$mail->AltBody  = "Регистрация в bgjoin.com"; 
+
+			$mail->MsgHTML($body);
+
+			$address = $email;
+			$mail->AddAddress($address, "Регистрация в bgjoin.com");
+			
+			// attachment
+			$mail->AddAttachment("../images/logo.png");      
+			
+			//send
+			$mail->Send();
 			
 		}
 
