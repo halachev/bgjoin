@@ -34,7 +34,7 @@ var user = {
 			
 			if (currUser == null)
 				main_box =
-					'<div class="main_box">' +
+					'<div style="background: #f5f5f5; margin: 20px; float: right; padding: 20;">' +
 					'<div class="title">Най-лесният начин да се забавляваш!</div>' +
 					'<div class="left_banner_content">' +
 					'<br/><p>Присъедини се към това което търсиш.<p/>' +
@@ -91,9 +91,14 @@ var user = {
 					if (_user.ThumbName != null)
 						html += '<a href="' + _user.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + _user.ThumbName + '" width="100"/></a>';
 					else
-						html = '<img src="images/user.png" width="35"/>';
+						html += '<img src="images/user.png" width="35"/>';
 					
 				}
+				
+				html += '<div class="blue_title">' + _user.username + '</div>' +
+				'<p>Описансие: <br/>' + _descr + '</p>';
+				
+				$('#user-profile').html(html);
 				
 				//profile events
 				$("a[href=#edit-user]").live("click", function () {
@@ -108,10 +113,7 @@ var user = {
 					user.remove();
 				});
 				
-				html += '<div class="blue_title">' + _user.username + '</div>' +
-				'<p>Описансие: <br/>' + _descr + '</p>';
 				
-				$('#user-profile').html(html);
 				
 			});
 			
@@ -187,7 +189,7 @@ var user = {
 	ShowUsers : function (users) {
 		
 		var html = '<div class="right_content">' +
-			'<div class="title"><img src="images/users-icon.png" />&nbsp;&nbsp;Потребители</div><br/>';
+			'<div class="title"><img src="images/users-icon.png" />&nbsp;&nbsp;Потребители</div><br/><a href="#LoadMore" class="button_view">Показване на още</a>';
 		
 		for (i in users) {
 			

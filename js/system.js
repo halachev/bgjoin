@@ -37,7 +37,10 @@ var system = {
 	},
 	
 	initContent : function () {
+		this.content().html('<center><a href="#LoadMore" class="button_view">Показване на още</a></center>');
+		
 		var html =
+		    
 			'<div class="center_bg">' +
 			
 			'<div id="leftHtml"></div>' +
@@ -52,7 +55,7 @@ var system = {
 		
 		this.content().html(html);
 		
-		this.content().append('<center><a href="#LoadMore" class="button_view">Показване на още</a></center>');
+		this.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');
 		
 	},
 	
@@ -237,7 +240,7 @@ var system = {
 		
 		for (i in ints) {
 			var interes = ints[i];
-			html += '<a href="#"><p class="data-text">' + interes.name + '</p></a>';
+			html += '<a href="#"><p class="data-text">' + interes.int_name + '</p></a>';
 		}
 		
 		return html;
