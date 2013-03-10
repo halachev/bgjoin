@@ -22,6 +22,10 @@
 <script type="text/javascript" src="js/system.js"></script>
 <script type="text/javascript" src="js/user.js"></script>
 
+ <!-- facebook sdk -->
+<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
+	
+
 <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css" />
 <link rel="stylesheet" media="all" type="text/css" href="jcss/query-ui-timepicker-addon.css" />
 <link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
@@ -31,29 +35,33 @@
 </head>
 <body>
 <div id="main_container">
-    <div id="header">
-    <h1>beta version!</h1>	
+    <div id="header">   
     <div id="logo"><a href="http://bgjoin.nh.zonebg.com"><img src="images/logo.png" width="206" height="63" alt="" border="0" /></a></div>
     <div id="menu">
       <ul>
          <li> <a href="#home" id="home-id">Начало</a></li>
 		 <li> <a href="#how-it-work" id="how-it-work-id">Как работи</a></li>
 		 <li> <a href="#my-events" id="my-events-id">Събития</a></li>
-		 <li> <a href="#my-requests" id="my-requests-id">Заявки</a></li>
-		 <li> <a href="#my-ints" id="my-ints-id">Интереси</a></li>
+		 <li> <a href="#my-requests" id="my-requests-id">Заявки</a></li>		 
 		 <li> <a href="#register" id="register-id">Регистрация</a></li>
 		 <li> <a href="#LogIn" id="login-id">Вход</a></li>
 		 <li> <a href="#Profile" id="profile-id">Профил</a></li>
-		 <li> <a href="#LogOut" id="exit-id">Изход</a></li>		 		
+		 <li> <a href="#LogOut" id="exit-id">Изход</a></li>		
+		 
+		
+		 <div class="data-text" id="facebook-login">
+		 <a href="#facebook-login" id="loginButton">
+		 <img src="/facebook-login/login-facebook-button.png" /></a><br />
+		 </div>	
+		 
       </ul>
     </div>
   </div>   
+  <div id="fb-root">ints</div>
   <div id="search-id"></div> 
-  <div id="main-box"></div> 
-  	
-  <div id="center_content">    
-	<div class=""><a href="http://www.facebook.com/bgjoinme" target="_blank"><img src="images/facebook.png" /></a> </div>   
-    <div id="main-content"></div> 
+  <div id="main-box"></div>   	
+  <div id="center_content">    	  
+    <div id="main-content"></div> 	
     <div id="modal-form"></div> 
 	<div id="lastPostsLoader"></div> 		
   </div>  
@@ -62,11 +70,7 @@
 	<div class="footer_links"> <a href="#" id="service-id" >Услуги</a> </div>  
 	<div class="footer_links"> <a href="#" id="about-id">За нас</a> </div>   	
   </div>
+  <div class="footer_links"><a href="http://www.facebook.com/bgjoinme" target="_blank"><img src="images/facebook.png" /></a> </div>   
 </div>
 </html>
-
-<? 
-$homepage = file_get_contents('http://www.example.com/'); 
-
-?>
 

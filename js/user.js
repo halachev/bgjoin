@@ -61,8 +61,7 @@ var user = {
 	
 	profile : function () {
 		
-		var data = user.currentUser();
-		user.UserProfile(data.id, true);
+		user.UserProfile(user.currentUser().id, true);
 	},
 	
 	UserProfile : function (_id, IsMyProfile) {
@@ -71,11 +70,14 @@ var user = {
 			
 			system.content().html(login_data);
 			
-			myAjax("user.php", {
+			var data = {
 				id : _id,
 				sessionId : sessionId,
 				method : "getUserById"
-			}, function (_data) {
+			}
+
+			
+			myAjax("user.php", data, function (_data) {
 				
 				var html = '';
 				
@@ -85,8 +87,9 @@ var user = {
 						'<a href="#edit-user" class="button_view">Редакция</a>' +
 						'<a href="#add-image" class="button_view">Качи снимка</a>';
 				}
-				
+								
 				for (i in _data) {
+				
 					var _user = $.parseJSON(JSON.stringify(_data))[i];
 					
 					var _descr = "";
@@ -101,11 +104,11 @@ var user = {
 						html += '<a href="' + _user.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + _user.ThumbName + '" width="100"/></a>';
 					else
 						html += '<img src="images/user.png" width="35"/>';
-					
-				}
+						
+					html += '<div class="blue_title">' + _user.username + '</div>' +
+						'<p>Описансие: <br/>' + _descr + '</p>';
 				
-				html += '<div class="blue_title">' + _user.username + '</div>' +
-				'<p>Описансие: <br/>' + _descr + '</p>';
+				}
 				
 				$('#user-profile').html(html);
 				
@@ -189,6 +192,7 @@ var user = {
 		
 		localStorage.removeItem('sessionId');
 		localStorage.removeItem('profileId');
+		localStorage.removeItem('eventResponse');		
 		location = pageUrl;
 		
 	},
@@ -213,13 +217,13 @@ var user = {
 			'<div class="member_details">';
 			
 			if (user.ImageName != null)
-				html += '<a href="#SelectedUser" id=' + user.id + '><img class="data-text" src="' + user.ImageName + '" width="100"/></а>';
+				html += '<a href="#selected-user" id=' + user.id + '><img class="data-text" src="' + user.ImageName + '" width="100"/></а>';
 			else
-				html += '<a href="#SelectedUser" id=' + user.id + '><img class="data-text" src="images/user.png" width="35"/></а>';
+				html += '<a href="#selected-user" id=' + user.id + '><img class="data-text" src="images/user.png" width="35"/></а>';
 			
-			html += '<div><a href="#SelectedUser" id=' + user.id + '>' + '<p class="data-text">' + user.username + '</p></a></div>' +
+			html += '<div><a href="#selected-user" id=' + user.id + '>' + '<p class="data-text">' + user.username + '</p></a></div>' +
 			'<p style="padding: 15px;">' + descr + '</p>' +
-			'<a href="#SelectedUser" id=' + user.id + ' class="read_more">Повече</a></div>' +
+			'<a href="#selected-user" id=' + user.id + ' class="read_more">Повече</a></div>' +
 			'</div>';
 			
 		}
@@ -694,7 +698,7 @@ var user = {
 			
 			myAjax('images.php', data, function (_data) {
 				//image was added!!!
-				
+				localStorage.removeItem('eventResponse');	
 			});
 		};
 		

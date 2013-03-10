@@ -12,6 +12,7 @@
 	define ('users', users);
 	define ('LoadMore', LoadMore);
 	define ('getUserById', getUserById);
+	define ('getUserById', getUserByName);
 	
 	class User 
 	{
@@ -70,7 +71,10 @@
 				break;			
 			  case getUserById:
 				echo $this->getUserById($_id);  
-				break;							
+				break;		
+			 case getUserByName:
+				echo $this->getUserByName($_username);  
+				break;			
 			  default:
 				throw new Exception('Invalid REQUEST_METHOD');
 				break;
@@ -168,6 +172,26 @@
 			return json_safe_encode($data);
 		}
 		
+		
+		function getUserByName($_name)
+		{		   
+			if (($this->sessionId == "") && ($this->method != insert))
+			{
+			    $data = array();
+				return json_safe_encode($data);				
+			}
+			
+			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+						left outer join images  i on (i.objectid = u.id) where u.username='$_name'");
+			
+			$data = array();
+			
+			while ($row = mysql_fetch_assoc($results)) {
+			   $data[] = $row;
+			}
+		   		    
+			return json_safe_encode($data);
+		}
 		
 		function LogIn()
 		{	

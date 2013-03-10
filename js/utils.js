@@ -52,7 +52,7 @@ function gethash() {
 		
 		switch (hash) {
 		case 'home':
-			system.init(); 
+			system.init();
 			break;
 			
 		case 'my-events':
@@ -64,31 +64,28 @@ function gethash() {
 			break;
 			
 		case 'my-ints':
-			system.ints(); 
+			system.ints();
 			break;
 			
 		case 'how-it-work-id':
-			system.how-it-work-id(); 
+			system.how - it - work - id();
 			break;
 			
 		case 'Profile':
 			user.profile();
 			break;
-		
-		
+			
 		case 'contact-id':
 			system.contacts();
 			break;
 			
-			
 		case 'service-id':
 			system.services();
-			break;	
+			break;
 			
 		case 'about-id':
 			system.about();
-			break;	
-			
+			break;
 			
 		}
 		
@@ -107,3 +104,23 @@ function getUrlVars() {
 	}
 	return vars;
 }
+
+//password functions
+var rand = function (str) {
+	return str[Math.floor(Math.random() * str.length)];
+};
+
+var get = function (source, len, a) {
+	for (var i = 0; i < len; i++)
+		a.push(rand(source));
+	return a;
+};
+
+var alpha = function (len, a) {
+	return get("A1BCD2EFG3HIJ4KLM5NOP6QRS7TUV8WXY9Z", len, a);
+};
+var symbol = function (len, a) {
+	return get("-:;_$!", len, a);
+};
+
+//end password functions

@@ -56,10 +56,6 @@ $(document).ready(function () {
 		user.my_events();
 	});
 	
-	$('#my-ints-id').click(function (e) {
-		system.ints();
-	});
-	
 	$('#profile-id').click(function (e) {		
 		user.profile();
 		
@@ -67,10 +63,6 @@ $(document).ready(function () {
 	
 	$('#exit-id').click(function (e) {
 		user.LogOut();
-	});
-	
-	$("a[href=#search-post]").live("click", function () {
-		user.GetLastUsers();
 	});
 	
 	$('#contact-id').click(function (e) {
@@ -102,16 +94,22 @@ $(document).ready(function () {
 		
 	});
 	
-	$("a[href=#SelectedUser]").live("click", function (e) {
+	$("a[href=#selected-user]").live("click", function (e) {
 		
 		if (currUser == null) {
 			system.ShowRegisterForm();
 			return;
 		}
 		
-		var _id = $(this).attr('id');
+		var _id = $(this).attr('id');		
 		user.UserProfile(_id, false);
 	});
+	
+	 $("a[href=#facebook-login]").live("click", function () {
+
+            system.registerByFaceBook();
+
+     });
 	
 	
 });

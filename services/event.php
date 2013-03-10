@@ -11,7 +11,7 @@
 	define ('LoadMore', LoadMore);
 	define ('MyEvents', MyEvents);
 	define ('getEventById', getEventById);
-
+	define ('GetEventsByIntID', GetEventsByIntID);
 	
 	class Event 
 	{
@@ -68,7 +68,10 @@
 				break;			
 			  case getEventById:
 				echo $this->getEventById($_id);  
-				break;							
+				break;	
+			 case GetEventsByIntID:
+				echo $this->GetEventsByIntID($_id);  
+				break;		
 			  default:
 				throw new Exception('Invalid REQUEST_METHOD');
 				break;
@@ -237,6 +240,27 @@
 			}
 		   		    
 			return json_safe_encode($data);
+		}
+		
+		
+		function GetEventsByIntID($id) {
+			
+			if ($this->sessionId == "")
+			{
+			    $data = array();
+				return json_safe_encode($data);				
+			}
+			
+			$results = mysql_query("select * from events where int_id='$id'");
+			
+			$data = array();
+			
+			while ($row = mysql_fetch_assoc($results)) {
+			   $data[] = $row;
+			}
+		   		    
+			return json_safe_encode($data);
+		
 		}
 		
 		function LoadMore()

@@ -2,7 +2,6 @@
 var system = {
 	
 	init : function () {
-		
 		system.search();
 		if (sessionId == null) {
 			$('#profile-id').hide();
@@ -10,6 +9,7 @@ var system = {
 			$('#my-events-id').hide();
 			$('#exit-id').hide();
 			$('#register-id').show();
+			$('#facebook-login').show();
 			$('#login-id').show();
 			$('#how-it-work-id').show();
 		} else {
@@ -18,6 +18,7 @@ var system = {
 			$('#my-events-id').show();
 			$('#exit-id').show();
 			$('#register-id').hide();
+			$('#facebook-login').hide();
 			$('#login-id').hide();
 			$('#how-it-work-id').hide();
 		}
@@ -37,11 +38,11 @@ var system = {
 	},
 	
 	initContent : function () {
-			
+		
 		this.content().html('<center><a href="#LoadMore" class="button_view">Показване на още</a></center>');
 		
 		var html =
-		    
+			
 			'<div class="center_bg">' +
 			
 			'<div id="leftHtml"></div>' +
@@ -98,12 +99,12 @@ var system = {
 				password : $('#login-password').val(),
 				method : "LogIn"
 			};
-			myAjax("user.php", data, function (_data) {			
+			myAjax("user.php", data, function (_data) {
 				
-			
 				if (_data.error_message != "")
 					
-					$('#btnLogin').removeAttr("disabled");                    ("disabled", "disabled");
+					$('#btnLogin').removeAttr("disabled");
+				("disabled", "disabled");
 				
 				user.UserStorage(_data, true);
 			});
@@ -154,6 +155,85 @@ var system = {
 		
 	},
 	
+	registerByFaceBook : function () {
+		
+		FB.init({
+			appId : '167009306785503',
+			status : true,
+			cookie : true,
+			oauth : true
+		});
+		
+		function registerUser(resp) {
+			
+			//password
+			var l = Math.floor(length / 2),
+			r = Math.ceil(length / 2);
+			var ret = alpha(l, symbol(1, alpha(r, []))).join('');
+			
+			var data = {
+				username : resp.name,
+				password : ret,
+				email : resp.email,
+				method : "insert"
+			};
+			
+			myAjax("user.php", data, function (_data) {
+				user.UserStorage(_data, true);
+				location = pageUrl;
+			});
+			
+		}
+		
+		function FaceBookLogin() {
+			FB.api('/me', function (resp) {
+				var access_token = FB.getAuthResponse()['accessToken'];
+				
+				sessionId = $.sha1(resp.name + resp.email);
+				localStorage.setItem('sessionId', sessionId);
+				
+				var data = {
+					sessionId : sessionId,
+					username : resp.name,
+					email : resp.email,
+					method : 'getUserByName'
+				};
+				
+				myAjax("user.php", data, function (_data) {
+					if (_data.length <= 0)
+						registerUser(resp);
+					else
+						user.UserStorage(_data, true);
+					
+				});
+				
+			});
+		}
+		
+		function getUserInfo() {
+			
+			FaceBookLogin();
+			
+		}
+		
+		FB.getLoginStatus(function (stsResp) {
+			if (stsResp.authResponse) {
+				getUserInfo();
+			} else {
+				FB.login(function (loginResp) {
+					if (loginResp.authResponse) {
+						getUserInfo();
+					} else {
+						//alert('Please authorize this application to use it!');
+					}
+				}, {
+					scope : 'email'
+				});
+			}
+		});
+		
+	},
+	
 	how_it_work : function () {
 		
 		$.get('ui/how-it-works.html', function (login_data) {
@@ -164,16 +244,38 @@ var system = {
 	},
 	search : function () {
 		
-		var shtml =
-			'<div class="search_tab">' +
-			'<div class="search_title">Търси</div>&nbsp;&nbsp;&nbsp;&nbsp;' +
-			'<input type="radio" name="group1" id="search-event" value="1">Събитие'+
-			'<input type="radio" name="group1" id="search-user" value="2" checked>Потребител<br>'+
-			'<div class="search_form">' +
-			'<input type="text" class="small_input" />' +
-			'<a href="#search-post" class="search_bt" >&nbsp;&nbsp;<img src="images/search.gif" /></a>' +
-			'</div>' +
-			'</div>';
+		system.Loader(true);
+		$.get('ui/search.html', function (login_data) {
+			$('#search-id').html(login_data);
+			
+			var data = {
+				method : 'interests'
+			}
+			
+			myAjax('ints.php', data, function (_data) {
+				
+				var values = null;
+				for (i in _data) {
+					var interest = _data[i];
+					values += '<option value="' + interest.id + '">' + interest.int_name + '</option>';
+					
+				}
+				
+				$('#ints-id').html(values);
+				
+				$("#ints-id").change(function () {
+					var _id = $('#ints-id').val();					
+					system.GetEventsByIntID(_id);
+				});
+				
+				$("a[href=#search-post]").live("click", function () {
+					user.GetLastUsers();
+				});
+				
+				system.Loader(false);
+			});
+			
+		});
 		
 		$("#search-event").live("click", function (e) {
 			//
@@ -183,7 +285,24 @@ var system = {
 			//
 		});
 		
-		$('#search-id').html(shtml);
+	},
+	
+	GetEventsByIntID : function (_id) {
+		system.Loader(true);		
+		myAjax("event.php", {		
+			id: _id,
+			sessionId: sessionId,
+			limit : FIRST_MAX_EVENTS,
+			method : "GetEventsByIntID"
+		}, function (_data) {			
+			var html = user.ShowUserEvents(_data);			
+			$('#leftHtml').html(html);
+			
+			if (_data.length <=0)
+				alert("Няма намерени резултати!");
+			
+			system.Loader(false);
+		});
 		
 	},
 	
@@ -221,40 +340,6 @@ var system = {
 		
 		$('#new-event-form span').empty();
 		_element.after('<span class="error">' + _message + '</span>');
-	},
-	
-	ints : function () {
-		system.Loader(true);
-		$.get('ui/my-ints.html', function (login_data) {
-			
-			system.content().html(login_data);
-			
-			var data = {
-				method : 'interests'
-			}
-			
-			myAjax('ints.php', data, function (_data) {
-				var html = system.ShowInts(_data);
-				
-				$('#my-ints-list').html(html);
-				system.Loader(false);
-			});
-			
-		});
-		
-	},
-	
-	ShowInts : function (ints) {
-		
-		var html = '';
-		
-		for (i in ints) {
-			var interes = ints[i];
-			html += '<a href="#"><p class="data-text">' + interes.int_name + '</p></a>';
-		}
-		
-		return html;
-		
 	},
 	
 	contacts : function () {
