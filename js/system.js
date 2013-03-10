@@ -263,7 +263,9 @@ var system = {
 			
 			myAjax('ints.php', data, function (_data) {
 				
-				var values = null;
+				
+				var values = '<option value="0">Избрете категория</option>';
+					
 				for (i in _data) {
 					var interest = _data[i];
 					values += '<option value="' + interest.id + '">' + interest.int_name + '</option>';
@@ -273,8 +275,11 @@ var system = {
 				$('#ints-id').html(values);
 				
 				$("#ints-id").change(function () {
-					var _id = $('#ints-id').val();					
-					system.GetEventsByIntID(_id);
+					var _id = $('#ints-id').val();	
+					if (_id > 0)
+						system.GetEventsByIntID(_id);
+					else 
+						system.initContent();
 				});
 				
 				$("a[href=#search-post]").live("click", function () {

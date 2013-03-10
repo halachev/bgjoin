@@ -94,7 +94,8 @@ var user = {
 				}
 				
 				html += '<div class="blue_title">' + _user.username + '</div>' +
-				'<p>Описансие: <br/>' + _descr + '</p>';
+				'<p>Описансие: <br/>' + _descr + '</p>' + 
+				'<a href="#">Събития на '+ _user.username +'</a>';
 				
 				$('#user-profile').html(html);
 				
@@ -206,7 +207,7 @@ var user = {
 				$('#rightHtml').html(html);
 				
 				$('#rightHtml').hide();
-				$('#rightHtml').fadeIn(2000);
+				$('#rightHtml').fadeIn(1000);
 				
 				var id = 0;
 				for (i in _data) {
@@ -254,9 +255,9 @@ var user = {
 			else
 				html += '<a href="#selected-user" id=' + user.id + '><img class="data-text" src="images/user.png" width="35"/></а>';
 			
-			html += '<div><a href="#selected-user" id=' + user.id + '>' + '<p class="data-text">' + user.username + '</p></a></div>' +
-			'<p style="padding: 15px;">' + descr + '</p>' +
-			'<a href="#selected-user" id=' + user.id + ' class="read_more">Повече</a></div>' +
+			html += '<div><a href="#selected-user" id=' + user.id + '>' + '<p class="data-text">' + user.username + '</p></a></div>' +			
+			'<a style="margin: 20px 0 0 15px;" href="#selected-user" id=' + user.id + '>Събития на '+ user.username +'</a><br/>' + 
+			'<a href="#selected-user" id=' + user.id + ' class="read_more">Профил</a></div>' +
 			'</div>';
 			
 		}
@@ -267,7 +268,7 @@ var user = {
 	ShowUserEvents : function (events) {
 		
 		var html = '<div class="left_content"> ' +
-			'<div class="title"><img src="images/event_icon.png" />&nbsp;&nbsp;Последни предложения &nbsp;&nbsp;' +
+			'<div class="title"><img src="images/event_icon.png" />&nbsp;&nbsp;Последни събития &nbsp;&nbsp;' +
 			'</div><br/>';
 		
 		for (i in events) {
@@ -410,13 +411,14 @@ var user = {
 			$('#error-message').html('<h1>Зарежда ...</h1>');
 			myAjax('ints.php', data, function (_data) {
 				
-				var interestsValues = "";
+				var values = '<option value="0">Избрете категория</option>';
+				
 				for (i in _data) {
 					var interest = _data[i];
-					interestsValues += '<option value="' + interest.id + '">' + interest.int_name + '</option>';
+					values += '<option value="' + interest.id + '">' + interest.int_name + '</option>';
 				}
 				
-				$('#event-interest').html(interestsValues);
+				$('#event-interest').html(values);
 				$('#error-message').hide('slow');
 			})
 			
@@ -461,7 +463,14 @@ var user = {
 		else if (!system.testString(data.descr, $('#event-descr'), 'Попълнете полето описание!'))
 			return;
 		
+		if ($('#event-interest').val() <= 0)
+		{
+			system.error($('#event-interest'), '<p>Моля, изберете категория към събитието!</p>');
+			return;
+		}
+		
 		myAjax("event.php", data, function (_data) {
+			
 			var data = $.parseJSON(JSON.stringify(_data));
 			var event = data[0];
 			
@@ -470,8 +479,9 @@ var user = {
 			
 			//update image objectid and type by event
 			//read eventResponse from localStorage
-			var eventResponse = localStorage.getItem('eventResponse');
-			user.updateImage(eventResponse, event.id, event_image);
+			var eventResponse = localStorage.getItem('eventResponse');			
+			if (eventResponse != null)
+				user.updateImage(eventResponse, event.id, event_image);
 			//
 			
 		});
@@ -565,7 +575,7 @@ var user = {
 				html += image +
 				'<p class="blue_title">' + event.name + '</p>' +
 				'<p><b>Дата:</b><br/>' + event.date + '</p>' +
-				'<p><b>Интереси:</b><br/>' + event.int_name + '</p>' +
+				'<p><b>Категория:</b><br/>' + event.int_name + '</p>' +
 				'<p><b>Описание:</b><br/>' + _descr + '</p>' +
 				'<p class="blue_title"">Изберете бутона заявка, ако проявявате интерес към това събитие.</p>';
 				
