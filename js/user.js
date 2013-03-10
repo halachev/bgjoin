@@ -15,8 +15,7 @@ var user = {
 	},
 	
 	GetLastUsers : function () {
-		system.Loader(true);
-		
+		system.Loader(true);		
 		myAjax("user.php", {
 			limit : FIRST_MAX_USERS,
 			method : "users"
@@ -38,22 +37,8 @@ var user = {
 		}, function (_data) {
 			
 			var html = user.ShowUserEvents(_data);
-			
-			var main_box = "";
-			
-			if (currUser == null)
-				main_box =
-					'<div style="background: #f5f5f5; margin: 20px; float: right; padding: 20;">' +
-					'<div class="title">Най-лесният начин да се забавляваш!</div>' +
-					'<div class="left_banner_content">' +
-					'<br/><p>Присъедини се към това което търсиш.<p/>' +
-					'<p>Социална мрежа за хора с общи интереси!<p>' +
-					'<p>Бъди различен последвай ме ...</p>' +
 					
-					'</div>';
-			
-			$('#leftHtml').html('<br/>' + main_box);
-			$('#leftHtml').append(html);
+			$('#leftHtml').html(html);
 			system.Loader(false);
 		});
 		
@@ -75,7 +60,6 @@ var user = {
 				sessionId : sessionId,
 				method : "getUserById"
 			}
-
 			
 			myAjax("user.php", data, function (_data) {
 				
@@ -83,13 +67,15 @@ var user = {
 				
 				if (IsMyProfile) {
 					
-					html = '<a href="#delete-user" class="button_view">Изтриване</a>' +
+					html =
+						'<a href="#change-password" class="button_view">Смяна на парола</a>' +
+						'<a href="#delete-user" class="button_view">Изтриване</a>' +
 						'<a href="#edit-user" class="button_view">Редакция</a>' +
 						'<a href="#add-image" class="button_view">Качи снимка</a>';
 				}
-								
-				for (i in _data) {
 				
+				for (i in _data) {
+					
 					var _user = $.parseJSON(JSON.stringify(_data))[i];
 					
 					var _descr = "";
@@ -104,11 +90,11 @@ var user = {
 						html += '<a href="' + _user.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + _user.ThumbName + '" width="100"/></a>';
 					else
 						html += '<img src="images/user.png" width="35"/>';
-						
-					html += '<div class="blue_title">' + _user.username + '</div>' +
-						'<p>Описансие: <br/>' + _descr + '</p>';
-				
+					
 				}
+				
+				html += '<div class="blue_title">' + _user.username + '</div>' +
+				'<p>Описансие: <br/>' + _descr + '</p>';
 				
 				$('#user-profile').html(html);
 				
@@ -125,9 +111,56 @@ var user = {
 					user.remove();
 				});
 				
+				$("a[href=#change-password]").live("click", function () {
+					user.NewPassword();
+				});
+				
 			});
 			
 		});
+	},
+	NewPassword : function () {
+		$.get('ui/new-password.html', function (login_data) {
+			
+			$('#modal-form').html(login_data);
+			
+			$("#btnNewPassword").live("click", function () {
+				
+				
+				var password = $('#new-password').val();
+				var re_password = $('#new-re-password').val();
+				
+				var data = {
+					id : user.currentUser().id,
+					sessionId : sessionId,
+					password : password,
+					method : 'SetNewPassword'
+				};
+				
+							
+				if (password.length < 3) {
+					$('#error-message').html('<p>Максимална дължина на парола 6 знака</p>');
+					return;
+				}
+				
+				if (password != re_password) {
+					$('#error-message').html('<p>Паролите не съвпадат!</p>');
+					return;
+				}
+				
+				$('#error-message').html('<p>Смяна на парола!</p>');
+				
+				myAjax("user.php", data, function (_data) {
+					
+					$('#modal-form').dialog("close");
+					
+				});
+				
+			});
+			
+		});
+		
+		system.ShowDialog($('#modal-form'), 'Смяна на парола!');
 	},
 	
 	lastUserPosts : function () {
@@ -192,7 +225,7 @@ var user = {
 		
 		localStorage.removeItem('sessionId');
 		localStorage.removeItem('profileId');
-		localStorage.removeItem('eventResponse');		
+		localStorage.removeItem('eventResponse');
 		location = pageUrl;
 		
 	},
@@ -409,17 +442,14 @@ var user = {
 			user_id : user.currentUser().id,
 			method : "insert"
 		};
-				
-		if (data.name.length > 50)
-		{		    
-			system.error($('#event-name'), '<p>Максимална дължина на заглавие 50 знака!</p>');			
+		
+		if (data.name.length > 50) {
+			system.error($('#event-name'), '<p>Максимална дължина на заглавие 50 знака!</p>');
 			return false;
 		}
 		
-		
-		if (data.descr.length > 250)
-		{		    
-			system.error($('#event-descr'), '<p>Максимална дължина на описание 250 знака!</p>');			
+		if (data.descr.length > 250) {
+			system.error($('#event-descr'), '<p>Максимална дължина на описание 250 знака!</p>');
 			return false;
 		}
 		
@@ -474,9 +504,9 @@ var user = {
 					if (event.date >= serverDateTime)
 						style = "class = data-text";
 					else
-						style = "class = data-text-line-through";						
+						style = "class = data-text-line-through";
 					
-					html += '<a href="#my_event-view" id="' + event.id + '"><p ' + style + '>' + event.name + ' - '+ event.date + '</p></a>';
+					html += '<a href="#my_event-view" id="' + event.id + '"><p ' + style + '>' + event.name + ' - ' + event.date + '</p></a>';
 					
 				}
 				
@@ -698,7 +728,7 @@ var user = {
 			
 			myAjax('images.php', data, function (_data) {
 				//image was added!!!
-				localStorage.removeItem('eventResponse');	
+				localStorage.removeItem('eventResponse');
 			});
 		};
 		

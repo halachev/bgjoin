@@ -245,12 +245,6 @@
 		
 		function GetEventsByIntID($id) {
 			
-			if ($this->sessionId == "")
-			{
-			    $data = array();
-				return json_safe_encode($data);				
-			}
-			
 			$results = mysql_query("select * from events where int_id='$id'");
 			
 			$data = array();

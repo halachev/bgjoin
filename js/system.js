@@ -2,7 +2,7 @@
 var system = {
 	
 	init : function () {
-		system.search();
+	
 		if (sessionId == null) {
 			$('#profile-id').hide();
 			$('#my-requests-id').hide();
@@ -38,6 +38,15 @@ var system = {
 	},
 	
 	initContent : function () {
+		
+		if (currUser == null)
+		{
+			$.get('ui/presents.html', function (login_data) {
+				$('#presents-id').html(login_data);
+			});
+		}
+		
+		system.search();
 		
 		this.content().html('<center><a href="#LoadMore" class="button_view">Показване на още</a></center>');
 		
@@ -290,8 +299,7 @@ var system = {
 	GetEventsByIntID : function (_id) {
 		system.Loader(true);		
 		myAjax("event.php", {		
-			id: _id,
-			sessionId: sessionId,
+			id: _id,			
 			limit : FIRST_MAX_EVENTS,
 			method : "GetEventsByIntID"
 		}, function (_data) {			

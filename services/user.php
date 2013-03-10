@@ -13,6 +13,7 @@
 	define ('LoadMore', LoadMore);
 	define ('getUserById', getUserById);
 	define ('getUserById', getUserByName);
+	define ('SetNewPassword', SetNewPassword);
 	
 	class User 
 	{
@@ -74,7 +75,11 @@
 				break;		
 			 case getUserByName:
 				echo $this->getUserByName($_username);  
-				break;			
+				break;	
+		     case SetNewPassword:
+				echo $this->SetNewPassword();  
+				break;	
+				
 			  default:
 				throw new Exception('Invalid REQUEST_METHOD');
 				break;
@@ -302,6 +307,23 @@
 			$mail->Send();
 			
 		}
+		
+		function SetNewPassword()
+		{
+			if ($this->sessionId == "")
+			{
+			    $data = array();
+				return json_safe_encode($data);				
+			}
+			
+			$id = $this->id;
+			$password = filter($this->password);
+			 
+			$result = mysql_query("update users set password='$password' where id='$id'");
+			 
+			echo $this->getUserById($id);
+		
+		}	
 
 	}
 	

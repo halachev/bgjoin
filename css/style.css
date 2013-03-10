@@ -140,12 +140,13 @@ padding:10px 0 10px 15px;
 }
 
 .main_box{
+border-radius: 15px 15px 15px 15px;
+box-shadow: 0 -3px 3px 0 rgba(0,0,0,.15);
 opacity: 0.9;
+float: left;
 padding: 10px;
-margin: 10px;
-width:379px;
-height:150px;
-background:#f1f1f1;
+margin: 20px 0 0 100px;
+background:url(../images/center_top_bg.gif) repeat center;
 }
 
 .left_banner_content{
