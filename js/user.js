@@ -1,4 +1,5 @@
 ﻿//user oject
+//user oject
 
 var user = {
 	
@@ -15,7 +16,7 @@ var user = {
 	},
 	
 	GetLastUsers : function () {
-		system.Loader(true);		
+		system.Loader(true);
 		myAjax("user.php", {
 			limit : FIRST_MAX_USERS,
 			method : "users"
@@ -37,20 +38,20 @@ var user = {
 		}, function (_data) {
 			
 			var html = user.ShowUserEvents(_data);
-					
+			
 			$('#leftHtml').html(html);
 			system.Loader(false);
 		});
 		
 	},
 	
-	profile : function () {
+	profile : function (e) {
 		
 		user.UserProfile(user.currentUser().id, true);
 	},
 	
 	UserProfile : function (_id, IsMyProfile) {
-		
+		system.Loader(true);
 		$.get('ui/profile.html', function (login_data) {
 			
 			system.content().html(login_data);
@@ -94,8 +95,10 @@ var user = {
 				}
 				
 				html += '<div class="blue_title">' + _user.username + '</div>' +
-				'<p>Описансие: <br/>' + _descr + '</p>' + 
-				'<a href="#">Събития на '+ _user.username +'</a>';
+				'<p>Описансие: <br/>' + _descr + '</p>' +
+				'<a href="#">Събития на ' + _user.username + '</a>';
+				
+				system.Loader(false);
 				
 				$('#user-profile').html(html);
 				
@@ -108,7 +111,7 @@ var user = {
 					user.addImage(user_image);
 				});
 				
-				$("a[href=#delete-user]").live("click", function () {
+				$("a[href=#delete-user]").live("click", function () {					
 					user.remove();
 				});
 				
@@ -127,7 +130,6 @@ var user = {
 			
 			$("#btnNewPassword").live("click", function () {
 				
-				
 				var password = $('#new-password').val();
 				var re_password = $('#new-re-password').val();
 				
@@ -138,7 +140,6 @@ var user = {
 					method : 'SetNewPassword'
 				};
 				
-							
 				if (password.length < 3) {
 					$('#error-message').html('<p>Максимална дължина на парола 6 знака</p>');
 					return;
@@ -187,7 +188,6 @@ var user = {
 			});
 		} else {
 			LoadMore(lastId);
-			
 		}
 		
 		function LoadMore(_lastId) {
@@ -255,8 +255,8 @@ var user = {
 			else
 				html += '<a href="#selected-user" id=' + user.id + '><img class="data-text" src="images/user.png" width="35"/></а>';
 			
-			html += '<div><a href="#selected-user" id=' + user.id + '>' + '<p class="data-text">' + user.username + '</p></a></div>' +			
-			'<a style="margin: 20px 0 0 15px;" href="#selected-user" id=' + user.id + '>Събития на '+ user.username +'</a><br/>' + 
+			html += '<div><a href="#selected-user" id=' + user.id + '>' + '<p class="data-text">' + user.username + '</p></a></div>' +
+			'<a style="margin: 20px 0 0 15px;" href="#selected-user" id=' + user.id + '>Събития на ' + user.username + '</a><br/>' +
 			'<a href="#selected-user" id=' + user.id + ' class="read_more">Профил</a></div>' +
 			'</div>';
 			
@@ -389,11 +389,12 @@ var user = {
 		
 	},
 	
-	remove : function () {
+	remove : function (e) {
 		var c = confirm("Сигурен ли сте, че искате да изтриете профила?");
 		
-		if (c) {
-			//delete
+		if (!c) {
+			e.defaultPrevent();
+			return;
 		}
 	},
 	
@@ -408,7 +409,7 @@ var user = {
 				sessionId : sessionId,
 				method : 'interests'
 			}
-			$('#error-message').html('<h1>Зарежда ...</h1>');
+			$('#error-message').html('<img src="images/ajax-loader.gif" />');
 			myAjax('ints.php', data, function (_data) {
 				
 				var values = '<option value="0">Избрете категория</option>';
@@ -463,8 +464,7 @@ var user = {
 		else if (!system.testString(data.descr, $('#event-descr'), 'Попълнете полето описание!'))
 			return;
 		
-		if ($('#event-interest').val() <= 0)
-		{
+		if ($('#event-interest').val() <= 0) {
 			system.error($('#event-interest'), '<p>Моля, изберете категория към събитието!</p>');
 			return;
 		}
@@ -479,7 +479,7 @@ var user = {
 			
 			//update image objectid and type by event
 			//read eventResponse from localStorage
-			var eventResponse = localStorage.getItem('eventResponse');			
+			var eventResponse = localStorage.getItem('eventResponse');
 			if (eventResponse != null)
 				user.updateImage(eventResponse, event.id, event_image);
 			//
@@ -505,9 +505,9 @@ var user = {
 			
 			myAjax('event.php', data, function (_data) {
 				
-				var html = "";
-				
+				var eventsData = [];
 				for (i in _data) {
+					
 					event = _data[i];
 					
 					var style = "";
@@ -516,11 +516,15 @@ var user = {
 					else
 						style = "class = data-text-line-through";
 					
-					html += '<a href="#my_event-view" id="' + event.id + '"><p ' + style + '>' + event.name + ' - ' + event.date + '</p></a>';
+					var html = '<a href="#my_event-view" id="' + event.id + '"><p ' + style + '>' + event.name + '</p></a>';
 					
+					eventsData.push({
+						name : html,
+						date : event.date
+					});
 				}
 				
-				$('#my-events-list').html(html);
+				user.kendoGrid(system.content(), eventsData);
 				system.Loader(false);
 			})
 			
@@ -540,6 +544,7 @@ var user = {
 	viewEvent : function (_eventId) {
 		
 		//view mode
+		system.Loader(true);
 		$.get('ui/view-event.html', function (login_data) {
 			
 			system.content().html(login_data);
@@ -580,6 +585,7 @@ var user = {
 				'<p class="blue_title"">Изберете бутона заявка, ако проявявате интерес към това събитие.</p>';
 				
 				$('#event-detail').html(html);
+				system.Loader(false);
 				localStorage.setItem('user_id', event.user_id);
 			})
 			
@@ -639,7 +645,10 @@ var user = {
 				var c = confirm('Изтриване на събитие?');
 				
 				if (!c)
+				{
+					e.defaultPrevent();
 					return;
+				}
 				
 				var data = {
 					sessionId : sessionId,
@@ -670,11 +679,15 @@ var user = {
 					
 					var user_id = localStorage.getItem('user_id');
 					
+					user.InitServerTime();
+					serverDateTime = localStorage.getItem("serverTime");
+					
 					var data = {
 						sessionId : sessionId,
 						sender_user_id : system.currentUser().id,
 						user_id : user_id,
 						event_id : _eventId,
+						date: serverDateTime, 
 						descr : $('#request-descr').val(),
 						method : 'insert'
 					}
@@ -707,14 +720,19 @@ var user = {
 			}
 			myAjax('request.php', data, function (_data) {
 				
-				var html = "";
+				var requestData = [];
 				
 				for (i in _data) {
 					request = _data[i];
-					html += '<a href="#" class="blue_title"><p class="data-text">' + request.descr + '</p></a>';
+					html = '<a href="#" class="blue_title"><p class="data-text">' + request.descr + '</p></a>';
+					
+					requestData.push({
+						name : html,
+						date: request.date
+					})
 				}
 				
-				$('#my-request-list').html(html);
+				user.kendoGrid(system.content(), requestData);
 				system.Loader(false);
 				
 			})
@@ -763,6 +781,47 @@ var user = {
 		if (canRefresh)
 			location = pageUrl;
 		
+	},
+	
+	deleteTempImage : function (eventResponse) {
+		var response = JSON.parse(eventResponse)[0];
+		
+		var data = {
+			id : response.id,
+			method : 'delete'
+		};
+		
+		myAjax('images.php', data, function (_data) {
+			console.log(_data)
+		});
+	},
+	
+	kendoGrid : function (_container, documentsData) {
+		_container.kendoGrid({
+			
+			dataSource : {
+				data : documentsData,
+				pageSize : 10
+			},
+			
+			sortable : {
+				mode : "single",
+				allowUnsort : false
+			},
+			
+			pageable : true,
+			scrollable : false,
+			
+			columns : [{
+					field : "name",
+					title : "Заглавие",
+					template : "<div>#=name#</div>"
+				}, {
+					field : "date",
+					title : "Дата"
+				}
+			]
+		});
 	}
 	
 }

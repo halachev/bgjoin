@@ -24,6 +24,11 @@ h1{
 color:#cf0a09;
 font-size:18px;
 }
+
+img {
+border:none;
+}
+
 img.photo{
 float:left;
 padding:5px 10px 0 0;
@@ -334,3 +339,8 @@ text-decoration:line-through;
 	
 }
 
+.loader
+{
+	padding:100px 0 0 440px;
+	position: absolute;	
+}

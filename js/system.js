@@ -71,11 +71,12 @@ var system = {
 	},
 	
 	Loader : function (state) {
+	
 		if (state)
 			$('div#lastPostsLoader').html('<img src="images/ajax-loader.gif">');
 		else
 			$('div#lastPostsLoader').html("");
-		
+				
 	},
 	
 	ShowLoginForm : function () {
@@ -129,8 +130,17 @@ var system = {
 			show : 'fadeIn',
 			resizable : false,
 			dialogClass : 'dialog-box',
+			position: 'center',
 			buttons : {
 				"Close" : function () {
+										
+					// remove temporary image from images table 
+					//if does not have event
+					
+					var eventResponse = localStorage.getItem('eventResponse');
+				    if (eventResponse != null)
+						user.deleteTempImage(eventResponse);
+						
 					$(this).dialog("close");
 				}
 			},
@@ -145,6 +155,7 @@ var system = {
 			//show : 'fadeIn',
 			resizable : false,
 			//draggable: false,
+			position: 'center',
 			width : 'auto',
 			position : 'top'
 		});

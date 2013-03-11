@@ -29,17 +29,16 @@ CREATE TABLE `interests` (
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
-
 CREATE TABLE `requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `sender_user_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `event_id` int(11) DEFAULT NULL,
-  `descr` text CHARACTER SET latin1,
+  `sender_user_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `event_id` int(11) NOT NULL,
+  `date` datetime NOT NULL,
+  `descr` text CHARACTER SET latin1 NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
