@@ -1,86 +1,116 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>JoinMe - Най-лесния начин да се забавляваш</title>
- 
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
-<meta name="keywords" content="събития, патуване, музика, технологии, море, планина, заведения, дискотеки, спорт, риболов, запознанства, образование, политика"/>
-
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-<script src="http://code.jquery.com/jquery-1.8.2.js"></script>    
-<script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
-
-<script type="text/javascript" src="js/jquery/jquery-ui-timepicker-addon.js"></script>
-<script type="text/javascript" src="js/jquery/jquery-ui-sliderAccess.js"></script>
-<script type="text/javascript" src="js/jquery/jquery-ui-timepicker-bg.js"></script>
-<script type="text/javascript" src="js/jquery/jquery.ui.datepicker-bg.js"></script>
-<script type="text/javascript" src="js/jquery/jquery.ui.datepicker-bg.js"></script>
-
-<script type="text/javascript" src="js/jquery/jquery.sha1.js"></script>
-<script type="text/javascript" src="js/jquery/jquery.poptrox-0.1.js"></script>
- 
-<script type="text/javascript" src="js/client.js"></script>
-<script type="text/javascript" src="js/utils.js"></script>
-<script type="text/javascript" src="js/system.js"></script>
-<script type="text/javascript" src="js/user.js"></script>
-
-<!-- facebook sdk -->
-<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
-	
-<!-- telerik kendo UI -->
-<link href="js/kendo/kendo.common.min.css" rel="stylesheet">
-<link href="js/kendo/kendo.default.min.css" rel="stylesheet">	
-<script src="js/kendo/kendo.web.min.js"></script>
-    
-	
-<link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css" />
-<link rel="stylesheet" media="all" type="text/css" href="css/jquery-ui-timepicker-addon.css" />
-<link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="css/buttons.css" media="screen" />
-<link REL="SHORTCUT ICON" HREF="images/logo.png" />    
-	
-</head>
-<body>
-<div id="main_container">
-    <div id="header">   
-    <div id="logo"><a href="http://bgjoin.nh.zonebg.com"><img src="images/logo.png" width="206" height="63" alt="" border="0" /></a></div>
-    <div id="menu">
-      <ul>
-         <li> <a href="#home" id="home-id">Начало</a></li>
-		 <li> <a href="#how-it-work" id="how-it-work-id">Как работи</a></li>
-		 <li> <a href="#my-events" id="my-events-id">Събития</a></li>
-		 <li> <a href="#my-requests" id="my-requests-id">Заявки</a></li>		 
-		 <li> <a href="#register" id="register-id">Регистрация</a></li>
-		 <li> <a href="#LogIn" id="login-id">Вход</a></li>
-		 <li> <a href="#Profile" id="profile-id">Профил</a></li>
-		 <li> <a href="#LogOut" id="exit-id">Изход</a></li>		
+п»ї<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>JoinMe - РЎРїРѕРґРµР»СЏРЅРµ РЅР° СЃСЉР±РёС‚РёСЏ</title>
 		 
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+		<meta name="keywords" content="СЃСЉР±РёС‚РёСЏ, РїР°С‚СѓРІР°РЅРµ, РјСѓР·РёРєР°, С‚РµС…РЅРѕР»РѕРіРёРё, РјРѕСЂРµ, РїР»Р°РЅРёРЅР°, Р·Р°РІРµРґРµРЅРёСЏ, РґРёСЃРєРѕС‚РµРєРё, СЃРїРѕСЂС‚, СЂРёР±РѕР»РѕРІ, Р·Р°РїРѕР·РЅР°РЅСЃС‚РІР°, РѕР±СЂР°Р·РѕРІР°РЅРёРµ, РїРѕР»РёС‚РёРєР°"/>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<script src="http://code.jquery.com/jquery-1.8.2.js"></script>    
+		<script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+
+		<script type="text/javascript" src="js/jquery/jquery-ui-timepicker-addon.js"></script>
+		<script type="text/javascript" src="js/jquery/jquery-ui-sliderAccess.js"></script>
+		<script type="text/javascript" src="js/jquery/jquery-ui-timepicker-bg.js"></script>
+		<script type="text/javascript" src="js/jquery/jquery.ui.datepicker-bg.js"></script>
+		<script type="text/javascript" src="js/jquery/jquery.ui.datepicker-bg.js"></script>
+
+		<script type="text/javascript" src="js/jquery/jquery.sha1.js"></script>
+		<script type="text/javascript" src="js/jquery/jquery.poptrox-0.1.js"></script>
+		 
+		<script type="text/javascript" src="js/client.js"></script>
+		<script type="text/javascript" src="js/utils.js"></script>
+		<script type="text/javascript" src="js/system.js"></script>
+		<script type="text/javascript" src="js/user.js"></script>
+
+		<!-- facebook sdk -->
+		<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
+			
+		<!-- telerik kendo UI -->
+		<link href="js/kendo/kendo.common.min.css" rel="stylesheet">
+		<link href="js/kendo/kendo.default.min.css" rel="stylesheet">	
+		<script src="js/kendo/kendo.web.min.js"></script>
+			
+			
+		<link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css" />
+		<link rel="stylesheet" media="all" type="text/css" href="css/jquery-ui-timepicker-addon.css" />
+				
+		<link rel="stylesheet" href="css/reset.css" type="text/css" media="screen">
+		<link rel="stylesheet" href="css/style.css" type="text/css" media="screen">
+		<link rel="stylesheet" href="css/bg-style.css" type="text/css" media="screen">
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" media="screen" />
 		
-		 <div style="margin: 30px 0 0 120px;" id="facebook-login">
-		 <a href="#facebook-login" id="loginButton">
-		 <img src="/facebook-login/login-facebook-button.png" /></a><br />
-		 </div>	
-		 
-      </ul>
-    </div>
-  </div>   
-  <div class="loader" id="lastPostsLoader"></div> 	
-  <div id="fb-root"></div>
-  <div id="presents-id"></div> 
-  <div id="search-id"></div> 
-  <div id="main-box"></div>   	
-  <div id="center_content">    	  
-    <div id="main-content"></div> 	
-    <div id="modal-form"></div> 	
-  </div>  
-  <div id="footer">
-	<div class="footer_links"> <a href="#" id="contact-id">Контакти</a> </div>   
-	<div class="footer_links"> <a href="#" id="service-id" >Услуги</a> </div>  
-	<div class="footer_links"> <a href="#" id="about-id">За нас</a> </div>   	
-  </div>
-  <div class="footer_links"><a href="http://www.facebook.com/bgjoinme" target="_blank"><img src="images/facebook.png" /></a> </div>   
-</div>
+		<link REL="SHORTCUT ICON" HREF="images/logo.png" /> 
+				
+		
+	</head>
+	<body>
+		<div class="extra">
+<!--==============================header=================================-->
+			<header>	
+				<div class="main">	
+					<div class="border-top">
+						<div class="wrapper">							
+							<nav>
+								<ul class="menu">									
+									<li> <a class="active" href="#home" id="home-id">РќР°С‡Р°Р»Рѕ</a></li>
+									<li> <a href="#how-it-work" id="how-it-work-id">РљР°Рє СЂР°Р±РѕС‚Рё</a></li>
+									<li> <a href="#my-events" id="my-events-id">РЎСЉР±РёС‚РёСЏ</a></li>
+									<li> <a href="#my-requests" id="my-requests-id">Р—Р°СЏРІРєРё</a></li>	
+									<li> <a href="#users" id="user-id">РџРѕС‚СЂРµР±РёС‚РµР»Рё</a></li>		 									
+									<li> <a href="#register" id="register-id">Р РµРіРёСЃС‚СЂР°С†РёСЏ</a></li>
+									<li> <a href="#LogIn" id="login-id">Р’С…РѕРґ</a></li>
+									<li> <a href="#Profile" id="profile-id">РџСЂРѕС„РёР»</a></li>
+									<li> <a href="#LogOut" id="exit-id">РР·С…РѕРґ</a></li>	
+											 
+								</ul>
+							</nav>
+						</div>
+						<div id="search-id"></div> 
+						<div class="loader" id="lastPostsLoader"></div>
+					</div>		
+													
+					<div class="slider-bg">					
+						<div class="slider">	
+							<img src="images/main_bg.png" />							
+							<div class="banner">
+								<strong class="title-1"><img src="images/logo.png" /></strong>								
+								<span class="text-1">РЎРѕС†РёР°Р»РЅР° РјСЂРµР¶Р° Р·Р° СЃРїРѕРґРµР»СЏРЅР° РЅР° СЃСЉР±РёС‚РёСЏ.</span>								
+								<a class="link" href="#">РџРѕСЃР»РµРґРІР°Р№ РјРµ!</a>								
+							</div>							
+						</div>
+					</div>					
+				</div>
+			</header>
+<!--==============================content================================-->
+			<section id="content"><div class="ic"></div>			
+				<div class="main">					
+						<aside>									
+							<div class="wrapper">
+								<article class="grid_8">
+								<div class="indent-left">									
+									<div class="wrapper indent-bot">										 
+										 <div id="fb-root"></div>										 
+										 <div id="modal-form"></div> 
+										 <div id="main-content"></div> 											 
+									</div>									
+								</div>
+							</article>
+						</aside>
+					</div>
+				</div>
+				<div class="block"></div>
+			</section>
+		</div>
+<!--==============================footer=================================-->
+		<div id="footer">
+			<div class="footer_links"> <a href="#" id="contact-id">РљРѕРЅС‚Р°РєС‚Рё</a> </div>   
+			<div class="footer_links"> <a href="#" id="service-id" >РЈСЃР»СѓРіРё</a> </div>  
+			<div class="footer_links"> <a href="#" id="about-id">Р—Р° РЅР°СЃ</a> </div>   		
+		</div> 
+		
+	</body>
 </html>
-

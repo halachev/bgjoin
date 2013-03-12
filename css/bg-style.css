@@ -1,0 +1,175 @@
+
+a{
+	text-decoration: none;	
+}
+a:hover{
+	color: red;
+}
+p{
+margin:0px;
+padding:3px 0 3px 0;
+line-height:15px;
+font-size:14px;
+}
+p.left{
+float:left;width:270px;line-height:17px;
+}
+h1{
+color:#cf0a09;
+font-size:18px;
+}
+
+img {
+border:none;
+}
+
+img.photo{
+float:left;
+padding:5px 10px 0 0;
+}
+.clear{
+clear:both;
+}
+
+
+.search{
+margin: 10px;
+margin: 20px;
+padding:5px 10px 0 10px;
+background-color: #fff;
+
+}
+.title{
+
+color:#cf0a09;
+clear:both;
+font-size:18px;
+padding:10px 0 0 15px;
+}
+.blue_title{
+
+color:#5dafe7;
+clear:both;
+font-size:18px;
+padding:5px 0 5px 0;
+}
+
+a.read_more {
+width:66px;
+height:21px;
+display:block;
+text-decoration:none;
+float:right;
+margin:5px 0 0 0;
+text-align:center;
+line-height:21px;
+color:#fff;
+background:url(../images/read_more.gif) no-repeat center;
+}
+a.button_view {
+width:120px;
+height:21px;
+display:block;
+text-decoration:none;
+float:right;
+margin:10px 10px 0 0;
+text-align:center;
+line-height:21px;
+color:#fff;
+background: #d11614;
+}
+
+a.button_view:hover {
+background: #d34614;
+}
+
+button{
+  color: #fff;
+  background: #d34614;
+}
+
+a.more {
+display:block;
+text-decoration:none;
+font-size:11px;
+float:right;
+font-weight:bold;
+margin:10px 0 0 0;
+padding:0 0 0 20px;
+color:#d11614;
+background:url(../images/red_heart.gif) no-repeat left;
+}
+
+
+.dialog-box {
+    opacity: 0.9; 
+	margin:10px auto 0 auto;
+    text-align:center;
+    display: block;
+    width:50px;
+    padding: 5px 10px 6px;   
+    text-decoration: none;    
+    line-height: 1;
+	border-radius: 15px 15px 0 0;
+    box-shadow: 0 -3px 3px 0 rgba(0,0,0,.15);
+	background:url(../images/left_banner.gif) repeat-x top #cfe1ed;
+}
+
+.error
+{
+	color: red; 	
+    text-align:center;
+    display: block;
+    width: auto;
+   
+}
+
+.even-image-data{
+color:#2d2d2d;
+clear:both;
+padding:10px 0 0 20px;
+background:url(../images/bg.png) no-repeat left top #cfe1ed;
+
+}
+
+.even-image-data:hover
+{
+	opacity: 0.7;	
+}
+
+.data-text{
+
+color:#2d2d2d;
+clear:both;
+padding:10px 0 0 15px;
+
+}
+
+.data-text:hover
+{
+	opacity: 0.7;	
+}
+
+.data-text-line-through{
+
+color:red;
+clear:both;
+font-size:18px;
+padding:10px 0 0 15px;
+text-decoration:line-through;
+
+}
+
+#image-dialog:hover
+{
+	opacity: 0.7;
+}
+
+.loader
+{
+	padding:0px 0 0 440px;
+	
+}
+
+
+

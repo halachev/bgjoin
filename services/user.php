@@ -111,6 +111,7 @@
 		{
 			
 			$username = convertToCyrillic(filter($this->username));
+			//$password = filter(md5($this->password));
 			$password = filter($this->password);
 			$email = filter($this->email);
 			
@@ -201,6 +202,7 @@
 		function LogIn()
 		{	
 			$username = filter($this->username);
+			//$password = filter(md5($this->password));
 			$password = filter($this->password);
 			
 			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u

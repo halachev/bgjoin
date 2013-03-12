@@ -2,8 +2,9 @@
 var system = {
 	
 	init : function () {
-	
+		
 		if (sessionId == null) {
+			$('.slider-bg').show();
 			$('#profile-id').hide();
 			$('#my-requests-id').hide();
 			$('#my-events-id').hide();
@@ -13,6 +14,7 @@ var system = {
 			$('#login-id').show();
 			$('#how-it-work-id').show();
 		} else {
+			$('.slider-bg').hide();
 			$('#profile-id').show();
 			$('#my-requests-id').show();
 			$('#my-events-id').show();
@@ -37,46 +39,19 @@ var system = {
 		return $('#main-content');
 	},
 	
-	initContent : function () {
-		
-		if (currUser == null)
-		{
-			$.get('ui/presents.html', function (login_data) {
-				$('#presents-id').html(login_data);
-			});
-		}
-		
-		system.search();
-		
-		this.content().html('<center><a href="#LoadMore" class="button_view">Показване на още</a></center>');
-		
-		var html =
-			
-			'<div class="center_bg">' +
-			
-			'<div id="leftHtml"></div>' +
-			'<div id="rightHtml"></div>' +
-			
-			'<div class="clear"></div>' +
-			
-			'</div>';
-		
-		user.GetLastUserEvents(); // assigned to leftHtml
-		user.GetLastUsers(); // assigned to rightHtml
-		
-		this.content().html(html);
-		
-		this.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');
+	initContent : function () {		
+		system.search();			
+		user.GetLastUserEvents();			
 		
 	},
 	
 	Loader : function (state) {
-	
+		
 		if (state)
 			$('div#lastPostsLoader').html('<img src="images/ajax-loader.gif">');
 		else
 			$('div#lastPostsLoader').html("");
-				
+		
 	},
 	
 	ShowLoginForm : function () {
@@ -130,17 +105,17 @@ var system = {
 			show : 'fadeIn',
 			resizable : false,
 			dialogClass : 'dialog-box',
-			position: 'center',
+			position : 'center',
 			buttons : {
 				"Close" : function () {
-										
-					// remove temporary image from images table 
+					
+					// remove temporary image from images table
 					//if does not have event
 					
 					var eventResponse = localStorage.getItem('eventResponse');
-				    if (eventResponse != null)
+					if (eventResponse != null)
 						user.deleteTempImage(eventResponse);
-						
+					
 					$(this).dialog("close");
 				}
 			},
@@ -155,7 +130,7 @@ var system = {
 			//show : 'fadeIn',
 			resizable : false,
 			//draggable: false,
-			position: 'center',
+			position : 'center',
 			width : 'auto',
 			position : 'top'
 		});
@@ -176,7 +151,7 @@ var system = {
 	},
 	
 	registerByFaceBook : function () {
-		
+		system.Loader(true);
 		FB.init({
 			appId : '167009306785503',
 			status : true,
@@ -228,6 +203,7 @@ var system = {
 				});
 				
 			});
+			
 		}
 		
 		function getUserInfo() {
@@ -237,6 +213,7 @@ var system = {
 		}
 		
 		FB.getLoginStatus(function (stsResp) {
+			system.Loader(false);
 			if (stsResp.authResponse) {
 				getUserInfo();
 			} else {
@@ -274,9 +251,8 @@ var system = {
 			
 			myAjax('ints.php', data, function (_data) {
 				
-				
 				var values = '<option value="0">Избрете категория</option>';
-					
+				
 				for (i in _data) {
 					var interest = _data[i];
 					values += '<option value="' + interest.id + '">' + interest.int_name + '</option>';
@@ -286,10 +262,11 @@ var system = {
 				$('#ints-id').html(values);
 				
 				$("#ints-id").change(function () {
-					var _id = $('#ints-id').val();	
+					var _id = $('#ints-id').val();
+					
 					if (_id > 0)
 						system.GetEventsByIntID(_id);
-					else 
+					else
 						system.initContent();
 				});
 				
@@ -313,17 +290,19 @@ var system = {
 	},
 	
 	GetEventsByIntID : function (_id) {
-		system.Loader(true);		
-		myAjax("event.php", {		
-			id: _id,			
+		system.Loader(true);
+		myAjax("event.php", {
+			id : _id,
 			limit : FIRST_MAX_EVENTS,
 			method : "GetEventsByIntID"
-		}, function (_data) {			
-			var html = user.ShowUserEvents(_data);			
-			$('#leftHtml').html(html);
+		}, function (_data) {
+			var html = user.ShowUserEvents(_data);
+			system.content().html(html);
 			
-			if (_data.length <=0)
-				alert("Няма намерени резултати!");
+			if (_data.length <= 0)
+			{			
+				alert("Няма намерени резултати!");				
+			}
 			
 			system.Loader(false);
 		});

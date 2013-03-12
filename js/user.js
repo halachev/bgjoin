@@ -1,6 +1,4 @@
-﻿//user oject
-//user oject
-
+﻿//user object
 var user = {
 	
 	currentUser : function () {
@@ -22,9 +20,9 @@ var user = {
 			method : "users"
 		}, function (_data) {
 			
-			var html = user.ShowUsers(_data);
-			$('#rightHtml').html(html);
-			
+			var html = user.ShowUsers(_data);			
+			system.content().html(html);				
+			system.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');			
 			system.Loader(false);
 		});
 		
@@ -39,7 +37,7 @@ var user = {
 			
 			var html = user.ShowUserEvents(_data);
 			
-			$('#leftHtml').html(html);
+			system.content().html(html);
 			system.Loader(false);
 		});
 		
@@ -87,15 +85,19 @@ var user = {
 					if (_user.descr != null)
 						_descr = _user.descr;
 					
+					var imgSize = "160";
+					if (IsMyProfile)
+						imgSize = "75";
+						
 					if (_user.ThumbName != null)
-						html += '<a href="' + _user.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + _user.ThumbName + '" width="100"/></a>';
+						html += '<a href="' + _user.ImageName + '" id="image-dialog"><img src="' + _user.ThumbName + '" width='+imgSize+'/></a>';
 					else
-						html += '<img src="images/user.png" width="35"/>';
+						html += '<img src="images/empty-image.png" width="'+imgSize+'"/>';
 					
 				}
 				
-				html += '<div class="blue_title">' + _user.username + '</div>' +
-				'<p>Описансие: <br/>' + _descr + '</p>' +
+				html += '<p class="text-1>' + _user.username + '</p>' +
+				'<p class="p0" >Описансие: <br/>' + _descr + '</p>' +
 				'<a href="#">Събития на ' + _user.username + '</a>';
 				
 				system.Loader(false);
@@ -111,7 +113,7 @@ var user = {
 					user.addImage(user_image);
 				});
 				
-				$("a[href=#delete-user]").live("click", function () {					
+				$("a[href=#delete-user]").live("click", function () {
 					user.remove();
 				});
 				
@@ -200,15 +202,12 @@ var user = {
 			
 			myAjax("user.php", data, function (_data) {
 				
-				var html = user.ShowUserEvents(_data);
+				var html = user.ShowUsers(_data);				
 				
-				var html = user.ShowUsers(_data);
-				
-				$('#rightHtml').html(html);
-				
-				$('#rightHtml').hide();
-				$('#rightHtml').fadeIn(1000);
-				
+				system.content().html(html);				
+				system.content().hide();
+				system.content().fadeIn(1000);
+				system.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');
 				var id = 0;
 				for (i in _data) {
 					var u = _data[i];
@@ -233,8 +232,7 @@ var user = {
 	
 	ShowUsers : function (users) {
 		
-		var html = '<div class="right_content">' +
-			'<div class="title"><img src="images/users-icon.png" />&nbsp;&nbsp;Потребители</div><br/><a href="#LoadMore" class="button_view">Показване на още</a>';
+		var html = "<h3>Потребители</h3>";
 		
 		for (i in users) {
 			
@@ -246,19 +244,18 @@ var user = {
 			if (user.descr != null)
 				descr = user.descr;
 			
-			html +=
-			'<div class="member_tab">' +
-			'<div class="member_details">';
+			var image = '';
 			
-			if (user.ImageName != null)
-				html += '<a href="#selected-user" id=' + user.id + '><img class="data-text" src="' + user.ImageName + '" width="100"/></а>';
+			if (user.ThumbName != null)
+				image = '<a href="#selected-user" id=' + user.id + ' ><img class="border" src="' + user.ThumbName + '" alt="" width="160"></a>';
 			else
-				html += '<a href="#selected-user" id=' + user.id + '><img class="data-text" src="images/user.png" width="35"/></а>';
+				image = '<a href="#selected-user" id=' + user.id + ' ><img class="border" src="images/empty-image.png" alt="" width="160" height="160"></a>';
 			
-			html += '<div><a href="#selected-user" id=' + user.id + '>' + '<p class="data-text">' + user.username + '</p></a></div>' +
-			'<a style="margin: 20px 0 0 15px;" href="#selected-user" id=' + user.id + '>Събития на ' + user.username + '</a><br/>' +
-			'<a href="#selected-user" id=' + user.id + ' class="read_more">Профил</a></div>' +
-			'</div>';
+			html += '<article class="col-2">' +
+			'<h6>' + user.username + '</h6>' +
+			'<figure class="p2"><a href="#selected-user"></a>' + image + '</figure>' +
+			
+			'</article>';
 			
 		}
 		
@@ -267,9 +264,7 @@ var user = {
 	
 	ShowUserEvents : function (events) {
 		
-		var html = '<div class="left_content"> ' +
-			'<div class="title"><img src="images/event_icon.png" />&nbsp;&nbsp;Последни събития &nbsp;&nbsp;' +
-			'</div><br/>';
+		var html = "<h3>Последни събития</h3>";
 		
 		for (i in events) {
 			var event = events[i];
@@ -280,13 +275,16 @@ var user = {
 			var image = '';
 			
 			if (event.ThumbName != null)
-				image = '<img class="data-text" src="' + event.ThumbName + '" width="100"/>';
+				image = '<a href="#selectedEvent" id=' + event.id + ' ><img class="border" id=' + event.id + ' src="' + event.ThumbName + '" alt="" width="160"></a>';
+			else
+				image = '<a href="#selectedEvent" id=' + event.id + ' ><img class="border" src="images/empty-image.png" alt="" width="160" height="160"></a>';
 			
-			html +=
-			
-			'<a href="#selectedEvent" id=' + event.id + '>' +
-			'<p class="data-text">' + event.name + '</p>' + image + '</a>' +
-			'<p style="padding: 15px;">' + event.date + '</p><br/>';
+			html += '<article class="col-2">' +
+			'<h6>' + event.name + '</h6>' +
+			'<p class="p0">' + event.date + '</p>' +
+			'<a class="link" href="#selectedEvent" id=' + event.id + '>Детайли</a>' +
+			'<figure class="p2"><a href="#selectedEvent" id=' + event.id + '></a>' + image + '</figure>' +
+			'</article>';
 			
 		}
 		
@@ -561,7 +559,7 @@ var user = {
 				var event = $.parseJSON(JSON.stringify(_data))[0];
 				
 				if (event.ThumbName != null)
-					image += '<a href="' + event.ImageName + '" id="image-dialog">&nbsp;&nbsp; <img src="' + event.ThumbName + '" width="100"/></a>';
+					image += '<a href="' + event.ImageName + '" id="image-dialog"><img src="' + event.ThumbName + '" width="160"/></a><br/><br/>';
 				
 				var _descr = ""
 					if (event.descr != null)
@@ -577,16 +575,17 @@ var user = {
 					
 				}
 				
-				html += image +
-				'<p class="blue_title">' + event.name + '</p>' +
-				'<p><b>Дата:</b><br/>' + event.date + '</p>' +
-				'<p><b>Категория:</b><br/>' + event.int_name + '</p>' +
-				'<p><b>Описание:</b><br/>' + _descr + '</p>' +
+				html +=
+				'<p class="text-1">' + event.name + '</p>' + image +
+				'<p class="p0"><b>Дата:</b><br/>' + event.date + '</p>' +
+				'<p class="p0"><b>Категория:</b><br/>' + event.int_name + '</p>' +
+				'<p class="p0"><b>Описание:</b><br/>' + _descr + '</p>' +
 				'<p class="blue_title"">Изберете бутона заявка, ако проявявате интерес към това събитие.</p>';
 				
 				$('#event-detail').html(html);
 				system.Loader(false);
 				localStorage.setItem('user_id', event.user_id);
+				
 			})
 			
 			//edit mode
@@ -644,8 +643,7 @@ var user = {
 				
 				var c = confirm('Изтриване на събитие?');
 				
-				if (!c)
-				{
+				if (!c) {
 					e.defaultPrevent();
 					return;
 				}
@@ -687,7 +685,7 @@ var user = {
 						sender_user_id : system.currentUser().id,
 						user_id : user_id,
 						event_id : _eventId,
-						date: serverDateTime, 
+						date : serverDateTime,
 						descr : $('#request-descr').val(),
 						method : 'insert'
 					}
@@ -728,7 +726,7 @@ var user = {
 					
 					requestData.push({
 						name : html,
-						date: request.date
+						date : request.date
 					})
 				}
 				
@@ -818,7 +816,8 @@ var user = {
 					template : "<div>#=name#</div>"
 				}, {
 					field : "date",
-					title : "Дата"
+					title : "Дата",
+					template : "<div>#=date#</div>"
 				}
 			]
 		});

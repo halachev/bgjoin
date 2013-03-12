@@ -61,6 +61,10 @@ $(document).ready(function () {
 		
 	});
 	
+	$("#user-id").click(function (){		
+		user.GetLastUsers();		
+	})
+
 	$('#exit-id').click(function (e) {
 		user.LogOut();
 	});

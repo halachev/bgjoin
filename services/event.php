@@ -245,7 +245,11 @@
 		
 		function GetEventsByIntID($id) {
 			
-			$results = mysql_query("select * from events where int_id='$id'");
+			
+				$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type, ints.int_name from events e
+						left outer join images  i on (i.objectid = e.id) 
+						left outer join interests  ints on (ints.id = e.int_id)  
+						where e.int_id='$id'");
 			
 			$data = array();
 			
