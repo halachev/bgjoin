@@ -468,7 +468,7 @@ var user = {
 		}
 		
 		myAjax("event.php", data, function (_data) {
-			
+						
 			var data = $.parseJSON(JSON.stringify(_data));
 			var event = data[0];
 			
@@ -543,7 +543,7 @@ var user = {
 		
 		//view mode
 		system.Loader(true);
-		$.get('ui/view-event.html', function (login_data) {
+		$.get('ui/view-event.php', function (login_data) {
 			
 			system.content().html(login_data);
 			
@@ -585,7 +585,8 @@ var user = {
 				$('#event-detail').html(html);
 				system.Loader(false);
 				localStorage.setItem('user_id', event.user_id);
-				
+				window.history.pushState("!", "", '#!'+_eventId+''); 
+					
 			})
 			
 			//edit mode

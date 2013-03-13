@@ -25,8 +25,7 @@ var user_image = 1;
 var event_image = 2;
 
 $(document).ready(function () {
-
-	gethash();
+	
 	//start application
 	system.init();
 	
@@ -36,7 +35,7 @@ $(document).ready(function () {
 	});
 	
 	$('#how-it-work-id').click(function (e) {
-		system.how_it_work();
+		system.how_it_work();		
 	});
 	
 	$('#login-id').click(function (e) {
@@ -45,7 +44,7 @@ $(document).ready(function () {
 	});
 	
 	$('#register-id').click(function (e) {
-		system.ShowRegisterForm();
+		system.ShowRegisterForm();		
 	});
 	
 	$('#my-requests-id').click(function (e) {

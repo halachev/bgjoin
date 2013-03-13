@@ -39,10 +39,24 @@ var system = {
 		return $('#main-content');
 	},
 	
-	initContent : function () {		
-		system.search();			
-		user.GetLastUserEvents();			
+	initContent : function () {	
 		
+		// check for go back button 	
+		gethash();		
+		
+		system.search();	
+		
+		//check for hash string ???
+		var hash = window.location.hash; // get !# 
+		id = hash.slice(1).replace('!', '') // replace
+		
+		//at the moment we have only event view ...
+		if (id > 0)
+			$('#main-content').load('http://bgjoin.nh.zonebg.com/ui/view-event.php?_escaped_fragment_='+id+'');
+		else
+		  user.GetLastUserEvents();	// first load events
+		
+			
 	},
 	
 	Loader : function (state) {

@@ -1,16 +1,16 @@
-/* Bulgarian translation for the jQuery Timepicker Addon */
+п»ї/* Bulgarian translation for the jQuery Timepicker Addon */
 /* Written by Plamen Kovandjiev */
 (function($) {
 	$.timepicker.regional['bg'] = {
-		timeOnlyTitle: 'Изберете време',
-		timeText: 'Време',
-		hourText: 'Час',
-		minuteText: 'Минути',
-		secondText: 'Секунди',
-		millisecText: 'Милисекунди',
-		timezoneText: 'Часови пояс',
-		currentText: 'Сега',
-		closeText: 'Затвори',
+		timeOnlyTitle: 'РР·Р±РµСЂРµС‚Рµ РІСЂРµРјРµ',
+		timeText: 'Р’СЂРµРјРµ',
+		hourText: 'Р§Р°СЃ',
+		minuteText: 'РњРёРЅСѓС‚Рё',
+		secondText: 'РЎРµРєСѓРЅРґРё',
+		millisecText: 'РњРёР»РёСЃРµРєСѓРЅРґРё',
+		timezoneText: 'Р§Р°СЃРѕРІРё РїРѕСЏСЃ',
+		currentText: 'РЎРµРіР°',
+		closeText: 'Р—Р°С‚РІРѕСЂРё',
 		timeFormat: 'HH:mm',
 		amNames: ['AM', 'A'],
 		pmNames: ['PM', 'P'],

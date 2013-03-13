@@ -1,4 +1,4 @@
-п»ї<?php
+<?php
    
 	include "connect.php";
 	include "utils.php";
@@ -112,7 +112,7 @@
 			
 			if (strlen ($name > 50))
 			{
-				$data = array("error_message" => "РњР°РєСЃРёРјР°Р»РЅР° РґСЉР»Р¶РёРЅР° РЅР° Р·Р°РіР»Р°РІРёРµ 50 Р·РЅР°РєР°");
+				$data = array("error_message" => "Максимална дължина на заглавие 50 знака");
 				echo json_safe_encode($data);
 				exit;				
 			}
@@ -120,24 +120,24 @@
 			
 			if (strlen ($descr > 250))
 			{
-				$data = array("error_message" => "РњР°РєСЃРёРјР°Р»РЅР° РґСЉР»Р¶РёРЅР° РЅР° РѕРїРёСЃР°РЅРёРµ 250 Р·РЅР°РєР°");
+				$data = array("error_message" => "Максимална дължина на описание 250 знака");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
 			if ((!$name) || (!$date) || (!$descr))
 			{
-				$data = array("error_message" => "Р’СЃРёС‡РєРё РїРѕР»РµС‚Р° Р·Р°РґСЉР»Р¶РёС‚РµР»РЅРё!");
+				$data = array("error_message" => "Всички полета задължителни!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
-			//РїСЂРѕРІРµСЂРєР° Р·Р° СЃСЉС‰РµСЃРІСѓРІР°С‰Рѕ РёРјРµ
+			//проверка за същесвуващо име
 			$count = $this->ExistEventName();
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "РРјРµС‚Рѕ Рµ Р·Р°РµС‚Рѕ!");				
+				$data = array("error_message" => "Името е заето!");				
 				echo json_safe_encode($data);
 			
 			}
@@ -146,7 +146,7 @@
 			{
 				$results = mysql_query("insert into events (name, date, descr, int_id, user_id) values('$name', '$date', '$descr', '$int_id', '$user_id') ");
 			
-				// РІСЂСЉС‰Р°РјРµ РЅРѕРІРёСЏ РѕР±РµРєС‚ РЅР° РєР»РёРµРЅС‚Р°
+				// връщаме новия обект на клиента
 				$newId = mysql_insert_id();							
 				echo $this->getEventById($newId);
 			}
@@ -184,8 +184,9 @@
 			
 			while ($row = mysql_fetch_assoc($results)) {
 			   $data[] = $row;
+			   		
 			}
-		   		    
+		   	
 			return json_safe_encode($data);
 		}
 		
@@ -203,7 +204,7 @@
 			
 			if (($this->id <= 0) || ($this->sessionId == null))
 			{
-			    $data = array("system error" => "Р’СЉР·РЅРёРєРЅР° РїСЂРѕР±Р»РµРј!РњРѕР»СЏ, РѕР±СЉСЂРЅРµС‚Рµ СЃРµ РєСЉРј Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°.");
+			    $data = array("system error" => "Възникна проблем!Моля, обърнете се към администратора.");
 				
 				return json_safe_encode($data);				
 			}

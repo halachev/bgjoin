@@ -40,7 +40,7 @@ $(window).scroll(function () {
 	
 	if ($(window).scrollTop() == $(document).height() - $(window).height()) {
 		
-		//user.lastPosts();
+		//user.lastUserPosts();
 		
 	}
 });
