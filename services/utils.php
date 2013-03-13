@@ -14,7 +14,7 @@ function filter($data) {
 
 function convertToCyrillic($_str)
 {
-	  $_str = mb_convert_encoding($_str,'cp1251','utf8');		
+	  $_str = mb_convert_encoding($_str,'utf8','cp1251');		
 	  mb_internal_encoding('cp1251');
       return $_str;
 }	

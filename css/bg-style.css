@@ -124,19 +124,6 @@ background:url(../images/red_heart.gif) no-repeat left;
    
 }
 
-.even-image-data{
-color:#2d2d2d;
-clear:both;
-padding:10px 0 0 20px;
-background:url(../images/bg.png) no-repeat left top #cfe1ed;
-
-}
-
-.even-image-data:hover
-{
-	opacity: 0.7;	
-}
-
 .data-text{
 
 color:#2d2d2d;

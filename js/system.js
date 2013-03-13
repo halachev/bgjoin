@@ -52,7 +52,7 @@ var system = {
 		
 		//at the moment we have only event view ...
 		if (id > 0)
-			$('#main-content').load('http://bgjoin.nh.zonebg.com/ui/view-event.php?_escaped_fragment_='+id+'');
+			$('#main-content').load('/ui/view-event.php?_escaped_fragment_='+id+'');
 		else
 		  user.GetLastUserEvents();	// first load events
 		

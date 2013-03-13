@@ -15,18 +15,18 @@
 			
 	$data = array();
 	while ($row = mysql_fetch_assoc($results)) {
-		
-		$title  = $row['name']; 
+				
+		$title  = convertToCyrillic($row['name']); 
 		$date  = $row['date']; 
 		$image = $row['ImageName'];		
-		$descr = $row['descr'];
+		$descr = convertToCyrillic($row['descr']);
+		$detail = '<a class="link" href="#selectedEvent" id=' .$id.'>Детайли</a>';
 		
-		
-		$data = '<article class="col-2">'.
-				'<h6>'.$title.'</h6>'.			
-				'<p class="p0">'.$date.'</p>'.
+		$data = '<article>'.
+				'<p class=text-1>'.$title.'</p>'.			
+				'<p class="p0"><strong>Дата на събитие: </strong><br/>'.$date.'</p>'.
 				'<img class="border" src="'.$image.'" alt="" width="160">'.				
-				'<p class="p0">'.$descr.'</p>'.				
+				'<p class="p0"><strong>Описание: <br/></strong>'.$descr.'</p>'.	$detail.				
 				'</article>';
 				
 		echo $data;
