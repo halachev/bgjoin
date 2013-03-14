@@ -83,12 +83,19 @@
 		{
 			
 			$currTime = date("Y-m-d H:i:s", time());
+			
 			if ($this->limit > 0)
-				$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type from events e
-						left outer join images  i on (i.objectid = e.id) where '$currTime' <= e.date order by id desc limit $this->limit");
-			else
-				$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type from events e
-						left outer join images  i on (i.objectid = e.id) where '$currTime' <= e.date order by id desc ");
+				$results = mysql_query("select e.*,  
+						i.objectid, 
+						i.ImageName, 
+						i.ThumbName, 
+						i.type,
+						_user.username as username
+						from events e						
+						left outer join images  i on (i.objectid = e.id) 
+						left outer join users _user on (_user.id = e.user_id) 
+						where '$currTime' <= e.date order by id desc limit $this->limit");
+			
 			
 			$data = array();
 			
@@ -175,8 +182,15 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type, ints.int_name from events e
+			$results = mysql_query("select e.*,  i.objectid, 
+						i.ImageName, 
+						i.ThumbName, 
+						i.type, 
+						ints.int_name,
+						_user.username as username
+						from events e
 						left outer join images  i on (i.objectid = e.id) 
+						left outer join users _user on (_user.id = e.user_id) 
 						left outer join interests  ints on (ints.id = e.int_id)  
 						where e.id='$id'");
 			

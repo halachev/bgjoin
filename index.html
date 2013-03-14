@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<title>JoinMe - Споделяне на събития</title>
-		 
+		<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">   
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="keywords" content="събития, патуване, музика, технологии, море, планина, заведения, дискотеки, спорт, риболов, запознанства, образование, политика"/>
 
@@ -96,7 +96,16 @@
 								<article class="grid_8">
 								<div class="indent-left">									
 									<div class="wrapper indent-bot">										 
-										 <div id="fb-root"></div>										 
+										<!-- facebook likes -->
+										<div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=186609524720286&amp;xfbml=1"></script>
+										<div id="fblikeblock"></div>
+										<script>
+											var url = 'http://apps.facebook.com/inflatableicons/image_preview.html?y=167009306785503';
+											jQuery("#fblikeblock").html('<fb:like id="fbLike" href="'+url+'" send="true" width="450" show_faces="true" font=""></fb:like>');
+											FB.XFBML.parse(document.getElementById('fblikeblock'));
+											console.log(document.getElementById('fblikeblock'));
+										  </script>
+
 										 <div id="modal-form"></div> 
 										 <div id="main-content"></div> 											 
 									</div>									
@@ -117,3 +126,4 @@
 		
 	</body>
 </html>
+

@@ -39,23 +39,23 @@ var system = {
 		return $('#main-content');
 	},
 	
-	initContent : function () {	
+	initContent : function () {
 		
-		// check for go back button 	
-		gethash();		
+		// check for go back button
+		gethash();
 		
-		system.search();	
+		system.search();
 		
 		//check for hash string ???
-		var hash = window.location.hash; // get !# 
+		var hash = window.location.hash; // get !#
 		id = hash.slice(1).replace('!', '') // replace
-		
-		//at the moment we have only event view ...
-		if (id > 0)
-			$('#main-content').load('/ui/view-event.php?_escaped_fragment_='+id+'');
-		else
-		  user.GetLastUserEvents();	// first load events
-		
+			
+			//at the moment we have only event view ...
+			if (id > 0)
+				$('#main-content').load('/ui/view-event.php?_escaped_fragment_=' + id + '');
+			else
+				user.GetLastUserEvents(); // first load events
+			
 			
 	},
 	
@@ -313,9 +313,8 @@ var system = {
 			var html = user.ShowUserEvents(_data);
 			system.content().html(html);
 			
-			if (_data.length <= 0)
-			{			
-				alert("Няма намерени резултати!");				
+			if (_data.length <= 0) {
+				alert("Няма намерени резултати!");
 			}
 			
 			system.Loader(false);

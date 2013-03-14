@@ -20,9 +20,9 @@ var user = {
 			method : "users"
 		}, function (_data) {
 			
-			var html = user.ShowUsers(_data);			
-			system.content().html(html);				
-			system.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');			
+			var html = user.ShowUsers(_data);
+			system.content().html(html);
+			system.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');
 			system.Loader(false);
 		});
 		
@@ -88,11 +88,11 @@ var user = {
 					var imgSize = "160";
 					if (IsMyProfile)
 						imgSize = "75";
-						
+					
 					if (_user.ThumbName != null)
-						html += '<a href="' + _user.ImageName + '" id="image-dialog"><img src="' + _user.ThumbName + '" width='+imgSize+'/></a>';
+						html += '<a href="' + _user.ImageName + '" id="image-dialog"><img src="' + _user.ThumbName + '" width=' + imgSize + '/></a>';
 					else
-						html += '<img src="images/empty-image.png" width="'+imgSize+'"/>';
+						html += '<img src="images/empty-image.png" width="' + imgSize + '"/>';
 					
 				}
 				
@@ -202,9 +202,9 @@ var user = {
 			
 			myAjax("user.php", data, function (_data) {
 				
-				var html = user.ShowUsers(_data);				
+				var html = user.ShowUsers(_data);
 				
-				system.content().html(html);				
+				system.content().html(html);
 				system.content().hide();
 				system.content().fadeIn(1000);
 				system.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');
@@ -280,7 +280,7 @@ var user = {
 				image = '<a href="#selectedEvent" id=' + event.id + ' ><img class="border" src="images/empty-image.png" alt="" width="160" height="160"></a>';
 			
 			html += '<article class="col-2">' +
-			'<h6>' + event.name + '</h6>' +
+			'<h6>' + '<a href="#selected-user" id=' + event.user_id + '>' + event.username + '</a><br/>' + event.name + '</h6>' +
 			'<p class="p0">' + event.date + '</p>' +
 			'<a class="link" href="#selectedEvent" id=' + event.id + '>Детайли</a>' +
 			'<figure class="p2"><a href="#selectedEvent" id=' + event.id + '></a>' + image + '</figure>' +
@@ -459,7 +459,7 @@ var user = {
 		}
 		
 		myAjax("event.php", data, function (_data) {
-						
+			
 			var data = $.parseJSON(JSON.stringify(_data));
 			var event = data[0];
 			
@@ -571,13 +571,15 @@ var user = {
 				'<p class="p0"><b>Дата:</b><br/>' + event.date + '</p>' +
 				'<p class="p0"><b>Категория:</b><br/>' + event.int_name + '</p>' +
 				'<p class="p0"><b>Описание:</b><br/>' + _descr + '</p>' +
+				'<p class="p0"><b>Добавено от :</b><br/>' + event.username + '</p>' +
+				
 				'<p class="blue_title"">Изберете бутона заявка, ако проявявате интерес към това събитие.</p>';
 				
 				$('#event-detail').html(html);
 				system.Loader(false);
 				localStorage.setItem('user_id', event.user_id);
-				window.history.pushState("!", "", '#!'+_eventId+''); 
-					
+				window.history.pushState("!", "", '#!' + _eventId + '');
+				
 			})
 			
 			//edit mode

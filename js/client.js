@@ -109,11 +109,12 @@ $(document).ready(function () {
 	});
 	
 	$("a[href=#selectedEvent]").live("click", function () {
+		
 		if (currUser == null) {			
 			system.ShowRegisterForm();
 			return;
 		}
-		
+		var _id = $(this).attr('id');
 		user.viewEvent(_id);
 	});
 	
