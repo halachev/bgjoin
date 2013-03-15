@@ -3,7 +3,14 @@ article, aside, audio, canvas, command, datalist, details, embed, figcaption, fi
 mark, rp, rt, ruby, summary, time {display:inline;}
 /* Global properties ======================================================== */
 html {width:100%;}
-body {font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#2d2d2d;min-width:980px;background:#f5f5f5}
+body {
+font-family:Arial, Helvetica, sans-serif;
+font-size:12px;
+color:#2d2d2d;
+min-width:980px;
+background: url(../images/background.jpg) no-repeat center center fixed #fff;
+}
+
 .ic {border:0;float:right;background:#fff;color:#f00;width:50%;line-height:10px;font-size:10px;margin:-220% 0 0 0;overflow:hidden;padding:0}
 .bg {width:100%; background:url(../images/bg-top.jpg) center 0 no-repeat;}
 .main {
@@ -83,9 +90,9 @@ p {margin-bottom:18px;}
 
 .menu li a,
 .list-1 li a,
-.link,
+.link ,
 .button,
-h1 a {text-decoration:none;}	
+h1 a {text-decoration:none; color:}	
 
 /*********************************header*************************************/
 header {

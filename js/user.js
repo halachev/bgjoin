@@ -96,9 +96,9 @@ var user = {
 					
 				}
 				
-				html += '<p class="text-1>' + _user.username + '</p>' +
+				html += '<h6>' + _user.username + '</h6>' +
 				'<p class="p0" >Описансие: <br/>' + _descr + '</p>' +
-				'<a href="#">Събития на ' + _user.username + '</a>';
+				'<a class="link" href="#">Събития на ' + _user.username + '</a>';
 				
 				system.Loader(false);
 				
@@ -279,8 +279,13 @@ var user = {
 			else
 				image = '<a href="#selectedEvent" id=' + event.id + ' ><img class="border" src="images/empty-image.png" alt="" width="160" height="160"></a>';
 			
+			if (event.name.length > 20)
+				subStr = event.name.substr(0, 18) + '...';
+			else
+				subStr = event.name;
+			
 			html += '<article class="col-2">' +
-			'<h6>' + '<a href="#selected-user" id=' + event.user_id + '>' + event.username + '</a><br/>' + event.name + '</h6>' +
+			'<h6>' + '<a href="#selected-user" id=' + event.user_id + '>' + event.username + '</a><br/>' + subStr + '</h6>' +
 			'<p class="p0">' + event.date + '</p>' +
 			'<a class="link" href="#selectedEvent" id=' + event.id + '>Детайли</a>' +
 			'<figure class="p2"><a href="#selectedEvent" id=' + event.id + '></a>' + image + '</figure>' +
@@ -445,6 +450,12 @@ var user = {
 			return false;
 		}
 		
+		if (data.date.length <= 0) {
+			
+			system.error($('#event-date'), '<p>Моля, изберете дата!</p>');
+			return false;
+		}
+		
 		//check validation for user
 		$(".error").hide();
 		
@@ -463,9 +474,6 @@ var user = {
 			var data = $.parseJSON(JSON.stringify(_data));
 			var event = data[0];
 			
-			$('#my-events-list').append("<h1>Успешно дабавихте вашето събитие!</h1>");
-			$('#modal-form').dialog("close");
-			
 			//update image objectid and type by event
 			//read eventResponse from localStorage
 			var eventResponse = localStorage.getItem('eventResponse');
@@ -473,10 +481,14 @@ var user = {
 				user.updateImage(eventResponse, event.id, event_image);
 			//
 			
+			$('#my-events-list').html('<h1 class="data-text">Успешно дабавихте вашето събитие!</h1>');
+			user.my_events();
+			$('#modal-form').dialog("close");
+			
 		});
 	},
 	
-	my_events : function () {
+	my_events : function (e) {
 		
 		system.Loader(true);
 		$.get('ui/my-events.html', function (login_data) {
@@ -506,12 +518,37 @@ var user = {
 						style = "class = data-text-line-through";
 					
 					var html = '<a href="#my_event-view" id="' + event.id + '"><p ' + style + '>' + event.name + '</p></a>';
+					var actions =
+						'<a class="data-text" href="#edit-event-request" id="' + event.id + '"><img src="images/edit.png"> Редакция</a>' +
+						'<a class="data-text" href="#remove-event-request" id="' + event.id + '"><img src="images/del.png"> Изтриване</a>';
 					
 					eventsData.push({
 						name : html,
-						date : event.date
+						date : event.date,
+						actions : actions
 					});
 				}
+				
+				$("a[href=#edit-event-request]").live("click", function (e) {
+					var _id = $(this).attr('id');
+					user.editEvent(_id);
+					e.defaultPrevent();
+					
+				});
+				
+				$("a[href=#remove-event-request]").live("click", function (e) {
+					
+					var c = confirm('Изтриване на събитие?');
+					
+					if (c) {
+						var _id = $(this).attr('id');					
+						user.delEvent(_id);										
+					}
+					else
+					  e.defaultPrevent();	
+									
+					
+				});
 				
 				user.kendoGrid(system.content(), eventsData);
 				system.Loader(false);
@@ -519,15 +556,85 @@ var user = {
 			
 			$('#add-event-id').click(function () {
 				user.addEvent();
+				e.defaultPrevent();
 			})
 			
 			$("a[href=#my_event-view]").live('click', function () {
 				
 				var _id = $(this).attr('id');
 				user.viewEvent(_id);
+				e.defaultPrevent();
 			})
 			
 		});
+				
+	},
+	
+	editEvent : function (_eventId) {
+		//edit mode
+		
+		
+		$.get('ui/edit-event.html', function (login_data) {
+			$('#modal-form').html(login_data);
+			$('#event-date').datetimepicker();
+			
+			var data = {
+				sessionId : sessionId,
+				id : _eventId,
+				method : 'getEventById'
+			};
+			
+			myAjax("event.php", data, function (_data) {
+				var event = $.parseJSON(JSON.stringify(_data))[0];
+				
+				$('#event-name').val(event.name);
+				$('#event-date').val(event.date);
+				$('#event-descr').val(event.descr);
+			});
+			
+			$('#btn-edit-event').click(function () {
+				
+				$('#event-detail').append('<h1>Изпратихте заявка към потребителя.<br/>Успех!</h1>');
+				
+				var user_id = localStorage.getItem('user_id');
+				
+				var data = {
+					sessionId : sessionId,
+					id : _eventId,
+					name : $('#event-name').val(),
+					date : $('#event-date').val(),
+					descr : $('#event-descr').val(),
+					method : 'edit'
+				};
+				
+				myAjax('event.php', data, function (_data) {
+					
+					if (!CheckServerError(_data))
+						return;
+					$('#modal-form').dialog("close");
+					user.my_events(_eventId);
+				});
+			});
+			
+		});
+		
+		system.ShowDialog($('#modal-form'), 'Редакция');
+		
+	},
+	
+	delEvent : function (_eventId) {
+		
+		var data = {
+			sessionId : sessionId,
+			id : _eventId,
+			method : 'delete'
+		};
+		
+		myAjax("event.php", data, function (_data) {
+			$('#event-detail').html('<p class="title">Събитието беше успешно изтрито!</p>').show('slow');			
+			user.my_events();	
+		});
+		
 	},
 	
 	viewEvent : function (_eventId) {
@@ -561,16 +668,16 @@ var user = {
 				if (event.user_id != user.currentUser().id)
 					html += '<a href="#make-event-request" class="button_view">Заявка</a>';
 				else {
-					html += '<a href="#remove-event-request" class="button_view">Изтриване</a>';
-					html += '<a href="#edit-event-request" class="button_view">Редакция</a>';
+					html += '<a href="#remove-event-request" id="' + _eventId + '" class="button_view">Изтриване</a>';
+					html += '<a href="#edit-event-request" id="' + _eventId + '" class="button_view">Редакция</a>';
 					
 				}
 				
 				html +=
 				'<p class="text-1">' + event.name + '</p>' + image +
-				'<p class="p0"><b>Дата:</b><br/>' + event.date + '</p>' +
+				'<p class="p0"><b>Дата на събитие:</b><br/>' + event.date + '</p>' +
 				'<p class="p0"><b>Категория:</b><br/>' + event.int_name + '</p>' +
-				'<p class="p0"><b>Описание:</b><br/>' + _descr + '</p>' +
+				'<p class="text-1"><b>Описание:</b><br/>' + _descr + '</p>' +
 				'<p class="p0"><b>Добавено от :</b><br/>' + event.username + '</p>' +
 				
 				'<p class="blue_title"">Изберете бутона заявка, ако проявявате интерес към това събитие.</p>';
@@ -580,117 +687,21 @@ var user = {
 				localStorage.setItem('user_id', event.user_id);
 				window.history.pushState("!", "", '#!' + _eventId + '');
 				
-			})
-			
-			//edit mode
-			$("a[href=#edit-event-request]").live("click", function (e) {
-				
-				$.get('ui/edit-event.html', function (login_data) {
-					$('#modal-form').html(login_data);
-					$('#event-date').datetimepicker();
-					
-					var data = {
-						sessionId : sessionId,
-						id : _eventId,
-						method : 'getEventById'
-					};
-					
-					myAjax("event.php", data, function (_data) {
-						var event = $.parseJSON(JSON.stringify(_data))[0];
-						
-						$('#event-name').val(event.name);
-						$('#event-date').val(event.date);
-						$('#event-descr').val(event.descr);
-					});
-					
-					$('#btn-edit-event').click(function () {
-						
-						$('#event-detail').append('<h1>Изпратихте заявка към потребителя.<br/>Успех!</h1>');
-						
-						var user_id = localStorage.getItem('user_id');
-						
-						var data = {
-							sessionId : sessionId,
-							id : _eventId,
-							name : $('#event-name').val(),
-							date : $('#event-date').val(),
-							descr : $('#event-descr').val(),
-							method : 'edit'
-						};
-						
-						myAjax('event.php', data, function (_data) {
-							
-							if (!CheckServerError(_data))
-								return;
-							$('#modal-form').dialog("close");
-							user.viewEvent(_eventId);
-						});
-					});
+				//edit mode
+				$("a[href=#edit-event-request]").live("click", function (e) {
+					user.editEvent(_eventId);
 					
 				});
 				
-				system.ShowDialog($('#modal-form'), 'Редакция');
-				
-			});
-			
-			$("a[href=#remove-event-request]").live("click", function (e) {
-				
-				var c = confirm('Изтриване на събитие?');
-				
-				if (!c) {
-					e.defaultPrevent();
-					return;
-				}
-				
-				var data = {
-					sessionId : sessionId,
-					id : _eventId,
-					method : 'delete'
-				};
-				
-				myAjax("event.php", data, function (_data) {
-					$('#event-detail').html('<p class="title">Събитието беше успешно изтрито!</p>').show('slow');
+				//del mode
+				$("a[href=#remove-event-request]").live("click", function (e) {
+					user.delEvent(_eventId);
+					
 				});
 				
-			});
-			
-			//request mode
-			$("a[href=#make-event-request]").live("click", function (e) {
-				
-				var html = '<p>кратко описание:</p><br/>' +
-					'<textarea rows="3" cols="30" id="request-descr"></textarea><br/>' +
-					'<input type="button" id="request-id" value="Изпрати">' +
-					'<div id="error-message"></div>';
-				
-				$('#modal-form').html(html);
-				system.ShowDialog($('#modal-form'), 'Изпращане');
-				
-				$('#request-id').click(function () {
-					
-					$('#event-detail').append('<h1>Изпратихте заявка към потребителя.<br/>Успех!</h1>');
-					
-					var user_id = localStorage.getItem('user_id');
-					
-					user.InitServerTime();
-					serverDateTime = localStorage.getItem("serverTime");
-					
-					var data = {
-						sessionId : sessionId,
-						sender_user_id : system.currentUser().id,
-						user_id : user_id,
-						event_id : _eventId,
-						date : serverDateTime,
-						descr : $('#request-descr').val(),
-						method : 'insert'
-					}
-					
-					myAjax('request.php', data, function (_data) {
-						if (!CheckServerError(_data))
-							return;
-						var request = $.parseJSON(JSON.stringify(_data))[0];
-						localStorage.removeItem('user_id');
-						$('#modal-form').dialog("close");
-					});
+				//request mode
+				$("a[href=#make-event-request]").live("click", function (e) {
+					user.MakeRequest(_eventId);
 				});
 				
 			})
@@ -699,8 +710,47 @@ var user = {
 		
 	},
 	
-	my_requests : function () {
-		system.Loader(true);
+	MakeRequest : function (_eventId) {
+		
+		var html = '<p>кратко описание:</p><br/>' +
+			'<textarea rows="3" cols="30" id="request-descr"></textarea><br/>' +
+			'<input type="button" id="request-id" value="Изпрати">' +
+			'<div id="error-message"></div>';
+		
+		$('#modal-form').html(html);
+		system.ShowDialog($('#modal-form'), 'Изпращане');
+		
+		$('#request-id').click(function () {
+			
+			$('#event-detail').append('<h1>Изпратихте заявка към потребителя.<br/>Успех!</h1>');
+			
+			var user_id = localStorage.getItem('user_id');
+			
+			user.InitServerTime();
+			serverDateTime = localStorage.getItem("serverTime");
+			
+			var data = {
+				sessionId : sessionId,
+				sender_user_id : system.currentUser().id,
+				user_id : user_id,
+				event_id : _eventId,
+				date : serverDateTime,
+				descr : $('#request-descr').val(),
+				method : 'insert'
+			}
+			
+			myAjax('request.php', data, function (_data) {
+				if (!CheckServerError(_data))
+					return;
+				var request = $.parseJSON(JSON.stringify(_data))[0];
+				localStorage.removeItem('user_id');
+				$('#modal-form').dialog("close");
+			});
+		});
+		
+	},
+	my_requests : function (e) {
+		
 		$.get('ui/my-requests.html', function (login_data) {
 			
 			system.content().html(login_data);
@@ -710,6 +760,8 @@ var user = {
 				user_id : user.currentUser().id,
 				method : 'MyRequests'
 			}
+			
+			system.Loader(true);
 			myAjax('request.php', data, function (_data) {
 				
 				var requestData = [];
@@ -717,20 +769,56 @@ var user = {
 				for (i in _data) {
 					request = _data[i];
 					html = '<a href="#" class="blue_title"><p class="data-text">' + request.descr + '</p></a>';
+					var actions =
+						'<a class="data-text" href="#apply-request" id="' + request.id + '"><img src="images/ok.png">Приеми</a>' +
+						'<a class="data-text" href="#remove-request" id="' + request.id + '"><img src="images/del.png">Изтрий</a>';
 					
 					requestData.push({
 						name : html,
-						date : request.date
+						date : request.date,
+						actions : actions
 					})
 				}
 				
-				user.kendoGrid(system.content(), requestData);
+				$("a[href=#apply-request]").live("click", function (e) {
+					user.ApplyRequest(event.id);
+					
+				});
+				
+				$("a[href=#remove-request]").live("click", function (e) {
+					var c = confirm('Отказване на заявка?');
+					
+					if (c)
+					{
+						var _id = $(this).attr('id');
+						user.DelRequest(_id);
+					}
+					e.defaultPrevent();
+				});
+				
 				system.Loader(false);
+				user.kendoGrid(system.content(), requestData);
 				
 			})
 			
 		});
 		
+	},
+	ApplyRequest : function () {
+		alert('under construction!');
+	},
+	
+	DelRequest : function (_id) {
+		var data = {
+			sessionId : sessionId,
+			id : _id,
+			method : 'delete'
+		};
+		
+		myAjax("request.php", data, function (_data) {
+			//$('#event-detail').html('<p class="title">Заявката беше успешно изтрита!</p>').show('slow');			
+			user.my_requests();	
+		});
 	},
 	
 	updateImage : function (response, objectid, _type) {
@@ -801,6 +889,7 @@ var user = {
 				allowUnsort : false
 			},
 			
+			selectable : "multiple",
 			pageable : true,
 			scrollable : false,
 			
@@ -812,6 +901,10 @@ var user = {
 					field : "date",
 					title : "Дата",
 					template : "<div>#=date#</div>"
+				}, {
+					field : "actions",
+					title : "Действие",
+					template : "<div>#=actions#</div>"
 				}
 			]
 		});

@@ -31,11 +31,13 @@ $(document).ready(function () {
 	
 	//handle main user events
 	$('#home-id').click(function (e) {
+		$('.slider-bg').show();
 		system.init();
 	});
 	
 	$('#how-it-work-id').click(function (e) {
 		system.how_it_work();
+		$('.slider-bg').hide();
 	});
 	
 	$('#login-id').click(function (e) {
@@ -62,6 +64,7 @@ $(document).ready(function () {
 	
 	$("#user-id").click(function () {
 		user.GetLastUsers();
+		$('.slider-bg').hide();
 	})
 	
 	$('#exit-id').click(function (e) {
@@ -71,16 +74,19 @@ $(document).ready(function () {
 	$('#contact-id').click(function (e) {
 		
 		system.contacts();
+		$('.slider-bg').hide();
 	});
 	
 	$('#service-id').click(function (e) {
 		
 		system.services();
+		$('.slider-bg').hide();
 	});
 	
 	$('#about-id').click(function (e) {
 		
 		system.about();
+		$('.slider-bg').hide();
 	});
 	
 	$("a[href=#LoadMore]").live("click", function (e) {
@@ -124,4 +130,5 @@ $(document).ready(function () {
 		
 	});
 	
+
 });

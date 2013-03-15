@@ -166,7 +166,18 @@
 		
 		function delete()
 		{
+			if (($this->id <= 0) || ($this->sessionId == null))
+				{
+					$data = array("system error" => "Възникна проблем!Моля, обърнете се към администратора.");
+					
+					return json_safe_encode($data);				
+				}
+				
+			$id = $this->id;
+				 
+			$results = mysql_query("delete from requests where id='$id'");
 		
+			echo json_encode($results);			
 		}
 		
 		function MyRequests()
