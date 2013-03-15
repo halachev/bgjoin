@@ -72,22 +72,6 @@
 			
 		}
 		
-		function events()
-		{
-			if ($this->limit > 0)
-				$results = mysql_query("select * from requests order by id desc limit $this->limit");
-			else
-				$results = mysql_query("select * from requests order by id desc ");
-			
-			$data = array();
-			
-			while ($row = mysql_fetch_assoc($results)) {
-			   $data[] = $row;
-			}
-		   
-			echo json_safe_encode($data);
-			
-		}
 		
 		
 		function insert()
@@ -196,7 +180,10 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select * from requests where user_id='$id'");
+			$results = mysql_query("select r.*, e.name as eventName, _user.username as created  from requests r
+			left outer join events e on (r.event_id = e.id)
+			left outer join users _user on (r.sender_user_id = _user.id)
+			where r.user_id = '$id' order by e.id desc");
 			
 			$data = array();
 			

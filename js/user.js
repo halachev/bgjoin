@@ -517,14 +517,16 @@ var user = {
 					else
 						style = "class = data-text-line-through";
 					
-					var html = '<a href="#my_event-view" id="' + event.id + '"><p ' + style + '>' + event.name + '</p></a>';
+					var title = '<a href="#my_event-view" id="' + event.id + '"><p ' + style + '>' + event.name + '</p></a>';
 					var actions =
 						'<a class="data-text" href="#edit-event-request" id="' + event.id + '"><img src="images/edit.png"> Редакция</a>' +
 						'<a class="data-text" href="#remove-event-request" id="' + event.id + '"><img src="images/del.png"> Изтриване</a>';
 					
 					eventsData.push({
-						name : html,
+						name : title,
 						date : event.date,
+						descr: event.descr.substr(0,50) + '...',
+						created: event.username,
 						actions : actions
 					});
 				}
@@ -712,7 +714,7 @@ var user = {
 	
 	MakeRequest : function (_eventId) {
 		
-		var html = '<p>кратко описание:</p><br/>' +
+		var html = '<p>кратко съобщение:</p><br/>' +
 			'<textarea rows="3" cols="30" id="request-descr"></textarea><br/>' +
 			'<input type="button" id="request-id" value="Изпрати">' +
 			'<div id="error-message"></div>';
@@ -768,14 +770,16 @@ var user = {
 				
 				for (i in _data) {
 					request = _data[i];
-					html = '<a href="#" class="blue_title"><p class="data-text">' + request.descr + '</p></a>';
+					var title = '<a href="#" class="blue_title"><p class="data-text">' + request.eventName + '</p></a>';
 					var actions =
 						'<a class="data-text" href="#apply-request" id="' + request.id + '"><img src="images/ok.png">Приеми</a>' +
 						'<a class="data-text" href="#remove-request" id="' + request.id + '"><img src="images/del.png">Изтрий</a>';
 					
 					requestData.push({
-						name : html,
+						name : title,
 						date : request.date,
+						descr: request.descr.substr(0,50) + '...',
+						created: request.created,
 						actions : actions
 					})
 				}
@@ -901,7 +905,20 @@ var user = {
 					field : "date",
 					title : "Дата",
 					template : "<div>#=date#</div>"
-				}, {
+				}
+				, {
+					field : "descr",
+					title : "Описание",
+					template : "<div>#=descr#</div>"
+				}
+				
+				, {
+					field : "created",
+					title : "Потребител",
+					template : "<div>#=created#</div>"
+				}
+				
+				, {
 					field : "actions",
 					title : "Действие",
 					template : "<div>#=actions#</div>"
