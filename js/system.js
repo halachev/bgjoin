@@ -117,7 +117,7 @@ var system = {
 			title : title,
 			modal : true,
 			show : 'fadeIn',
-			resizable : false,
+			resizable : false,			
 			dialogClass : 'dialog-box',
 			position : 'center',
 			buttons : {

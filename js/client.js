@@ -110,7 +110,7 @@ $(document).ready(function () {
 			return;
 		}
 		
-		var _id = $(this).attr('id');
+		var _id = $(this).attr('id');		
 		user.UserProfile(_id, false);
 	});
 	

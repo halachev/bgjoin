@@ -52,39 +52,29 @@
 			<header>	
 				<div class="main">	
 					<div class="border-top">
-						<div class="wrapper">							
-							<nav>
-								<ul class="menu">									
-									<li> <a class="active" href="#home" id="home-id">Начало</a></li>
-									<li> <a style="color: #2d2d2d;" href="#how-it-work" id="how-it-work-id">Как работи</a></li>
-									<li> <a style="color: #2d2d2d;" href="#my-events" id="my-events-id">Събития</a></li>
-									<li> <a style="color: #2d2d2d;" href="#my-requests" id="my-requests-id">Заявки</a></li>	
-									<li> <a style="color: #2d2d2d;" href="#users" id="user-id">Потребители</a></li>		 									
-									<li> <a style="color: #2d2d2d;" href="#register" id="register-id">Регистрация</a></li>
-									<li> <a style="color: #2d2d2d;" href="#LogIn" id="login-id">Вход</a></li>
-									<li> <a style="color: #2d2d2d;" href="#Profile" id="profile-id">Профил</a></li>
-									<li> <a style="color: #2d2d2d;" href="#LogOut" id="exit-id">Изход</a></li>												
-								</ul>
-							</nav>
-						</div>
-						<div style="float: left; margin: -20px; padding: 0 0 20px 40px;" id="facebook-login">
+						<div class="wrapper">
+							<a id="logo" href="#home"><img src="images/logo.png" width="120"></a>						
+								<nav>							
+									<ul class="menu">																													
+										<li> <a class="active" href="#home" id="home-id">Начало</a></li>
+										<li> <a style="color: #2d2d2d;" href="#how-it-work" id="how-it-work-id">Как работи</a></li>
+										<li> <a style="color: #2d2d2d;" href="#my-events" id="my-events-id">Събития</a></li>
+										<li> <a style="color: #2d2d2d;" href="#my-requests" id="my-requests-id">Заявки</a></li>	
+										<li> <a style="color: #2d2d2d;" href="#users" id="user-id">Потребители</a></li>		 									
+										<li> <a style="color: #2d2d2d;" href="#register" id="register-id">Регистрация</a></li>
+										<li> <a style="color: #2d2d2d;" href="#LogIn" id="login-id">Вход</a></li>
+										<li> <a style="color: #2d2d2d;" href="#Profile" id="profile-id">Профил</a></li>
+										<li> <a style="color: #2d2d2d;" href="#LogOut" id="exit-id">Изход</a></li>												
+									</ul>
+								</nav>
+							</div>
+						<div style="float: right; margin: 35px;" id="facebook-login">
 							<a href="#facebook-login" id="loginButton">
-							<img src="/facebook-login/login-facebook-button.png" /></a><br />
+							<img src="/facebook-login/login-facebook-button.png" /><br/>Регистрация чрез facebook!</a><br />
 						</div>	
 						<div id="search-id"></div> 
 						<div class="loader" id="lastPostsLoader"></div>
-					</div>		
-													
-					<div class="slider-bg">					
-						<div class="slider">	
-							<img src="images/main_bg.png" style="margin: -80px; padding:0 0 0 100px;"/>							
-							<div class="banner">
-								<strong class="title-1"><img src="images/logo.png" /></strong>								
-								<span class="text-1">Социална мрежа за споделяне на събития.</span>								
-								<a class="link" href="#">Последвай ме!</a>								
-							</div>							
-						</div>
-					</div>					
+					</div>									
 				</div>
 			</header>
 <!--==============================content================================-->
@@ -95,6 +85,10 @@
 								<article class="grid_8">
 								<div class="indent-left">									
 									<div class="wrapper indent-bot">										 
+										
+										<div class="title-1">Какво искаш да споделиш?</div><br/> 
+										<div class="text-1">Направи живота си различен!</div><br/> 
+										
 										<!-- facebook likes -->
 										<div id="fb-root"></div>										
 										<div id="fblikeblock"></div>
@@ -104,7 +98,7 @@
 											FB.XFBML.parse(document.getElementById('fblikeblock'));
 											console.log(document.getElementById('fblikeblock'));
 										  </script>
-
+										
 										 <div id="modal-form"></div> 
 										 <div id="main-content"></div> 											 
 									</div>									
@@ -120,7 +114,10 @@
 		<div id="footer">
 			<div class="footer_links"> <a href="#" id="contact-id">Контакти</a> </div>   
 			<div class="footer_links"> <a href="#" id="service-id" >Услуги</a> </div>  
-			<div class="footer_links"> <a href="#" id="about-id">За нас</a> </div>   		
+			<div class="footer_links"> <a href="#" id="about-id">За нас</a> </div>  
+			<div class="footer_links"><a href="http://pmsys.org" target="_blank">PM SYS</a></div>
+			<div class="footer_links-img"><img src="images/logo.png" width="75"/></div>   	
+			<div class="footer_links-img"><a href="http://www.facebook.com/bgjoinme" id="about-id" target="_blank"><img src="images/facebook.png" width="20"/></a></div>   						
 		</div> 
 		
 	</body>

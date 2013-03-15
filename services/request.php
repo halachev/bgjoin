@@ -180,10 +180,15 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select r.*, e.name as eventName, _user.username as created  from requests r
+			$results = mysql_query("select r.*, 
+			e.name as eventName, 
+			_user.username as created,  
+			i.ThumbName 
+			from requests r
 			left outer join events e on (r.event_id = e.id)
+			left outer join images  i on (i.objectid = r.sender_user_id) 
 			left outer join users _user on (r.sender_user_id = _user.id)
-			where r.user_id = '$id' order by e.id desc");
+			where r.user_id = '$id' group by r.id order by e.id desc");
 			
 			$data = array();
 			

@@ -544,7 +544,8 @@ var user = {
 					
 					if (c) {
 						var _id = $(this).attr('id');					
-						user.delEvent(_id);										
+						user.delEvent(_id);	
+						e.defaultPrevent();						
 					}
 					else
 					  e.defaultPrevent();	
@@ -596,7 +597,7 @@ var user = {
 			
 			$('#btn-edit-event').click(function () {
 				
-				$('#event-detail').append('<h1>Изпратихте заявка към потребителя.<br/>Успех!</h1>');
+				$('#event-detail').append('<h1>Успешна редакция!</h1>');
 				
 				var user_id = localStorage.getItem('user_id');
 				
@@ -693,11 +694,20 @@ var user = {
 				$("a[href=#edit-event-request]").live("click", function (e) {
 					user.editEvent(_eventId);
 					
+					
 				});
 				
 				//del mode
 				$("a[href=#remove-event-request]").live("click", function (e) {
-					user.delEvent(_eventId);
+					
+					var c = confirm('Изтриване на събитие?');
+					
+					if (c) {
+						var _id = $(this).attr('id');					
+						user.delEvent(_id);										
+					}
+					else
+					  e.defaultPrevent();	
 					
 				});
 				
@@ -770,16 +780,20 @@ var user = {
 				
 				for (i in _data) {
 					request = _data[i];
-					var title = '<a href="#" class="blue_title"><p class="data-text">' + request.eventName + '</p></a>';
+					
+					var title = '<a  class="data-text" href="#selectedEvent" id="'+request.event_id+'"><span>' + request.eventName + '</span></a>';
+					var created = '<a class="data-text" href="#selected-user" id="'+request.sender_user_id +'"><span>'+ request.created +'</span><br/><img src="'+request.ThumbName+'" width="75"></a>';
+					var date = '<span class="data-text">'+request.date+'</span>';
+					var descr = '<span class="data-text">'+request.descr +'</span>';
 					var actions =
 						'<a class="data-text" href="#apply-request" id="' + request.id + '"><img src="images/ok.png">Приеми</a>' +
 						'<a class="data-text" href="#remove-request" id="' + request.id + '"><img src="images/del.png">Изтрий</a>';
 					
 					requestData.push({
 						name : title,
-						date : request.date,
-						descr: request.descr.substr(0,50) + '...',
-						created: request.created,
+						date : date,
+						descr: descr,
+						created: created,
 						actions : actions
 					})
 				}
@@ -899,7 +913,7 @@ var user = {
 			
 			columns : [{
 					field : "name",
-					title : "Заглавие",
+					title : "Събитие",
 					template : "<div>#=name#</div>"
 				}, {
 					field : "date",
