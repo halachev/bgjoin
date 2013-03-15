@@ -38,7 +38,7 @@
 				'<p class=text-1>'.$title.'</p>'.			
 				'<p class="p0"><strong>Дата на събитие: </strong><br/>'.$date.'</p>'.
 				'<img class="border" src="'.$image.'" alt="" width="160">'.				
-				'<p class="p0"><strong>Описание: <br/></strong>'.$descr.'</p>'.	$detail.				
+				'<p class="text-1"><strong>Описание: <br/></strong>'.$descr.'</p>'.	$detail.				
 				'<p class="p0"><strong>Добавено от: </strong><br/><a href="#selected-user" id='.$user_id.'>'.$username.'</a></p>'.
 				'</article>';
 				
