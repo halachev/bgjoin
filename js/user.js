@@ -300,11 +300,22 @@ var user = {
 	registerUser : function () {
 		$('#btnRegister').attr("disabled", "disabled");
 		$('#error-message').html("<p>Регистрация, моля изчакайте ...</p>");
+		
+		var body = '<html><body> '+		
+			'<p>Добре дошли в bgjoin.com</p>'+	
+			'<h2>Данни за вашият акаунт!</h2>'+	
+			'<p>Потребител:'+$('#register-user').val()+'</p>'+	
+			'<p>Парола:'+$('#register-re-password').val()+'</p>'+	
+			'<p>Благодарим! От екипа на <a href="http://bgjoin.com/">bgjoin</a></p>'+	
+			'</body></html>';
+		
 		var data = {
 			username : $('#register-user').val(),
 			password : $('#register-password').val(),
 			RePassword : $('#register-re-password').val(),
 			email : $('#register-email').val(),
+			emailSubject: 'Регистрация в bgjoin', 
+			emailBody: body,
 			method : "insert"
 		};
 		
@@ -680,7 +691,7 @@ var user = {
 				'<p class="text-1">' + event.name + '</p>' + image +
 				'<p class="p0"><b>Дата на събитие:</b><br/>' + event.date + '</p>' +
 				'<p class="p0"><b>Категория:</b><br/>' + event.int_name + '</p>' +
-				'<p class="text-1"><b>Описание:</b><br/>' + _descr + '</p>' +
+				'<p class="p0"><b>Описание:</b><p class="text-1">' + _descr + '</p></p>' +
 				'<p class="p0"><b>Добавено от :</b><br/>' + event.username + '</p>' +
 				
 				'<p class="blue_title"">Изберете бутона заявка, ако проявявате интерес към това събитие.</p>';
@@ -761,6 +772,22 @@ var user = {
 		});
 		
 	},
+	
+	my_requests_count: function ()
+	{
+		var data = {
+				sessionId : sessionId,
+				user_id : user.currentUser().id,
+				method : 'MyRequests'
+			}
+					
+		myAjax('request.php', data, function (_data) {
+			var count = _data.length;
+			if (count > 0)
+				$('#my-requests-id').html('Заявки ('+count+')');
+		});
+	},
+	
 	my_requests : function (e) {
 		
 		$.get('ui/my-requests.html', function (login_data) {
@@ -776,7 +803,7 @@ var user = {
 			system.Loader(true);
 			myAjax('request.php', data, function (_data) {
 				
-				var requestData = [];
+				var requestsData = [];
 				
 				for (i in _data) {
 					request = _data[i];
@@ -789,7 +816,7 @@ var user = {
 						'<a class="data-text" href="#apply-request" id="' + request.id + '"><img src="images/ok.png">Приеми</a>' +
 						'<a class="data-text" href="#remove-request" id="' + request.id + '"><img src="images/del.png">Изтрий</a>';
 					
-					requestData.push({
+					requestsData.push({						
 						name : title,
 						date : date,
 						descr: descr,
@@ -799,7 +826,10 @@ var user = {
 				}
 				
 				$("a[href=#apply-request]").live("click", function (e) {
-					user.ApplyRequest(event.id);
+				    
+					var _id = $(this).attr('id');					
+					user.ApplyRequest(_data, _id);
+					e.defaultPrevent();
 					
 				});
 				
@@ -815,15 +845,53 @@ var user = {
 				});
 				
 				system.Loader(false);
-				user.kendoGrid(system.content(), requestData);
+				user.kendoGrid(system.content(), requestsData);
 				
 			})
 			
 		});
 		
 	},
-	ApplyRequest : function () {
-		alert('under construction!');
+	ApplyRequest : function (_data, _id) {
+		
+		system.content().html('<p class="text-1">Моля, изчакайте ...</p>');
+		system.Loader(true);
+		var reqData = null;
+		
+		for (i in _data)
+		{
+			var request = _data[i];
+			
+			if (request.id == _id)
+			{
+				reqData = request;
+				break;
+			}
+		}
+		
+	
+		var body = '<html><body> '+		
+			'<p>Здравейте, '+ reqData.created +'</p>'+				
+			'<p>Потребител: '+ user.currentUser().username +' желае да присъствате на събитието. '+ reqData.eventName + '</p>'+	
+			'</p>Може да се свържете на: '+ user.currentUser().email +'</p>' + 
+			'<p>Благодарим! oт екипа на <a href="http://bgjoin.com/">bgjoin</a></p>'+	
+			'</body></html>';
+		
+		
+		var data = {	
+			email: reqData.createdEmail,
+			emailSubject: 'Приета заявка от '+user.currentUser().username+'',
+			emailBody: body,			
+			method : 'sendMail'
+		};
+		
+		myAjax("user.php", data, function (_data) {	
+					
+			system.Loader(false);			
+			alert(_data.email_message);
+			user.DelRequest(_id);			
+		});
+		
 	},
 	
 	DelRequest : function (_id) {
@@ -833,8 +901,7 @@ var user = {
 			method : 'delete'
 		};
 		
-		myAjax("request.php", data, function (_data) {
-			//$('#event-detail').html('<p class="title">Заявката беше успешно изтрита!</p>').show('slow');			
+		myAjax("request.php", data, function (_data) {			
 			user.my_requests();	
 		});
 	},

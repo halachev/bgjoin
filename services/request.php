@@ -183,6 +183,7 @@
 			$results = mysql_query("select r.*, 
 			e.name as eventName, 
 			_user.username as created,  
+			_user.email as createdEmail,
 			i.ThumbName 
 			from requests r
 			left outer join events e on (r.event_id = e.id)

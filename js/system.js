@@ -3,8 +3,8 @@ var system = {
 	
 	init : function () {
 		
-		if (sessionId == null) {
-			$('.slider-bg').show();
+		if (sessionId == null) {		
+			$('#main-text').show();
 			$('#profile-id').hide();
 			$('#my-requests-id').hide();
 			$('#my-events-id').hide();
@@ -14,7 +14,7 @@ var system = {
 			$('#login-id').show();
 			$('#how-it-work-id').show();
 		} else {
-			$('.slider-bg').hide();
+			$('#main-text').hide();
 			$('#profile-id').show();
 			$('#my-requests-id').show();
 			$('#my-events-id').show();
@@ -23,6 +23,9 @@ var system = {
 			$('#facebook-login').hide();
 			$('#login-id').hide();
 			$('#how-it-work-id').hide();
+			
+			user.my_requests_count();
+			
 		}
 		
 		system.initContent();
@@ -42,9 +45,9 @@ var system = {
 	initContent : function () {
 		
 		// check for go back button
-		gethash();
-		
+		gethash();		
 		system.search();
+		
 		
 		//check for hash string ???
 		var hash = window.location.hash; // get !#
@@ -57,6 +60,7 @@ var system = {
 				user.GetLastUserEvents(); // first load events
 			
 			
+
 	},
 	
 	Loader : function (state) {

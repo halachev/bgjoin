@@ -14,6 +14,8 @@
 	define ('getUserById', getUserById);
 	define ('getUserById', getUserByName);
 	define ('SetNewPassword', SetNewPassword);
+	define ('sendMail', sendMail);
+
 	
 	class User 
 	{
@@ -25,6 +27,8 @@
 		private $descr;
 		private $limit;
 		private $userLastId;
+		private $emailBody;
+		private $emailSubject;
 		private $method;
 		
 		
@@ -37,6 +41,8 @@
 			$_descr,
 			$_limit,
 			$_userLastId,
+			$_emailBody,
+			$_emailSubject,
 			$_method) {
 			
 			$this->id = $_id;
@@ -47,6 +53,8 @@
 			$this->descr = $_descr;
 			$this->limit = $_limit;
 			$this->userLastId = $_userLastId;
+			$this->emailBody = $_emailBody;
+			$this->emailSubject = $_emailSubject;
 			$this->method = $_method;
 			
 			//$method = $_SERVER['REQUEST_METHOD'];
@@ -78,6 +86,9 @@
 				break;	
 		     case SetNewPassword:
 				echo $this->SetNewPassword();  
+				break;	
+			 case sendMail:
+				echo $this->sendMail();  
 				break;	
 				
 			  default:
@@ -111,8 +122,8 @@
 		{
 			
 			$username = convertToCyrillic(filter($this->username));
-			//$password = filter(md5($this->password));
-			$password = filter($this->password);
+			$password = filter(md5($this->password));
+			//$password = filter($this->password);
 			$email = filter($this->email);
 			
 			
@@ -202,8 +213,8 @@
 		function LogIn()
 		{	
 			$username = filter($this->username);
-			//$password = filter(md5($this->password));
-			$password = filter($this->password);
+			$password = filter(md5($this->password));
+			//$password = filter($this->password);
 			
 			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
 						left outer join images  i on (i.objectid = u.id) where u.username='$username' and u.password='$password' ");
@@ -236,10 +247,9 @@
 		
 		function delete()
 		{
-		
+			//
 		}
-		
-		
+				
 		function LoadMore()
 		{
 			$last_id = $this->userLastId;
@@ -260,19 +270,8 @@
 		{
 			
 			$mail = new PHPMailer();
-			 
-			 
-			$username = convertToCyrillic(filter($this->username));
-			$password = filter($this->password);
-			$email = filter($this->email);
 			
-			$body = '<html><body>		
-			<p>Добре дошли в bgjoin.com</p>
-			<h2>Данни за вашият акаунт!</h2>
-			<p>Потребител:'.$username.'</p>
-			<p>Парола:'.$password.'</p>
-			<p>Благодарим! От екипа на <a href="http://bgjoin.com/">bgjoin</a></p>
-			</body></html>';
+			$body = convertToCyrillic($this->emailBody);
 						
 			$body  = eregi_replace("[\]",'',$body);
 
@@ -292,21 +291,26 @@
 
 			$mail->AddReplyTo($ourEmail, "bgjoin");
 
-			$mail->Subject  = "Регистрация в bgjoin.com";
+			$mail->Subject  = convertToCyrillic( $this->emailSubject);
 		    
 			// optional, comment out and test
-			$mail->AltBody  = "Регистрация в bgjoin.com"; 
+			$mail->AltBody  = convertToCyrillic( $this->emailSubject);
 
 			$mail->MsgHTML($body);
-
-			$address = $email;
-			$mail->AddAddress($address, "Регистрация в bgjoin.com");
+			
+			$mail->AddAddress(filter($this->email), convertToCyrillic( $this->emailSubject));
 			
 			// attachment
 			$mail->AddAttachment("../images/logo.png");      
 			
 			//send
 			$mail->Send();
+			
+			if ($this->method != insert)
+			{
+				$data = array("email_message" => "Потребителя ще бъде уведомен по email!");				
+				echo json_safe_encode($data);
+			}
 			
 		}
 		
@@ -319,7 +323,7 @@
 			}
 			
 			$id = $this->id;
-			$password = filter($this->password);
+			$password = filter(md5($this->password));
 			 
 			$result = mysql_query("update users set password='$password' where id='$id'");
 			 
@@ -338,6 +342,8 @@
 	$descr = $_POST['descr'];	
 	$limit = $_POST['limit'];	
 	$userLastId = $_POST['userLastId'];
+	$emailBody = $_POST['emailBody'];	
+	$emailSubject = $_POST['emailSubject'];	
 	$method = $_POST['method'];
 	
 	$user = new User(
@@ -349,6 +355,8 @@
 				$descr, 
 				$limit,
 				$userLastId,
+				$emailBody,
+				$emailSubject,
 				$method);		
 	
 ?>
