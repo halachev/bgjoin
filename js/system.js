@@ -103,9 +103,7 @@ var system = {
 			myAjax("user.php", data, function (_data) {
 				
 				if (_data.error_message != "")
-					
 					$('#btnLogin').removeAttr("disabled");
-				("disabled", "disabled");
 				
 				user.UserStorage(_data, true);
 			});

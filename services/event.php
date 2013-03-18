@@ -13,6 +13,11 @@
 	define ('getEventById', getEventById);
 	define ('GetEventsByIntID', GetEventsByIntID);
 	
+	define ('EVENT_REQUARED_FIELDS', EVENT_REQUARED_FIELDS);
+	define ('MAX_EVENT_NAME', MAX_EVENT_NAME);
+	define ('MAX_EVENT_DESCR', MAX_EVENT_DESCR);
+	define ('EXIST_EVENT', EXIST_EVENT);
+	
 	class Event 
 	{
 		private $id;
@@ -119,7 +124,7 @@
 			
 			if (strlen ($name > 50))
 			{
-				$data = array("error_message" => "Максимална дължина на заглавие 50 знака");
+				$data = array("error_message" => MAX_EVENT_NAME);
 				echo json_safe_encode($data);
 				exit;				
 			}
@@ -127,14 +132,14 @@
 			
 			if (strlen ($descr > 250))
 			{
-				$data = array("error_message" => "Максимална дължина на описание 250 знака");
+				$data = array("error_message" => MAX_EVENT_DESCR);
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
 			if ((!$name) || (!$date) || (!$descr))
 			{
-				$data = array("error_message" => "Всички полета задължителни!");
+				$data = array("error_message" => EVENT_REQUARED_FIELDS);
 				echo json_safe_encode($data);
 				exit;				
 			}
@@ -144,7 +149,7 @@
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "Името е заето!");				
+				$data = array("error_message" => EXIST_EVENT);				
 				echo json_safe_encode($data);
 			
 			}
@@ -218,7 +223,7 @@
 			
 			if (($this->id <= 0) || ($this->sessionId == null))
 			{
-			    $data = array("system error" => "Възникна проблем!Моля, обърнете се към администратора.");
+			    $data = array("error_message" => "Invalid event object!");
 				
 				return json_safe_encode($data);				
 			}

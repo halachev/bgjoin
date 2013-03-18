@@ -743,8 +743,6 @@ var user = {
 		
 		$('#request-id').click(function () {
 			
-			$('#event-detail').append('<h1>Изпратихте заявка към потребителя.<br/>Успех!</h1>');
-			
 			var user_id = localStorage.getItem('user_id');
 			
 			user.InitServerTime();
@@ -766,6 +764,8 @@ var user = {
 				var request = $.parseJSON(JSON.stringify(_data))[0];
 				localStorage.removeItem('user_id');
 				$('#modal-form').dialog("close");
+				$('#event-detail').append('<h1>Изпратихте заявка към потребителя.<br/>Успех!</h1>');
+			
 			});
 		});
 		
@@ -880,8 +880,14 @@ var user = {
 		myAjax("user.php", data, function (_data) {
 			
 			system.Loader(false);
-			alert(_data.email_message);
-			user.DelRequest(_id);
+			
+			if (_data.error_message == "EMAIL_RESPONSE")
+			{				
+				alert('Потребителя, ще бъде уведомен по емайл!');
+				user.DelRequest(_id);
+			}
+						
+			
 		});
 		
 	},

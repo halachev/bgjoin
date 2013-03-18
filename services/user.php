@@ -15,8 +15,13 @@
 	define ('getUserById', getUserByName);
 	define ('SetNewPassword', SetNewPassword);
 	define ('sendMail', sendMail);
-
 	
+	define ('REQUARED_FIELDS', REQUARED_FIELDS);
+	define ('EXIST_USERNAME', EXIST_USERNAME);
+	define ('INVALID_USERNAME', INVALID_USERNAME);
+	define ('EMAIL_RESPONSE', EMAIL_RESPONSE);
+
+
 	class User 
 	{
 		private $id;
@@ -125,7 +130,7 @@
 			
 			if ((!$username) || (!$password) || (!$email))
 			{
-				$data = array("error_message" => "Всички полета задължителни!");
+				$data = array("error_message" => REQUARED_FIELDS);
 				echo json_safe_encode($data);
 				exit;				
 			}
@@ -135,7 +140,7 @@
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "Името е заето!");				
+				$data = array("error_message" => EXIST_USERNAME);				
 				echo json_safe_encode($data);
 			
 			}
@@ -208,7 +213,7 @@
 		
 		function LogIn()
 		{	
-			$username = filter($this->username);
+			$username = convertToCyrillic(filter($this->username));
 			$password = filter(md5($this->password));
 			
 			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
@@ -216,7 +221,7 @@
 			$count = mysql_num_rows($results);
 			if (!$count) 
 			{
-			    $data = array("error_message" => "Невалиден потребител!");
+			    $data = array("error_message" => INVALID_USERNAME);
 				echo json_safe_encode($data);
 				exit;
 			}
@@ -302,7 +307,7 @@
 			
 			if ($this->method != insert)
 			{
-				$data = array("email_message" => "Потребителя ще бъде уведомен по email!");				
+				$data = array("error_message" => EMAIL_RESPONSE);				
 				echo json_safe_encode($data);
 			}
 			

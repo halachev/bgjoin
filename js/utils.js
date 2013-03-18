@@ -28,7 +28,46 @@ function CheckServerError(obj) {
 			var err = JSON.parse(JSON.stringify(obj));
 			var err_message = err.error_message;
 			
-			system.error($('#error-message'), err_message);
+			var err = "";
+			switch(err_message)
+			{
+			   //user
+			   case "INVALID_USERNAME" : err = 'Невалидно потребителско имe или парола!';
+			   break;
+			   
+			   case "REQUARED_FIELDS" : err = 'Всички полета задължителни!';
+			   break;
+			   
+			   case "EXIST_USERNAME" : err = 'Потребителско име е заето!';
+			   break;
+			
+			   //events
+			   case "EVENT_REQUARED_FIELDS" : err = 'Всички полета задължителни!';
+			   break;
+			   
+			   case "MAX_EVENT_NAME" : err = 'Максимална дължина на заглавие 50 знака!';
+			   break;
+			   
+			   case "MAX_EVENT_DESCR" : err = 'Максимална дължина на описание 250 знака';
+			   break;
+			   
+			   case "EXIST_EVENT" : err = 'Вече има събитие със същото име!';
+			   break;
+			   
+			   //requests
+			   case "MAKE_SELF_REQUEST" : err = 'Не може да правите заявки към ваши събития!';
+			   break;
+			   
+			   case "REQUEST_REQUARED_FIELDS" : err = 'Всички полета задължителни!';
+			   break;
+			   
+			   case "EXIST_REQUEST" : err = 'Вече сте направил заявка за това събитие!';
+			   break;
+			  
+				
+			}
+			
+			system.error($('#error-message'), err);
 			return false;
 		}
 	} else

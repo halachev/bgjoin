@@ -10,7 +10,10 @@
 	define ('LoadMore', LoadMore);
 	define ('MyRequests', MyRequests);
 	define ('getRequestById', getRequestById);
-
+	
+	define ('MAKE_SELF_REQUEST', MAKE_SELF_REQUEST);
+	define ('REQUEST_REQUARED_FIELDS', REQUEST_REQUARED_FIELDS);
+	define ('EXIST_REQUEST', EXIST_REQUEST);
 	
 	class Request 
 	{
@@ -86,14 +89,14 @@
 			
 			if ($sender_user_id == $user_id)
 			{
-				$data = array("error_message" => "не може да правите заявки към ваши събития!");
+				$data = array("error_message" => MAKE_SELF_REQUEST);
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
 			if ((!$user_id) || (!$event_id) || (!$descr))
 			{
-				$data = array("error_message" => "Всички полета задължителни!");
+				$data = array("error_message" => REQUEST_REQUARED_FIELDS);
 				echo json_safe_encode($data);
 				exit;				
 			}
@@ -103,7 +106,7 @@
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "Името е заето!");				
+				$data = array("error_message" => EXIST_REQUEST);				
 				echo json_safe_encode($data);
 			
 			}
@@ -143,7 +146,7 @@
 		{
 		    $user_id = $this->user_id;
 			$event_id = $this->event_id;
-			$results = mysql_query("select name from requests where user_id='$name' and event_id='$event_id'");
+			$results = mysql_query("select * from requests where user_id='$user_id' and event_id='$event_id'");
 			
 			return mysql_num_rows($results);
 		}
@@ -151,11 +154,10 @@
 		function delete()
 		{
 			if (($this->id <= 0) || ($this->sessionId == null))
-				{
-					$data = array("system error" => "Възникна проблем!Моля, обърнете се към администратора.");
-					
-					return json_safe_encode($data);				
-				}
+			{
+				$data = array("error_message" => "Invalid request!");				
+				return json_safe_encode($data);				
+			}
 				
 			$id = $this->id;
 				 
