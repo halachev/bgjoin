@@ -1,4 +1,4 @@
-﻿
+﻿ 
 //public functions out of objects
 function myAjax(_file, _data, results) {
 	

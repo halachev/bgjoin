@@ -125,6 +125,7 @@ var user = {
 			
 		});
 	},
+	
 	NewPassword : function () {
 		$.get('ui/new-password.html', function (login_data) {
 			
@@ -398,9 +399,11 @@ var user = {
 		var c = confirm("Сигурен ли сте, че искате да изтриете профила?");
 		
 		if (!c) {
-			e.defaultPrevent();
-			return;
+			e.stopImmediatePropagation();
+			return;	
 		}
+		
+		e.stopImmediatePropagation();
 	},
 	
 	addEvent : function () {
@@ -545,10 +548,10 @@ var user = {
 				}
 				
 				$("a[href=#edit-event-request]").live("click", function (e) {
+					
 					var _id = $(this).attr('id');
 					user.editEvent(_id);
-					e.defaultPrevent();
-					
+									
 				});
 				
 				$("a[href=#remove-event-request]").live("click", function (e) {
@@ -557,10 +560,8 @@ var user = {
 					
 					if (c) {
 						var _id = $(this).attr('id');
-						user.delEvent(_id);
-						e.defaultPrevent();
-					} else
-						e.defaultPrevent();
+						user.delEvent(_id);						
+					}
 					
 				});
 				
@@ -569,25 +570,22 @@ var user = {
 			})
 			
 			$('#add-event-id').click(function () {
-				user.addEvent();
-				e.defaultPrevent();
+				user.addEvent();				
 			})
 			
 			$("a[href=#my_event-view]").live('click', function () {
 				
 				var _id = $(this).attr('id');
-				user.viewEvent(_id);
-				e.defaultPrevent();
+				user.viewEvent(_id);				
 			})
 			
 		});
-		
+		e.stopImmediatePropagation();
 	},
 	
 	editEvent : function (_eventId) {
 		//edit mode
-		
-		
+				
 		$.get('ui/edit-event.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			$('#event-date').datetimepicker();
@@ -597,6 +595,7 @@ var user = {
 				id : _eventId,
 				method : 'getEventById'
 			};
+			
 			
 			myAjax("event.php", data, function (_data) {
 				var event = $.parseJSON(JSON.stringify(_data))[0];
@@ -716,7 +715,7 @@ var user = {
 						var _id = $(this).attr('id');
 						user.delEvent(_id);
 					} else
-						e.defaultPrevent();
+						e.preventDefault();
 					
 				});
 				
@@ -826,7 +825,7 @@ var user = {
 					
 					var _id = $(this).attr('id');
 					user.ApplyRequest(_data, _id);
-					e.defaultPrevent();
+					e.preventDefault();
 					
 				});
 				
@@ -837,7 +836,7 @@ var user = {
 						var _id = $(this).attr('id');
 						user.DelRequest(_id);
 					}
-					e.defaultPrevent();
+					e.preventDefault();
 				});
 				
 				system.Loader(false);

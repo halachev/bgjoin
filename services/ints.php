@@ -40,10 +40,8 @@
 		
 		function interests()
 		{
-			if ($this->limit > 0)
-				$results = mysql_query("select * from interests order by id desc limit $this->limit");
-			else
-				$results = mysql_query("select * from interests order by id desc ");
+			
+			$results = mysql_query("select * from interests order by id desc ");
 			
 			$data = array();
 			

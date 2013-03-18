@@ -113,13 +113,18 @@ var system = {
 	},
 	
 	ShowDialog : function (_id, title) {
-		_id.dialog({
+		_id.dialog({			
 			title : title,
 			modal : true,
 			show : 'fadeIn',
 			resizable : false,
+			width : 'auto',
 			dialogClass : 'dialog-box',
-			position : 'center',
+			position: {
+			 my: "center bottom",
+			 at: "center top",
+			 of: $("#main-content")		
+			},
 			buttons : {
 				"Close" : function () {
 					
@@ -253,7 +258,7 @@ var system = {
 			
 		});
 	},
-	search : function () {
+	search : function (e) {
 		
 		system.Loader(true);
 		$.get('ui/search.html', function (login_data) {
@@ -289,6 +294,7 @@ var system = {
 				});
 				
 				system.Loader(false);
+				e.preventDefault();
 			});
 			
 		});
