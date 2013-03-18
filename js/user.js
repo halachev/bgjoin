@@ -301,12 +301,12 @@ var user = {
 		$('#btnRegister').attr("disabled", "disabled");
 		$('#error-message').html("<p>Регистрация, моля изчакайте ...</p>");
 		
-		var body = '<html><body> '+		
-			'<p>Добре дошли в bgjoin.com</p>'+	
-			'<h2>Данни за вашият акаунт!</h2>'+	
-			'<p>Потребител:'+$('#register-user').val()+'</p>'+	
-			'<p>Парола:'+$('#register-re-password').val()+'</p>'+	
-			'<p>Благодарим! От екипа на <a href="http://bgjoin.com/">bgjoin</a></p>'+	
+		var body = '<html><body> ' +
+			'<p>Добре дошли в bgjoin.com</p>' +
+			'<h2>Данни за вашият акаунт!</h2>' +
+			'<p>Потребител:' + $('#register-user').val() + '</p>' +
+			'<p>Парола:' + $('#register-re-password').val() + '</p>' +
+			'<p>Благодарим! От екипа на <a href="http://bgjoin.com/">bgjoin</a></p>' +
 			'</body></html>';
 		
 		var data = {
@@ -314,8 +314,8 @@ var user = {
 			password : $('#register-password').val(),
 			RePassword : $('#register-re-password').val(),
 			email : $('#register-email').val(),
-			emailSubject: 'Регистрация в bgjoin', 
-			emailBody: body,
+			emailSubject : 'Регистрация в bgjoin',
+			emailBody : body,
 			method : "insert"
 		};
 		
@@ -485,6 +485,10 @@ var user = {
 			var data = $.parseJSON(JSON.stringify(_data));
 			var event = data[0];
 			
+			$('#my-events-list').html('<h1 class="data-text">Успешно дабавихте вашето събитие!</h1>');
+			user.my_events();
+			$('#modal-form').dialog("close");
+			
 			//update image objectid and type by event
 			//read eventResponse from localStorage
 			var eventResponse = localStorage.getItem('eventResponse');
@@ -492,9 +496,7 @@ var user = {
 				user.updateImage(eventResponse, event.id, event_image);
 			//
 			
-			$('#my-events-list').html('<h1 class="data-text">Успешно дабавихте вашето събитие!</h1>');
-			user.my_events();
-			$('#modal-form').dialog("close");
+			
 			
 		});
 	},
@@ -536,8 +538,8 @@ var user = {
 					eventsData.push({
 						name : title,
 						date : event.date,
-						descr: event.descr.substr(0,50) + '...',
-						created: event.username,
+						descr : event.descr.substr(0, 50) + '...',
+						created : event.username,
 						actions : actions
 					});
 				}
@@ -554,13 +556,11 @@ var user = {
 					var c = confirm('Изтриване на събитие?');
 					
 					if (c) {
-						var _id = $(this).attr('id');					
-						user.delEvent(_id);	
-						e.defaultPrevent();						
-					}
-					else
-					  e.defaultPrevent();	
-									
+						var _id = $(this).attr('id');
+						user.delEvent(_id);
+						e.defaultPrevent();
+					} else
+						e.defaultPrevent();
 					
 				});
 				
@@ -581,7 +581,7 @@ var user = {
 			})
 			
 		});
-				
+		
 	},
 	
 	editEvent : function (_eventId) {
@@ -644,9 +644,9 @@ var user = {
 			method : 'delete'
 		};
 		
-		myAjax("event.php", data, function (_data) {
-			$('#event-detail').html('<p class="title">Събитието беше успешно изтрито!</p>').show('slow');			
-			user.my_events();	
+		myAjax("event.php", data, function (_data) {			
+			$('#event-detail').html('<p class="title">Събитието беше успешно изтрито!</p>').show('slow');
+			user.my_events();
 		});
 		
 	},
@@ -705,7 +705,6 @@ var user = {
 				$("a[href=#edit-event-request]").live("click", function (e) {
 					user.editEvent(_eventId);
 					
-					
 				});
 				
 				//del mode
@@ -714,11 +713,10 @@ var user = {
 					var c = confirm('Изтриване на събитие?');
 					
 					if (c) {
-						var _id = $(this).attr('id');					
-						user.delEvent(_id);										
-					}
-					else
-					  e.defaultPrevent();	
+						var _id = $(this).attr('id');
+						user.delEvent(_id);
+					} else
+						e.defaultPrevent();
 					
 				});
 				
@@ -773,18 +771,17 @@ var user = {
 		
 	},
 	
-	my_requests_count: function ()
-	{
+	my_requests_count : function () {
 		var data = {
-				sessionId : sessionId,
-				user_id : user.currentUser().id,
-				method : 'MyRequests'
-			}
-					
+			sessionId : sessionId,
+			user_id : user.currentUser().id,
+			method : 'MyRequests'
+		}
+		
 		myAjax('request.php', data, function (_data) {
 			var count = _data.length;
 			if (count > 0)
-				$('#my-requests-id').html('Заявки ('+count+')');
+				$('#my-requests-id').html('Заявки (' + count + ')');
 		});
 	},
 	
@@ -808,26 +805,26 @@ var user = {
 				for (i in _data) {
 					request = _data[i];
 					
-					var title = '<a  class="data-text" href="#selectedEvent" id="'+request.event_id+'"><span>' + request.eventName + '</span></a>';
-					var created = '<a class="data-text" href="#selected-user" id="'+request.sender_user_id +'"><span>'+ request.created +'</span><br/><img src="'+request.ThumbName+'" width="75"></a>';
-					var date = '<span class="data-text">'+request.date+'</span>';
-					var descr = '<span class="data-text">'+request.descr +'</span>';
+					var title = '<a  class="data-text" href="#selectedEvent" id="' + request.event_id + '"><span>' + request.eventName + '</span></a>';
+					var created = '<a class="data-text" href="#selected-user" id="' + request.sender_user_id + '"><span>' + request.created + '</span><br/><img src="' + request.ThumbName + '" width="75"></a>';
+					var date = '<span class="data-text">' + request.date + '</span>';
+					var descr = '<span class="data-text">' + request.descr + '</span>';
 					var actions =
 						'<a class="data-text" href="#apply-request" id="' + request.id + '"><img src="images/ok.png">Приеми</a>' +
 						'<a class="data-text" href="#remove-request" id="' + request.id + '"><img src="images/del.png">Изтрий</a>';
 					
-					requestsData.push({						
+					requestsData.push({
 						name : title,
 						date : date,
-						descr: descr,
-						created: created,
+						descr : descr,
+						created : created,
 						actions : actions
 					})
 				}
 				
 				$("a[href=#apply-request]").live("click", function (e) {
-				    
-					var _id = $(this).attr('id');					
+					
+					var _id = $(this).attr('id');
 					user.ApplyRequest(_data, _id);
 					e.defaultPrevent();
 					
@@ -836,8 +833,7 @@ var user = {
 				$("a[href=#remove-request]").live("click", function (e) {
 					var c = confirm('Отказване на заявка?');
 					
-					if (c)
-					{
+					if (c) {
 						var _id = $(this).attr('id');
 						user.DelRequest(_id);
 					}
@@ -858,38 +854,34 @@ var user = {
 		system.Loader(true);
 		var reqData = null;
 		
-		for (i in _data)
-		{
+		for (i in _data) {
 			var request = _data[i];
 			
-			if (request.id == _id)
-			{
+			if (request.id == _id) {
 				reqData = request;
 				break;
 			}
 		}
 		
-	
-		var body = '<html><body> '+		
-			'<p>Здравейте, '+ reqData.created +'</p>'+				
-			'<p>Потребител: '+ user.currentUser().username +' желае да присъствате на събитието. '+ reqData.eventName + '</p>'+	
-			'</p>Може да се свържете на: '+ user.currentUser().email +'</p>' + 
-			'<p>Благодарим! oт екипа на <a href="http://bgjoin.com/">bgjoin</a></p>'+	
+		var body = '<html><body> ' +
+			'<p>Здравейте, ' + reqData.created + '</p>' +
+			'<p>Потребител: ' + user.currentUser().username + ' желае да присъствате на събитието. ' + reqData.eventName + '</p>' +
+			'</p>Може да се свържете на: ' + user.currentUser().email + '</p>' +
+			'<p>Благодарим! oт екипа на <a href="http://bgjoin.com/">bgjoin</a></p>' +
 			'</body></html>';
 		
-		
-		var data = {	
-			email: reqData.createdEmail,
-			emailSubject: 'Приета заявка от '+user.currentUser().username+'',
-			emailBody: body,			
+		var data = {
+			email : reqData.createdEmail,
+			emailSubject : 'Приета заявка от ' + user.currentUser().username + '',
+			emailBody : body,
 			method : 'sendMail'
 		};
 		
-		myAjax("user.php", data, function (_data) {	
-					
-			system.Loader(false);			
+		myAjax("user.php", data, function (_data) {
+			
+			system.Loader(false);
 			alert(_data.email_message);
-			user.DelRequest(_id);			
+			user.DelRequest(_id);
 		});
 		
 	},
@@ -901,8 +893,8 @@ var user = {
 			method : 'delete'
 		};
 		
-		myAjax("request.php", data, function (_data) {			
-			user.my_requests();	
+		myAjax("request.php", data, function (_data) {
+			user.my_requests();
 		});
 	},
 	
@@ -986,20 +978,15 @@ var user = {
 					field : "date",
 					title : "Дата",
 					template : "<div>#=date#</div>"
-				}
-				, {
+				}, {
 					field : "descr",
 					title : "Описание",
 					template : "<div>#=descr#</div>"
-				}
-				
-				, {
+				}, {
 					field : "created",
 					title : "Потребител",
 					template : "<div>#=created#</div>"
-				}
-				
-				, {
+				}, {
 					field : "actions",
 					title : "Действие",
 					template : "<div>#=actions#</div>"

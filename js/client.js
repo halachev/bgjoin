@@ -1,12 +1,13 @@
 ﻿/*
-url - http://joinme.nh.zonebg.com
+url - http://bgjoin.com
 writen by Nurietin Mehmedov © 2013
 All right reserver ...
  */
 
 //base url
 serviceURL = '/services';
-pageUrl = 'http://bgjoin.nh.zonebg.com';
+//pageUrl = 'http://bgjoin.nh.zonebg.com';
+pageUrl = 'http://bgjoin.com';
 
 //global session
 var sessionId = localStorage.getItem('sessionId');
@@ -110,13 +111,13 @@ $(document).ready(function () {
 			return;
 		}
 		
-		var _id = $(this).attr('id');		
+		var _id = $(this).attr('id');
 		user.UserProfile(_id, false);
 	});
 	
 	$("a[href=#selectedEvent]").live("click", function () {
 		
-		if (currUser == null) {			
+		if (currUser == null) {
 			system.ShowRegisterForm();
 			return;
 		}
@@ -130,5 +131,4 @@ $(document).ready(function () {
 		
 	});
 	
-
 });

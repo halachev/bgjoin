@@ -1,4 +1,4 @@
-<?php
+Ôªø<?php
    
 	include "connect.php";
 	include "utils.php";
@@ -103,10 +103,7 @@
 			if ($this->limit > 0)
 				$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
 						left outer join images  i on (i.objectid = u.id) order by u.id desc limit $this->limit");
-			else
-				$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
-					left outer join images  i on (i.objectid = u.id) order by u.id desc ");
-			
+		
 			$data = array();
 			
 			while ($row = mysql_fetch_assoc($results)) {
@@ -122,24 +119,23 @@
 		{
 			
 			$username = convertToCyrillic(filter($this->username));
-			$password = filter(md5($this->password));
-			//$password = filter($this->password);
+			$password = filter(md5($this->password));			
 			$email = filter($this->email);
 			
 			
 			if ((!$username) || (!$password) || (!$email))
 			{
-				$data = array("error_message" => "¬ÒË˜ÍË ÔÓÎÂÚ‡ Á‡‰˙ÎÊËÚÂÎÌË!");
+				$data = array("error_message" => "–í—Å–∏—á–∫–∏ –ø–æ–ª–µ—Ç–∞ –∑–∞–¥—ä–ª–∂–∏—Ç–µ–ª–Ω–∏!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
-			//ÔÓ‚ÂÍ‡ Á‡ Ò˙˘ÂÒ‚Û‚‡˘Ó ËÏÂ
+			//–ø—Ä–æ–≤–µ—Ä–∫–∞ –∑–∞ —Å—ä—â–µ—Å–≤—É–≤–∞—â–æ –∏–º–µ
 			$count = $this->ExistUserName($username);
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "»ÏÂÚÓ Â Á‡ÂÚÓ!");				
+				$data = array("error_message" => "–ò–º–µ—Ç–æ –µ –∑–∞–µ—Ç–æ!");				
 				echo json_safe_encode($data);
 			
 			}
@@ -150,7 +146,7 @@
 			
 				$this->sendMail();
 				
-				// ‚˙˘‡ÏÂ ÌÓ‚Ëˇ Ó·ÂÍÚ Ì‡ ÍÎËÂÌÚ‡
+				// –≤—Ä—ä—â–∞–º–µ –Ω–æ–≤–∏—è –æ–±–µ–∫—Ç –Ω–∞ –∫–ª–∏–µ–Ω—Ç–∞
 				$newId = mysql_insert_id();							
 				echo $this->getUserById($newId);
 			}
@@ -214,14 +210,13 @@
 		{	
 			$username = filter($this->username);
 			$password = filter(md5($this->password));
-			//$password = filter($this->password);
 			
 			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
 						left outer join images  i on (i.objectid = u.id) where u.username='$username' and u.password='$password' ");
 			$count = mysql_num_rows($results);
 			if (!$count) 
 			{
-			    $data = array("error_message" => "ÕÂ‚‡ÎË‰ÂÌ ÔÓÚÂ·ËÚÂÎ!");
+			    $data = array("error_message" => "–ù–µ–≤–∞–ª–∏–¥–µ–Ω –ø–æ—Ç—Ä–µ–±–∏—Ç–µ–ª!");
 				echo json_safe_encode($data);
 				exit;
 			}
@@ -232,8 +227,7 @@
 			   $data[] = $row;
 			}
 		   				
-			
-			//echo json_encode($data);		
+				
 			echo json_safe_encode($data);
 				
 		}
@@ -308,7 +302,7 @@
 			
 			if ($this->method != insert)
 			{
-				$data = array("email_message" => "œÓÚÂ·ËÚÂÎˇ ˘Â ·˙‰Â Û‚Â‰ÓÏÂÌ ÔÓ email!");				
+				$data = array("email_message" => "–ü–æ—Ç—Ä–µ–±–∏—Ç–µ–ª—è —â–µ –±—ä–¥–µ —É–≤–µ–¥–æ–º–µ–Ω –ø–æ email!");				
 				echo json_safe_encode($data);
 			}
 			

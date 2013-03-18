@@ -3,7 +3,7 @@ var system = {
 	
 	init : function () {
 		
-		if (sessionId == null) {		
+		if (sessionId == null) {
 			$('#main-text').show();
 			$('#profile-id').hide();
 			$('#my-requests-id').hide();
@@ -45,9 +45,8 @@ var system = {
 	initContent : function () {
 		
 		// check for go back button
-		gethash();		
+		gethash();
 		system.search();
-		
 		
 		//check for hash string ???
 		var hash = window.location.hash; // get !#
@@ -60,7 +59,6 @@ var system = {
 				user.GetLastUserEvents(); // first load events
 			
 			
-
 	},
 	
 	Loader : function (state) {
@@ -121,7 +119,7 @@ var system = {
 			title : title,
 			modal : true,
 			show : 'fadeIn',
-			resizable : false,			
+			resizable : false,
 			dialogClass : 'dialog-box',
 			position : 'center',
 			buttons : {

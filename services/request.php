@@ -1,4 +1,4 @@
-<?php
+Ôªø<?php
    
 	include "connect.php";
 	include "utils.php";
@@ -86,24 +86,24 @@
 			
 			if ($sender_user_id == $user_id)
 			{
-				$data = array("error_message" => "ÌÂ ÏÓÊÂ ‰‡ Ô‡‚ËÚÂ Á‡ˇ‚ÍË Í˙Ï ‚‡¯Ë Ò˙·ËÚËˇ!");
+				$data = array("error_message" => "–Ω–µ –º–æ–∂–µ –¥–∞ –ø—Ä–∞–≤–∏—Ç–µ –∑–∞—è–≤–∫–∏ –∫—ä–º –≤–∞—à–∏ —Å—ä–±–∏—Ç–∏—è!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
 			if ((!$user_id) || (!$event_id) || (!$descr))
 			{
-				$data = array("error_message" => "¬ÒË˜ÍË ÔÓÎÂÚ‡ Á‡‰˙ÎÊËÚÂÎÌË!");
+				$data = array("error_message" => "–í—Å–∏—á–∫–∏ –ø–æ–ª–µ—Ç–∞ –∑–∞–¥—ä–ª–∂–∏—Ç–µ–ª–Ω–∏!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
-			//ÔÓ‚ÂÍ‡ Á‡ Ò˙˘ÂÒ‚Û‚‡˘‡ Á‡ˇ‚Í‡
+			//–ø—Ä–æ–≤–µ—Ä–∫–∞ –∑–∞ —Å—ä—â–µ—Å–≤—É–≤–∞—â–∞ –∑–∞—è–≤–∫–∞
 			$count = $this->ExistRequest();
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "»ÏÂÚÓ Â Á‡ÂÚÓ!");				
+				$data = array("error_message" => "–ò–º–µ—Ç–æ –µ –∑–∞–µ—Ç–æ!");				
 				echo json_safe_encode($data);
 			
 			}
@@ -112,7 +112,7 @@
 			{
 				$results = mysql_query("insert into requests (sender_user_id, user_id, event_id, date, descr) values('$sender_user_id', '$user_id', '$event_id', '$date', '$descr') ");
 			
-				// ‚˙˘‡ÏÂ ÌÓ‚Ëˇ Ó·ÂÍÚ Ì‡ ÍÎËÂÌÚ‡
+				// –≤—Ä—ä—â–∞–º–µ –Ω–æ–≤–∏—è –æ–±–µ–∫—Ç –Ω–∞ –∫–ª–∏–µ–Ω—Ç–∞
 				$newId = mysql_insert_id();							
 				echo $this->getRequestById($newId);
 			}
@@ -152,7 +152,7 @@
 		{
 			if (($this->id <= 0) || ($this->sessionId == null))
 				{
-					$data = array("system error" => "¬˙ÁÌËÍÌ‡ ÔÓ·ÎÂÏ!ÃÓÎˇ, Ó·˙ÌÂÚÂ ÒÂ Í˙Ï ‡‰ÏËÌËÒÚ‡ÚÓ‡.");
+					$data = array("system error" => "–í—ä–∑–Ω–∏–∫–Ω–∞ –ø—Ä–æ–±–ª–µ–º!–ú–æ–ª—è, –æ–±—ä—Ä–Ω–µ—Ç–µ —Å–µ –∫—ä–º –∞–¥–º–∏–Ω–∏—Å—Ç—Ä–∞—Ç–æ—Ä–∞.");
 					
 					return json_safe_encode($data);				
 				}

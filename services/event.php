@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
    
 	include "connect.php";
 	include "utils.php";
@@ -119,7 +119,7 @@
 			
 			if (strlen ($name > 50))
 			{
-				$data = array("error_message" => "Ìàêñèìàëíà äúëæèíà íà çàãëàâèå 50 çíàêà");
+				$data = array("error_message" => "ÐœÐ°ÐºÑÐ¸Ð¼Ð°Ð»Ð½Ð° Ð´ÑŠÐ»Ð¶Ð¸Ð½Ð° Ð½Ð° Ð·Ð°Ð³Ð»Ð°Ð²Ð¸Ðµ 50 Ð·Ð½Ð°ÐºÐ°");
 				echo json_safe_encode($data);
 				exit;				
 			}
@@ -127,24 +127,24 @@
 			
 			if (strlen ($descr > 250))
 			{
-				$data = array("error_message" => "Ìàêñèìàëíà äúëæèíà íà îïèñàíèå 250 çíàêà");
+				$data = array("error_message" => "ÐœÐ°ÐºÑÐ¸Ð¼Ð°Ð»Ð½Ð° Ð´ÑŠÐ»Ð¶Ð¸Ð½Ð° Ð½Ð° Ð¾Ð¿Ð¸ÑÐ°Ð½Ð¸Ðµ 250 Ð·Ð½Ð°ÐºÐ°");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
 			if ((!$name) || (!$date) || (!$descr))
 			{
-				$data = array("error_message" => "Âñè÷êè ïîëåòà çàäúëæèòåëíè!");
+				$data = array("error_message" => "Ð’ÑÐ¸Ñ‡ÐºÐ¸ Ð¿Ð¾Ð»ÐµÑ‚Ð° Ð·Ð°Ð´ÑŠÐ»Ð¶Ð¸Ñ‚ÐµÐ»Ð½Ð¸!");
 				echo json_safe_encode($data);
 				exit;				
 			}
 			
-			//ïðîâåðêà çà ñúùåñâóâàùî èìå
+			//Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð·Ð° ÑÑŠÑ‰ÐµÑÐ²ÑƒÐ²Ð°Ñ‰Ð¾ Ð¸Ð¼Ðµ
 			$count = $this->ExistEventName();
 			
 			if ($count > 0) 
 			{
-				$data = array("error_message" => "Èìåòî å çàåòî!");				
+				$data = array("error_message" => "Ð˜Ð¼ÐµÑ‚Ð¾ Ðµ Ð·Ð°ÐµÑ‚Ð¾!");				
 				echo json_safe_encode($data);
 			
 			}
@@ -153,7 +153,7 @@
 			{
 				$results = mysql_query("insert into events (name, date, descr, int_id, user_id) values('$name', '$date', '$descr', '$int_id', '$user_id') ");
 			
-				// âðúùàìå íîâèÿ îáåêò íà êëèåíòà
+				// Ð²Ñ€ÑŠÑ‰Ð°Ð¼Ðµ Ð½Ð¾Ð²Ð¸Ñ Ð¾Ð±ÐµÐºÑ‚ Ð½Ð° ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°
 				$newId = mysql_insert_id();							
 				echo $this->getEventById($newId);
 			}
@@ -218,16 +218,29 @@
 			
 			if (($this->id <= 0) || ($this->sessionId == null))
 			{
-			    $data = array("system error" => "Âúçíèêíà ïðîáëåì!Ìîëÿ, îáúðíåòå ñå êúì àäìèíèñòðàòîðà.");
+			    $data = array("system error" => "Ð’ÑŠÐ·Ð½Ð¸ÐºÐ½Ð° Ð¿Ñ€Ð¾Ð±Ð»ÐµÐ¼!ÐœÐ¾Ð»Ñ, Ð¾Ð±ÑŠÑ€Ð½ÐµÑ‚Ðµ ÑÐµ ÐºÑŠÐ¼ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€Ð°.");
 				
 				return json_safe_encode($data);				
 			}
 			
 			$id = $this->id;
+			
+			//remove file from upload dir ...
+			$results = mysql_query("select ImageName, ThumbName from images where objectid='$id' and type=2");
+			
+			while ($row = mysql_fetch_assoc($results)) {
+			   			  
+			   unlink($row['ImageName']);
+			   unlink($row['ThumbName']);
+			  
+			}
 			 
+			//remove event
 			$results = mysql_query("delete from events where id='$id'");
+			//remove image row from images table
 			$results = mysql_query("delete from images where objectid='$id' and type=2");
-			echo json_encode($results);			
+			
+			echo json_encode($data);			
 		}
 		
 		function MyEvents()
