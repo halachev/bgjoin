@@ -117,12 +117,10 @@ var system = {
 			title : title,
 			modal : true,
 			show : 'fadeIn',
-			resizable : false,
-			width : 'auto',
+			resizable : false,			
 			dialogClass : 'dialog-box',
 			position: {
-			 my: "center bottom",
-			 at: "center top",
+			 my: "center bottom",			 
 			 of: $("#main-content")		
 			},
 			buttons : {
@@ -293,9 +291,10 @@ var system = {
 					user.GetLastUsers();
 				});
 				
-				system.Loader(false);
-				e.preventDefault();
+						
 			});
+			
+			system.Loader(false);	
 			
 		});
 		
@@ -310,6 +309,7 @@ var system = {
 	},
 	
 	GetEventsByIntID : function (_id) {
+	
 		system.Loader(true);
 		myAjax("event.php", {
 			id : _id,
@@ -320,10 +320,12 @@ var system = {
 			system.content().html(html);
 			
 			if (_data.length <= 0) {
-				alert("Няма намерени резултати!");
+				system.content().html('<h1>Няма намерени резултати!</h1>');	
+				system.Loader(false);								
 			}
 			
 			system.Loader(false);
+					
 		});
 		
 	},

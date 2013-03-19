@@ -173,8 +173,9 @@
 		  $date = date("Y-m-d H:i:s", strtotime($this->date));
 		  $descr = filter($this->descr);	
 		  $descr = convertToCyrillic($descr);
+		  $int_id = $this->int_id; 
 		   
-		  $result = mysql_query("update events set name='$name', date='$date', descr='$descr' where id='$id'");
+		  $result = mysql_query("update events set name='$name', date='$date', descr='$descr', int_id='$int_id' where id='$id'");
 		 
 		  echo $this->getEventById($id);
 		}

@@ -275,7 +275,7 @@ var user = {
 			
 			var image = '';
 			
-			if (event.ThumbName != null)
+			if ((event.ThumbName != null) && (event.type == 2))
 				image = '<a href="#selectedEvent" id=' + event.id + ' ><img class="border" id=' + event.id + ' src="' + event.ThumbName + '" alt="" width="160"></a>';
 			else
 				image = '<a href="#selectedEvent" id=' + event.id + ' ><img class="border" src="images/empty-image.png" alt="" width="160" height="160"></a>';
@@ -299,8 +299,7 @@ var user = {
 	},
 	
 	registerUser : function () {
-		$('#btnRegister').attr("disabled", "disabled");
-		$('#error-message').html("<p>Регистрация, моля изчакайте ...</p>");
+		//$('#btnRegister').attr("disabled", "disabled");
 		
 		var body = '<html><body> ' +
 			'<p>Добре дошли в bgjoin.com</p>' +
@@ -332,7 +331,7 @@ var user = {
 			system.error($('#register-email'), 'Невалиден email адрес!');
 			return false;
 		};
-		
+		$('#error-message').html("<p>Регистрация, моля изчакайте ...</p>");
 		myAjax("user.php", data, function (_data) {
 			user.UserStorage(_data, true);
 			$('#error-message').html("");
@@ -400,7 +399,7 @@ var user = {
 		
 		if (!c) {
 			e.stopImmediatePropagation();
-			return;	
+			return;
 		}
 		
 		e.stopImmediatePropagation();
@@ -413,23 +412,7 @@ var user = {
 			system.ShowDialog($('#modal-form'), 'Ново събитие');
 			$('#event-date').datetimepicker();
 			
-			var data = {
-				sessionId : sessionId,
-				method : 'interests'
-			}
-			$('#error-message').html('<img src="images/ajax-loader.gif" />');
-			myAjax('ints.php', data, function (_data) {
-				
-				var values = '<option value="0">Избрете категория</option>';
-				
-				for (i in _data) {
-					var interest = _data[i];
-					values += '<option value="' + interest.id + '">' + interest.int_name + '</option>';
-				}
-				
-				$('#event-interest').html(values);
-				$('#error-message').hide('slow');
-			})
+			user.loadInts();
 			
 			$('#add-event-image').click(function () {
 				user.addImage(event_image);
@@ -440,6 +423,34 @@ var user = {
 			})
 			
 		});
+	},
+	
+	loadInts : function (_id) {
+		
+		var data = {
+			sessionId : sessionId,
+			method : 'interests'
+		}
+		$('#error-message').html('<img src="images/ajax-loader.gif" />');
+		myAjax('ints.php', data, function (_data) {
+			
+			var values = '<option value="0">Избрете категория</option>';
+			
+			for (i in _data) {
+				var interest = _data[i];
+				
+				var selected = "";
+				if (interest.id == _id)
+					selected = 'selected';				
+				
+				values += '<option value="' + interest.id + '" '+ selected +'>' + interest.int_name + '</option>';
+				
+			}
+			
+			$('#event-interest').html(values);
+			$('#error-message').hide('slow');
+		})
+		
 	},
 	
 	event_insert : function () {
@@ -500,7 +511,6 @@ var user = {
 			//
 			
 			
-			
 		});
 	},
 	
@@ -525,7 +535,7 @@ var user = {
 				var eventsData = [];
 				for (i in _data) {
 					
-					event = _data[i];
+					var event = _data[i];
 					
 					var style = "";
 					if (event.date >= serverDateTime)
@@ -537,7 +547,7 @@ var user = {
 					var actions =
 						'<a class="data-text" href="#edit-event-request" id="' + event.id + '"><img src="images/edit.png"> Редакция</a>' +
 						'<a class="data-text" href="#remove-event-request" id="' + event.id + '"><img src="images/del.png"> Изтриване</a>';
-					
+										
 					eventsData.push({
 						name : title,
 						date : event.date,
@@ -551,7 +561,7 @@ var user = {
 					
 					var _id = $(this).attr('id');
 					user.editEvent(_id);
-									
+					
 				});
 				
 				$("a[href=#remove-event-request]").live("click", function (e) {
@@ -570,7 +580,7 @@ var user = {
 			})
 			
 			$('#add-event-id').click(function () {
-				user.addEvent();				
+				user.addEvent();
 			})
 			
 			$("a[href=#my_event-view]").live('click', function () {
@@ -578,17 +588,18 @@ var user = {
 				var _id = $(this).attr('id');
 				user.viewEvent(_id);				
 			})
-			
+						
 		});
-		e.stopImmediatePropagation();
+			
 	},
 	
 	editEvent : function (_eventId) {
 		//edit mode
-				
+		
 		$.get('ui/edit-event.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			$('#event-date').datetimepicker();
+			
 			
 			var data = {
 				sessionId : sessionId,
@@ -596,13 +607,15 @@ var user = {
 				method : 'getEventById'
 			};
 			
-			
 			myAjax("event.php", data, function (_data) {
 				var event = $.parseJSON(JSON.stringify(_data))[0];
 				
 				$('#event-name').val(event.name);
 				$('#event-date').val(event.date);
 				$('#event-descr').val(event.descr);
+				
+				user.loadInts(event.int_id);
+				
 			});
 			
 			$('#btn-edit-event').click(function () {
@@ -617,6 +630,7 @@ var user = {
 					name : $('#event-name').val(),
 					date : $('#event-date').val(),
 					descr : $('#event-descr').val(),
+					int_id : $('#event-interest').val(),
 					method : 'edit'
 				};
 				
@@ -643,7 +657,7 @@ var user = {
 			method : 'delete'
 		};
 		
-		myAjax("event.php", data, function (_data) {			
+		myAjax("event.php", data, function (_data) {
 			$('#event-detail').html('<p class="title">Събитието беше успешно изтрито!</p>').show('slow');
 			user.my_events();
 		});
@@ -669,9 +683,10 @@ var user = {
 				
 				var event = $.parseJSON(JSON.stringify(_data))[0];
 				
-				if (event.ThumbName != null)
+				if ((event.ThumbName != null) && (event.type == 2))
 					image += '<a href="' + event.ImageName + '" id="image-dialog"><img src="' + event.ThumbName + '" width="160"/></a><br/><br/>';
-				
+				else
+					image += '<a href="images/empty-image.png" id="image-dialog"><img src="images/empty-image.png" width="160"/></a><br/><br/>';
 				var _descr = ""
 					if (event.descr != null)
 						_descr = event.descr;
@@ -740,7 +755,7 @@ var user = {
 		$('#modal-form').html(html);
 		system.ShowDialog($('#modal-form'), 'Изпращане');
 		
-		$('#request-id').click(function () {
+		$('#request-id').click(function (e) {
 			
 			var user_id = localStorage.getItem('user_id');
 			
@@ -763,8 +778,8 @@ var user = {
 				var request = $.parseJSON(JSON.stringify(_data))[0];
 				localStorage.removeItem('user_id');
 				$('#modal-form').dialog("close");
-				$('#event-detail').append('<h1>Изпратихте заявка към потребителя.<br/>Успех!</h1>');
-			
+				$('#event-detail').append('<h1>Изпратихте заявка към потребителя.Успех!</h1>');
+				
 			});
 		});
 		
@@ -880,12 +895,10 @@ var user = {
 			
 			system.Loader(false);
 			
-			if (_data.error_message == "EMAIL_RESPONSE")
-			{				
+			if (_data.error_message == "EMAIL_RESPONSE") {
 				alert('Потребителя, ще бъде уведомен по емайл!');
 				user.DelRequest(_id);
 			}
-						
 			
 		});
 		
@@ -959,6 +972,7 @@ var user = {
 	},
 	
 	kendoGrid : function (_container, documentsData) {
+		
 		_container.kendoGrid({
 			
 			dataSource : {

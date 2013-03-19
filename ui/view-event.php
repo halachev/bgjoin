@@ -55,7 +55,6 @@
 		
 ?>
 
-
 <div style="margin: 20px;" id="event-detail"></div>
 
 

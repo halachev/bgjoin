@@ -31,41 +31,45 @@ $(document).ready(function () {
 	system.init();
 	
 	//handle main user events
-	$('#home-id').click(function (e) {
-		$('.slider-bg').show();
+	$('#home-id').click(function (e) {		
 		system.init();
+		e.preventDefault();
 	});
 	
 	$('#how-it-work-id').click(function (e) {
 		system.how_it_work();
-		$('.slider-bg').hide();
+		e.preventDefault();
 	});
 	
 	$('#login-id').click(function (e) {
 		system.ShowLoginForm();
+		e.preventDefault();
 		
 	});
 	
 	$('#register-id').click(function (e) {
 		system.ShowRegisterForm();
+		e.preventDefault();
 	});
 	
 	$('#my-requests-id').click(function (e) {
 		user.my_requests();
+		e.preventDefault();
 	});
 	
 	$('#my-events-id').click(function (e) {
-		user.my_events();
+		e.preventDefault();
+		user.my_events();	
 	});
 	
 	$('#profile-id').click(function (e) {
 		user.profile();
-		
+		e.preventDefault();
 	});
 	
 	$("#user-id").click(function () {
 		user.GetLastUsers();
-		$('.slider-bg').hide();
+		e.preventDefault();
 	})
 	
 	$('#exit-id').click(function (e) {
@@ -75,19 +79,19 @@ $(document).ready(function () {
 	$('#contact-id').click(function (e) {
 		
 		system.contacts();
-		$('.slider-bg').hide();
+		e.preventDefault();
 	});
 	
 	$('#service-id').click(function (e) {
 		
 		system.services();
-		$('.slider-bg').hide();
+		e.preventDefault();
 	});
 	
 	$('#about-id').click(function (e) {
 		
 		system.about();
-		$('.slider-bg').hide();
+		e.preventDefault();
 	});
 	
 	$("a[href=#LoadMore]").live("click", function (e) {
@@ -128,6 +132,7 @@ $(document).ready(function () {
 	$("a[href=#facebook-login]").live("click", function () {
 		
 		system.registerByFaceBook();
+		e.preventDefault();
 		
 	});
 	
