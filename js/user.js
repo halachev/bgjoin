@@ -35,8 +35,7 @@ var user = {
 			method : "events"
 		}, function (_data) {
 			
-			var html = user.ShowUserEvents(_data);
-			
+			var html = user.ShowUserEvents(_data);			
 			system.content().html(html);
 			system.Loader(false);
 		});

@@ -12,6 +12,8 @@
 	define ('MyEvents', MyEvents);
 	define ('getEventById', getEventById);
 	define ('GetEventsByIntID', GetEventsByIntID);
+	define ('GetEventByText', GetEventByText);
+	
 	
 	define ('EVENT_REQUARED_FIELDS', EVENT_REQUARED_FIELDS);
 	define ('MAX_EVENT_NAME', MAX_EVENT_NAME);
@@ -76,7 +78,11 @@
 				break;	
 			 case GetEventsByIntID:
 				echo $this->GetEventsByIntID($_id);  
-				break;		
+				break;	
+			 case GetEventByText:
+				echo $this->GetEventByText();  
+				break;	
+					
 			  default:
 				throw new Exception('Invalid REQUEST_METHOD');
 				break;
@@ -288,8 +294,7 @@
 		
 		
 		function GetEventsByIntID($id) {
-			
-			
+						
 				$results = mysql_query("select e.*,  i.objectid, 
 						i.ImageName, 
 						i.ThumbName, 
@@ -310,6 +315,34 @@
 		   		    
 			return json_safe_encode($data);
 		
+		}
+		
+		
+		function GetEventByText()
+		{
+						
+			$name = convertToCyrillic(filter($this->name));	
+			
+			$results = mysql_query("select e.*,  i.objectid, 
+						i.ImageName, 
+						i.ThumbName, 
+						i.type, 
+						ints.int_name,
+						_user.username as username
+						from events e
+						left outer join images  i on (i.objectid = e.id) 
+						left outer join users _user on (_user.id = e.user_id) 
+						left outer join interests  ints on (ints.id = e.int_id)  
+						where e.name like '%$name%' group by e.id order by e.id desc");
+			
+			$data = array();
+			
+			while($row=mysql_fetch_array($results))
+			{
+				  $data[] = $row;
+			} 
+			
+			echo json_safe_encode($data);
 		}
 		
 		function LoadMore()

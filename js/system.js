@@ -262,6 +262,7 @@ var system = {
 		$.get('ui/search.html', function (login_data) {
 			$('#search-id').html(login_data);
 			
+			//load interests
 			var data = {
 				method : 'interests'
 			}
@@ -276,8 +277,10 @@ var system = {
 					
 				}
 				
+				//render html data
 				$('#ints-id').html(values);
 				
+				//event handler
 				$("#ints-id").change(function () {
 					var _id = $('#ints-id').val();
 					
@@ -288,18 +291,34 @@ var system = {
 				});
 				
 				$('#search-post').click(function () {
-					
 					var _text = $('#SearchValue').val();
-					system.GetUsersByText(_text);
-					e.preventDefault();
+					if ($('#search-user').is(':checked')) {
+						
+						system.GetUsersByText(_text);
+					}
+					
+					if ($('#search-event').is(':checked')) {
+						
+						system.GetEventByText(_text);
+					}
+					
 				});
 				
-				$("#search-post").live("keypress", function (event) {
+				$("#SearchValue").keypress(function (event) {
 					
 					if (event.keyCode == 13) {
 						var _text = $('#SearchValue').val();
-						system.GetUsersByText(_text);
-						e.preventDefault();
+						
+						if ($('#search-user').is(':checked')) {
+							
+							system.GetUsersByText(_text);
+						}
+						
+						if ($('#search-event').is(':checked')) {
+							
+							system.GetEventByText(_text);
+						}
+						
 					}
 				});
 				
@@ -309,12 +328,26 @@ var system = {
 			
 		});
 		
-		$("#search-event").live("click", function (e) {
-			//
-		});
+	},
+	
+	GetEventByText : function (_text) {
 		
-		$("#search-user").live("click", function (e) {
-			//
+		system.Loader(true);
+		myAjax("event.php", {
+			name : _text,
+			method : "GetEventByText"
+		}, function (_data) {
+			
+			var html = user.ShowUserEvents(_data);
+			system.content().html(html);
+			
+			if (_data.length <= 0) {
+				system.content().html('<h1>Няма намерени резултати!</h1>');
+				system.Loader(false);
+			}
+			
+			system.Loader(false);
+			
 		});
 		
 	},

@@ -118,15 +118,15 @@ function gethash() {
 			user.profile();
 			break;
 			
-		case 'contact-id':
+		case 'contact':
 			system.contacts();
 			break;
 			
-		case 'service-id':
+		case 'service':
 			system.services();
 			break;
 			
-		case 'about-id':
+		case 'about':
 			system.about();
 			break;
 			

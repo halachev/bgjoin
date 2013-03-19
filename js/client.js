@@ -32,44 +32,36 @@ $(document).ready(function () {
 	
 	//handle main user events
 	$('#home-id').click(function (e) {
-		system.init();
-		e.preventDefault();
+		system.init();		
 	});
 	
 	$('#how-it-work-id').click(function (e) {
-		system.how_it_work();
-		e.preventDefault();
+		system.how_it_work();		
 	});
 	
 	$('#login-id').click(function (e) {
-		system.ShowLoginForm();
-		e.preventDefault();
+		system.ShowLoginForm();		
 		
 	});
 	
 	$('#register-id').click(function (e) {
-		system.ShowRegisterForm();
-		e.preventDefault();
+		system.ShowRegisterForm();		
 	});
 	
 	$('#my-requests-id').click(function (e) {
-		user.my_requests();
-		e.preventDefault();
+		user.my_requests();		
 	});
 	
-	$('#my-events-id').click(function (e) {
-		e.preventDefault();
+	$('#my-events-id').click(function (e) {		
 		user.my_events();
 	});
 	
 	$('#profile-id').click(function (e) {
-		user.profile();
-		e.preventDefault();
+		user.profile();		
 	});
 	
 	$("#user-id").click(function () {
-		user.GetLastUsers();
-		e.preventDefault();
+		user.GetLastUsers();		
 	})
 	
 	$('#exit-id').click(function (e) {
@@ -78,25 +70,21 @@ $(document).ready(function () {
 	
 	$('#contact-id').click(function (e) {
 		
-		system.contacts();
-		e.preventDefault();
+		system.contacts();		
 	});
 	
 	$('#service-id').click(function (e) {
 		
-		system.services();
-		e.preventDefault();
+		system.services();		
 	});
 	
 	$('#about-id').click(function (e) {
 		
-		system.about();
-		e.preventDefault();
+		system.about();		
 	});
 	
 	$('#terms-id').click(function (e) {
-		system.terms();
-		e.preventDefault();
+		system.terms();		
 	});
 	
 	$("a[href=#LoadMore]").live("click", function (e) {
@@ -136,8 +124,7 @@ $(document).ready(function () {
 	
 	$("a[href=#facebook-login]").live("click", function () {
 		
-		system.registerByFaceBook();
-		e.preventDefault();
+		system.registerByFaceBook();		
 		
 	});
 	
