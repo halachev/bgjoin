@@ -75,7 +75,7 @@ var system = {
 		$.get('ui/login.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			
-			$("#login-password").keypress(function () {
+			$("#login-password").keypress(function (event) {
 				if (event.which == 13) {
 					$('#btnLogin').attr("disabled", "disabled");
 					$('#error-message').html('<p class="title">Моля, изчакайте...</p>');
@@ -113,15 +113,15 @@ var system = {
 	},
 	
 	ShowDialog : function (_id, title) {
-		_id.dialog({			
+		_id.dialog({
 			title : title,
 			modal : true,
 			show : 'fadeIn',
-			resizable : false,			
+			resizable : false,
 			dialogClass : 'dialog-box',
-			position: {
-			 my: "center bottom",			 
-			 of: $("#main-content")		
+			position : {
+				my : "center bottom",
+				of : $("#main-content")
 			},
 			buttons : {
 				"Close" : function () {
@@ -287,14 +287,25 @@ var system = {
 						system.initContent();
 				});
 				
-				$("a[href=#search-post]").live("click", function () {
-					user.GetLastUsers();
+				$('#search-post').click(function () {
+					
+					var _text = $('#SearchValue').val();
+					system.GetUsersByText(_text);
+					e.preventDefault();
 				});
 				
-						
+				$("#search-post").live("keypress", function (event) {
+					
+					if (event.keyCode == 13) {
+						var _text = $('#SearchValue').val();
+						system.GetUsersByText(_text);
+						e.preventDefault();
+					}
+				});
+				
 			});
 			
-			system.Loader(false);	
+			system.Loader(false);
 			
 		});
 		
@@ -308,8 +319,29 @@ var system = {
 		
 	},
 	
-	GetEventsByIntID : function (_id) {
+	GetUsersByText : function (_text) {
+		
+		system.Loader(true);
+		myAjax("user.php", {
+			username : _text,
+			method : "GetUsersByText"
+		}, function (_data) {
+			var html = user.ShowUsers(_data);
+			system.content().html(html);
+			
+			if (_data.length <= 0) {
+				system.content().html('<h1>Няма намерени резултати!</h1>');
+				system.Loader(false);
+			}
+			
+			system.Loader(false);
+			
+		});
+		
+	},
 	
+	GetEventsByIntID : function (_id) {
+		
 		system.Loader(true);
 		myAjax("event.php", {
 			id : _id,
@@ -320,12 +352,12 @@ var system = {
 			system.content().html(html);
 			
 			if (_data.length <= 0) {
-				system.content().html('<h1>Няма намерени резултати!</h1>');	
-				system.Loader(false);								
+				system.content().html('<h1>Няма намерени резултати!</h1>');
+				system.Loader(false);
 			}
 			
 			system.Loader(false);
-					
+			
 		});
 		
 	},
@@ -389,5 +421,13 @@ var system = {
 			
 		});
 	},
+	
+	terms : function () {
+		$.get('ui/terms.html', function (login_data) {
+			
+			system.content().html(login_data);
+			
+		});
+	}
 	
 };

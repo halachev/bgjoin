@@ -106,6 +106,10 @@ function gethash() {
 			system.ints();
 			break;
 			
+		case 'users':
+			user.GetLastUsers();
+			break;
+			
 		case 'how-it-work-id':
 			system.how - it - work - id();
 			break;

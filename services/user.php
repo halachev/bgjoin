@@ -13,6 +13,7 @@
 	define ('LoadMore', LoadMore);
 	define ('getUserById', getUserById);
 	define ('getUserById', getUserByName);
+	define ('GetUsersByText', GetUsersByText);
 	define ('SetNewPassword', SetNewPassword);
 	define ('sendMail', sendMail);
 	
@@ -89,6 +90,10 @@
 			 case getUserByName:
 				echo $this->getUserByName($_username);  
 				break;	
+			case GetUsersByText:
+				echo $this->GetUsersByText($_username);  
+				break;
+				
 		     case SetNewPassword:
 				echo $this->SetNewPassword();  
 				break;	
@@ -242,6 +247,24 @@
 			$results = mysql_query("select username from users where username='$username'");
 			
 			return mysql_num_rows($results);
+		}
+		
+		function GetUsersByText()
+		{
+						
+			$username = $this->username;
+			
+			$sql = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+						left outer join images  i on (i.objectid = u.id) where u.username like '%$username%' group by u.id order by u.id desc");
+			
+			$data = array();
+			
+			while($row=mysql_fetch_array($sql))
+			{
+				  $data[] = $row;
+			} 
+			
+			echo json_safe_encode($data);
 		}
 		
 		function delete()

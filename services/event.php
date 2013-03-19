@@ -290,8 +290,15 @@
 		function GetEventsByIntID($id) {
 			
 			
-				$results = mysql_query("select e.*,  i.objectid, i.ImageName, i.ThumbName, i.type, ints.int_name from events e
+				$results = mysql_query("select e.*,  i.objectid, 
+						i.ImageName, 
+						i.ThumbName, 
+						i.type, 
+						ints.int_name,
+						_user.username as username
+						from events e
 						left outer join images  i on (i.objectid = e.id) 
+						left outer join users _user on (_user.id = e.user_id) 
 						left outer join interests  ints on (ints.id = e.int_id)  
 						where e.int_id='$id'");
 			

@@ -31,7 +31,7 @@ $(document).ready(function () {
 	system.init();
 	
 	//handle main user events
-	$('#home-id').click(function (e) {		
+	$('#home-id').click(function (e) {
 		system.init();
 		e.preventDefault();
 	});
@@ -59,7 +59,7 @@ $(document).ready(function () {
 	
 	$('#my-events-id').click(function (e) {
 		e.preventDefault();
-		user.my_events();	
+		user.my_events();
 	});
 	
 	$('#profile-id').click(function (e) {
@@ -91,6 +91,11 @@ $(document).ready(function () {
 	$('#about-id').click(function (e) {
 		
 		system.about();
+		e.preventDefault();
+	});
+	
+	$('#terms-id').click(function (e) {
+		system.terms();
 		e.preventDefault();
 	});
 	
@@ -135,5 +140,7 @@ $(document).ready(function () {
 		e.preventDefault();
 		
 	});
+	
+	
 	
 });

@@ -28,7 +28,7 @@
 				
 		$title  = convertToCyrillic($row['name']); 
 		$date  = $row['date']; 
-		$image = $row['ImageName'];		
+		$image = '<a href="' .$row['ImageName']. '" id="image-dialog"><img src="' . $row['ThumbName']. '" width="160"/></a>';
 		$descr = convertToCyrillic($row['descr']);
 		$detail = '<a class="link" href="#selectedEvent" id=' .$id.'>Детайли</a>';
 		$username = convertToCyrillic($row['username']);
@@ -36,8 +36,7 @@
 		
 		$data = '<article>'.
 				'<p class=text-1>'.$title.'</p>'.			
-				'<p class="p0"><strong>Дата на събитие: </strong><br/>'.$date.'</p>'.
-				'<img class="border" src="'.$image.'" alt="" width="160">'.				
+				'<p class="p0"><strong>Дата на събитие: </strong><br/>'.$date.'</p>' .$image.			
 				'<p class="p0">Описание: <p class="text-1">'.$descr.'</p></p>'.	$detail.				
 				'<p class="p0"><strong>Добавено от: </strong><br/><a href="#selected-user" id='.$user_id.'>'.$username.'</a></p>'.
 				'</article>';
