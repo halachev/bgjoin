@@ -60,7 +60,7 @@ $(document).ready(function () {
 		user.profile();		
 	});
 	
-	$("#user-id").click(function () {
+	$("#user-id").click(function (e) {
 		user.GetLastUsers();		
 	})
 	
@@ -110,9 +110,11 @@ $(document).ready(function () {
 		
 		var _id = $(this).attr('id');
 		user.UserProfile(_id, false);
+		
+		
 	});
 	
-	$("a[href=#selectedEvent]").live("click", function () {
+	$("a[href=#selectedEvent]").live("click", function (e) {
 		
 		if (currUser == null) {
 			system.ShowRegisterForm();
@@ -120,6 +122,7 @@ $(document).ready(function () {
 		}
 		var _id = $(this).attr('id');
 		user.viewEvent(_id);
+		
 	});
 	
 	$("a[href=#facebook-login]").live("click", function () {
@@ -128,6 +131,5 @@ $(document).ready(function () {
 		
 	});
 	
-	
-	
+
 });

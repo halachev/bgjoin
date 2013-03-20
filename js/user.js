@@ -1,19 +1,21 @@
 ﻿//user object
 var user = {
 	
-	currentUser : function () {
+	currentUser : function (e) {
 		
 		var data = JSON.parse(currUser);
 		return data;
 	},
 	
-	InitServerTime : function () {
+	InitServerTime : function (e) {
 		myAjax('time.php', "", function (data) {
 			localStorage.setItem("serverTime", data.serverTime);
 		});
+		
 	},
 	
-	GetLastUsers : function () {
+	GetLastUsers : function (e) {
+		
 		system.Loader(true);
 		myAjax("user.php", {
 			limit : FIRST_MAX_USERS,
@@ -24,27 +26,30 @@ var user = {
 			system.content().html(html);
 			system.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');
 			system.Loader(false);
+			
 		});
+		
+		e.stopImmediatePropagation();
 		
 	},
 	
-	GetLastUserEvents : function (_html) {
+	GetLastUserEvents : function (e) {
 		system.Loader(true);
 		myAjax("event.php", {
 			limit : FIRST_MAX_EVENTS,
 			method : "events"
 		}, function (_data) {
 			
-			var html = user.ShowUserEvents(_data);			
+			var html = user.ShowUserEvents(_data);
 			system.content().html(html);
 			system.Loader(false);
 		});
-		
 	},
 	
 	profile : function (e) {
 		
 		user.UserProfile(user.currentUser().id, true);
+		e.stopImmediatePropagation();
 	},
 	
 	UserProfile : function (_id, IsMyProfile) {
@@ -345,14 +350,12 @@ var user = {
 			
 			var data = {
 				username : $('#edit-user'),
-				email : $('#edit-email'),
 				descr : $('#edit-descr')
 			};
 			
 			var _user = user.currentUser();
 			
 			data.username.val(_user.username);
-			data.email.val(_user.email);
 			data.descr.val(_user.descr);
 			
 			$('#btnEdit').click(function (e) {
@@ -361,7 +364,6 @@ var user = {
 					id : _user.id,
 					sessionId : sessionId,
 					username : data.username.val(),
-					email : data.email.val(),
 					descr : data.descr.val(),
 					method : "edit"
 				};
@@ -440,9 +442,9 @@ var user = {
 				
 				var selected = "";
 				if (interest.id == _id)
-					selected = 'selected';				
+					selected = 'selected';
 				
-				values += '<option value="' + interest.id + '" '+ selected +'>' + interest.int_name + '</option>';
+				values += '<option value="' + interest.id + '" ' + selected + '>' + interest.int_name + '</option>';
 				
 			}
 			
@@ -476,6 +478,7 @@ var user = {
 		
 		if (data.date.length <= 0) {
 			
+
 			system.error($('#event-date'), '<p>Моля, изберете дата!</p>');
 			return false;
 		}
@@ -515,6 +518,13 @@ var user = {
 	
 	my_events : function (e) {
 		
+		user.GetMyEvents();
+		e.stopImmediatePropagation();
+		
+	},
+	
+	GetMyEvents : function (e) {
+		
 		system.Loader(true);
 		$.get('ui/my-events.html', function (login_data) {
 			
@@ -546,7 +556,7 @@ var user = {
 					var actions =
 						'<a class="data-text" href="#edit-event-request" id="' + event.id + '"><img src="images/edit.png"> Редакция</a>' +
 						'<a class="data-text" href="#remove-event-request" id="' + event.id + '"><img src="images/del.png"> Изтриване</a>';
-										
+					
 					eventsData.push({
 						name : title,
 						date : event.date,
@@ -569,7 +579,7 @@ var user = {
 					
 					if (c) {
 						var _id = $(this).attr('id');
-						user.delEvent(_id);						
+						user.delEvent(_id);
 					}
 					
 				});
@@ -585,11 +595,11 @@ var user = {
 			$("a[href=#my_event-view]").live('click', function () {
 				
 				var _id = $(this).attr('id');
-				user.viewEvent(_id);				
+				user.viewEvent(_id);
 			})
-						
-		});
 			
+		});
+		
 	},
 	
 	editEvent : function (_eventId) {
@@ -598,7 +608,6 @@ var user = {
 		$.get('ui/edit-event.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			$('#event-date').datetimepicker();
-			
 			
 			var data = {
 				sessionId : sessionId,
@@ -705,7 +714,7 @@ var user = {
 				'<p class="p0"><b>Дата на събитие:</b><br/>' + event.date + '</p>' +
 				'<p class="p0"><b>Категория:</b><br/>' + event.int_name + '</p>' +
 				'<p class="p0"><b>Описание:</b><p class="text-1">' + _descr + '</p></p>' +
-				'<p class="p0"><b>Добавено от :</b><br/>' + event.username + '</p>' +
+				'<p class="p0"><b>Добавено от :</b><a href="#selected-user" id="' + event.user_id + '">' + event.username + '</a></p><br/>' +
 				
 				'<p class="blue_title"">Изберете бутона заявка, ако проявявате интерес към това събитие.</p>';
 				
@@ -728,8 +737,7 @@ var user = {
 					if (c) {
 						var _id = $(this).attr('id');
 						user.delEvent(_id);
-					} else
-						e.preventDefault();
+					}
 					
 				});
 				
@@ -795,11 +803,20 @@ var user = {
 			var count = _data.length;
 			if (count > 0)
 				$('#my-requests-id').html('Заявки (' + count + ')');
+			else
+				$('#my-requests-id').html('Заявки');
 		});
 	},
 	
 	my_requests : function (e) {
 		
+		user.getMyRequests();
+		e.stopImmediatePropagation();
+		
+	},
+	
+	getMyRequests : function (e) {
+	
 		$.get('ui/my-requests.html', function (login_data) {
 			
 			system.content().html(login_data);
@@ -839,7 +856,7 @@ var user = {
 					
 					var _id = $(this).attr('id');
 					user.ApplyRequest(_data, _id);
-					e.preventDefault();
+					e.stopImmediatePropagation();
 					
 				});
 				
@@ -850,7 +867,9 @@ var user = {
 						var _id = $(this).attr('id');
 						user.DelRequest(_id);
 					}
-					e.preventDefault();
+					
+					e.stopImmediatePropagation();
+					
 				});
 				
 				system.Loader(false);
@@ -861,8 +880,9 @@ var user = {
 		});
 		
 	},
+	
 	ApplyRequest : function (_data, _id) {
-		
+				
 		system.content().html('<p class="text-1">Моля, изчакайте ...</p>');
 		system.Loader(true);
 		var reqData = null;
@@ -879,10 +899,10 @@ var user = {
 		var body = '<html><body> ' +
 			'<p>Здравейте, ' + reqData.created + '</p>' +
 			'<p>Потребител: ' + user.currentUser().username + ' желае да присъствате на събитието. ' + reqData.eventName + '</p>' +
-			'</p>Може да се свържете на: ' + user.currentUser().email + '</p>' +
+			'</p>Може да се свържете на: ' + reqData.myEmail + '</p>' +
 			'<p>Благодарим! oт екипа на <a href="http://bgjoin.com/">bgjoin</a></p>' +
 			'</body></html>';
-		
+			
 		var data = {
 			email : reqData.createdEmail,
 			emailSubject : 'Приета заявка от ' + user.currentUser().username + '',
@@ -892,11 +912,11 @@ var user = {
 		
 		myAjax("user.php", data, function (_data) {
 			
-			system.Loader(false);
-			
+			system.Loader(false);			
 			if (_data.error_message == "EMAIL_RESPONSE") {
-				alert('Потребителя, ще бъде уведомен по емайл!');
+				alert("Потребителя, ще бъде уведомен по емайл!");
 				user.DelRequest(_id);
+				user.my_requests_count();
 			}
 			
 		});
@@ -911,7 +931,9 @@ var user = {
 		};
 		
 		myAjax("request.php", data, function (_data) {
+			user.my_requests_count();
 			user.my_requests();
+
 		});
 	},
 	

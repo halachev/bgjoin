@@ -1,7 +1,7 @@
 ﻿//system object
 var system = {
 	
-	init : function () {
+	init : function (e) {
 		
 		if (sessionId == null) {
 			$('#main-text').show();
@@ -29,6 +29,8 @@ var system = {
 		}
 		
 		system.initContent();
+		
+		
 	},
 	
 	currentUser : function () {
@@ -42,7 +44,7 @@ var system = {
 		return $('#main-content');
 	},
 	
-	initContent : function () {
+	initContent : function (e) {
 		
 		// check for go back button
 		gethash();
@@ -50,15 +52,15 @@ var system = {
 		
 		//check for hash string ???
 		var hash = window.location.hash; // get !#
-		id = hash.slice(1).replace('!', '') // replace
-			
-			//at the moment we have only event view ...
-			if (id > 0)
-				$('#main-content').load('/ui/view-event.php?_escaped_fragment_=' + id + '');
-			else
-				user.GetLastUserEvents(); // first load events
-			
-			
+		id = hash.slice(1).replace('!', ''); // replace
+		
+		//at the moment we have only event view ...
+		if (id > 0)
+			$('#main-content').load('/ui/view-event.php?_escaped_fragment_=' + id + '');
+		else {
+			user.GetLastUserEvents(); // first load events
+		}
+		
 	},
 	
 	Loader : function (state) {

@@ -111,7 +111,10 @@
 		function users()
 		{
 			if ($this->limit > 0)
-				$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+				$results = mysql_query("select u.id, u.username, u.descr,  
+						i.objectid, i.ImageName, 
+						i.ThumbName, 
+						i.type from users u
 						left outer join images  i on (i.objectid = u.id) order by u.id desc limit $this->limit");
 		
 			$data = array();
@@ -165,12 +168,11 @@
 		
 		function edit()
 		{
-		  $id = $this->id;
-		  $email = filter($this->email);
+		  $id = $this->id;		  
 		  $descr = filter($this->descr);	
 		  $descr = convertToCyrillic($descr);
 		   
-		  $result = mysql_query("update users set descr='$descr', email='$email' where id='$id'");
+		  $result = mysql_query("update users set descr='$descr', where id='$id'");
 		 
 		  echo $this->getUserById($id);
 		}
@@ -183,7 +185,11 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+			$results = mysql_query("select u.id, u.username, u.descr,  
+						i.objectid, 
+						i.ImageName, 
+						i.ThumbName, 
+						i.type from users u
 						left outer join images  i on (i.objectid = u.id) where u.id='$id'");
 			
 			$data = array();
@@ -204,7 +210,8 @@
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+			$results = mysql_query("select u.id, u.username, u.descr,  
+						i.objectid, i.ImageName, i.ThumbName, i.type from users u
 						left outer join images  i on (i.objectid = u.id) where u.username='$_name'");
 			
 			$data = array();
@@ -221,7 +228,11 @@
 			$username = convertToCyrillic(filter($this->username));
 			$password = filter(md5($this->password));
 			
-			$results = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+			$results = mysql_query("select u.id, u.username, u.descr,  
+						i.objectid, i.ImageName, 
+						i.ThumbName, 
+						i.type 
+						from users u
 						left outer join images  i on (i.objectid = u.id) where u.username='$username' and u.password='$password' ");
 			$count = mysql_num_rows($results);
 			if (!$count) 
@@ -254,7 +265,7 @@
 						
 			$username = $this->username;
 			
-			$sql = mysql_query("select u.*,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
+			$sql = mysql_query("select u.id, u.username, u.descr,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
 						left outer join images  i on (i.objectid = u.id) where u.username like '%$username%' group by u.id order by u.id desc");
 			
 			$data = array();
@@ -275,7 +286,7 @@
 		function LoadMore()
 		{
 			$last_id = $this->userLastId;
-			$sql = mysql_query("SELECT * FROM users WHERE id < '$last_id' ORDER BY id desc LIMIT $this->limit");
+			$sql = mysql_query("SELECT u.id, u.username, u.descr FROM users u WHERE id < '$last_id' ORDER BY id desc LIMIT $this->limit");
 			
 			$data = array();
 			
