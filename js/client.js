@@ -15,7 +15,7 @@ var currUser = localStorage.getItem('profileId');
 localStorage.removeItem('lastId');
 
 FIRST_MAX_USERS = 10;
-FIRST_MAX_EVENTS = 20;
+FIRST_MAX_EVENTS = 30;
 
 var ERROR_INSERT_EXIST_NAME = 1;
 var ERROR_INSERT_REQUARED = 2;

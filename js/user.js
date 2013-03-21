@@ -77,30 +77,26 @@ var user = {
 						'<a href="#add-image" class="button_view">Качи снимка</a>';
 				}
 				
-				for (i in _data) {
-					
-					var _user = $.parseJSON(JSON.stringify(_data))[i];
-					
-					var _descr = "";
-					
-					if (typeof _user == 'undefined')
-						return;
-					
-					if (_user.descr != null)
-						_descr = _user.descr;
-					
-					var imgSize = "160";
-					
-					if (_user.ThumbName != null)
-						html += '<a href="' + _user.ImageName + '" id="image-dialog"><img class="border" src="' + _user.ThumbName + '" width=' + imgSize + '/></a>';
-					else
-						html += '<img class="border" src="images/empty-image.png" width="' + imgSize + '"/>';
-					
-				}
+				var _user = $.parseJSON(JSON.stringify(_data))[0];
+				
+				var _descr = "";
+				
+				if (typeof _user == 'undefined')
+					return;
+				
+				if (_user.descr != null)
+					_descr = _user.descr;
+				
+				var imgSize = "160";
+				
+				if (_user.ThumbName != null)
+					html += '<a href="' + _user.ImageName + '" id="image-dialog"><img class="border" src="' + _user.ThumbName + '" width=' + imgSize + '/></a>';
+				else
+					html += '<img class="border" src="images/empty-image.png" width="' + imgSize + '"/>';
 				
 				html += '<h6>' + _user.username + '</h6>' +
 				'<p class="p0" >Описансие: <br/>' + _descr + '</p>' +
-				'<a class="link" href="#">Събития на ' + _user.username + '</a>';
+				'<a class="link" href="#user-events" id="' + _user.id + '">Събития на ' + _user.username + '</a>';
 				
 				system.Loader(false);
 				
@@ -121,6 +117,11 @@ var user = {
 				
 				$("a[href=#change-password]").live("click", function () {
 					user.NewPassword();
+				});
+				
+				$("a[href=#user-events]").live("click", function () {
+					var userId = $(this).attr('id');					
+					user.UserEventsView(userId);
 				});
 				
 			});
@@ -510,7 +511,7 @@ var user = {
 	myEventResponse : function (objectId) {
 		
 		//update image objectid and type by event
-		//read eventResponse from localStorage		
+		//read eventResponse from localStorage
 		var eventResponse = localStorage.getItem('eventResponse');
 		if (eventResponse != null)
 			user.updateImage(eventResponse, objectId, event_image);
@@ -603,6 +604,58 @@ var user = {
 		
 	},
 	
+	UserEventsView : function (_userId) {
+		system.Loader(true);
+		$.get('ui/user-events.html', function (login_data) {
+			
+			system.content().html(login_data);
+			
+			user.InitServerTime();
+			serverDateTime = localStorage.getItem("serverTime");
+			
+			var data = {
+				sessionId : sessionId,
+				user_id : _userId,
+				method : 'MyEvents'
+			};
+			
+			myAjax('event.php', data, function (_data) {
+				
+				var eventsData = [];
+				for (i in _data) {
+					
+					var event = _data[i];
+					
+					var style = "";
+					if (event.date >= serverDateTime)
+						style = "class = data-text";
+					else
+						style = "class = data-text-line-through";
+					
+					var title = '<a href="#user-event-view" id="' + event.id + '"><p ' + style + '>' + event.name + '</p></a>';
+					
+					eventsData.push({
+						name : title,
+						date : event.date,
+						descr : event.descr.substr(0, 50) + '...',
+						created : event.username,
+						actions : ""
+					});
+				}
+				
+				user.kendoGrid(system.content(), eventsData);
+				system.Loader(false);
+			})
+			
+			$("a[href=#user-event-view]").live('click', function () {
+				
+				var _id = $(this).attr('id');
+				user.viewEvent(_id);
+			})
+			
+		});
+	},
+	
 	editEvent : function (_eventId) {
 		//edit mode
 		
@@ -627,13 +680,12 @@ var user = {
 				
 			});
 			
-			
-			$('#edit-add-event-image').click(function () {				
+			$('#edit-add-event-image').click(function () {
 				user.addImage(event_image);
 			});
 			
 			$('#btn-edit-event').click(function () {
-			
+				
 				$('#event-detail').append('<h1>Успешна редакция!</h1>');
 				
 				var user_id = localStorage.getItem('user_id');
@@ -650,7 +702,8 @@ var user = {
 				
 				myAjax('event.php', data, function (_data) {
 					
-					if (!CheckServerError(_data)) return;					
+					if (!CheckServerError(_data))
+						return;
 					$('#modal-form').dialog("close");
 					
 					user.myEventResponse(_eventId);
@@ -697,34 +750,33 @@ var user = {
 			myAjax("event.php", data, function (_data) {
 				
 				//first read all images of event
-				for (i in _data)
-				{
+				for (i in _data) {
 					var imgEvent = $.parseJSON(JSON.stringify(_data))[i];
 					if ((imgEvent.ThumbName != null) && (imgEvent.type == 2))
 						image += '<a href="' + imgEvent.ImageName + '" id="image-dialog"><img class="border" src="' + imgEvent.ThumbName + '" width="160"/></a>';
 					else
 						image = '<a href="images/empty-image.png" id="image-dialog"><img class="border" src="images/empty-image.png" width="160"/></a><br/><br/>';
-				
+					
 				}
 				
 				//get event object by index 0
 				var event = $.parseJSON(JSON.stringify(_data))[0];
-								
+				
 				var _descr = ""
 					if (event.descr != null)
 						_descr = event.descr.replace(/\n/g, '<br/>');
 					
-				var html = '';
+					var html = '';
 				
 				if (event.user_id != user.currentUser().id)
 					html += '<a href="#make-event-request" class="button_view">Заявка</a>';
 				else {
 					html += '<a href="#remove-event-request" id="' + _eventId + '" class="button_view">Изтриване</a>';
-					html += '<a href="#edit-event-request" id="' + _eventId + '" class="button_view">Редакция</a>';					
+					html += '<a href="#edit-event-request" id="' + _eventId + '" class="button_view">Редакция</a>';
 				}
 				
 				html +=
-				'<p class="text-1">' + event.name + '</p>' + image + '<br/>' + 
+				'<p class="text-1">' + event.name + '</p>' + image + '<br/>' +
 				'<p class="p0"><b>Дата на събитие:</b><br/>' + event.date + '</p>' +
 				'<p class="p0"><b>Категория:</b><br/>' + event.int_name + '</p>' +
 				'<p class="p0"><b>Описание:</b><p class="text-1">' + _descr + '</p></p>' +
