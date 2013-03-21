@@ -25,7 +25,7 @@ $(document).ready(function() {
 	var output 				= $("#output"); //ajax result output element
 	var completed 			= '0%'; //initial progressbar value
 	var FileInputsHolder 	= $('#AddFileInputBox'); //Element where additional file inputs are appended
-	var MaxFileInputs		= 3; //Maximum number of file input boxs
+	var MaxFileInputs		= 1; //Maximum number of file input boxs
 
 	// adding and removing file input box
 	var i = $("#AddFileInputBox div").size() + 1;

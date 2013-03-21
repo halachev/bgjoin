@@ -105,7 +105,7 @@
 						from events e						
 						left outer join images  i on (i.objectid = e.id) 
 						left outer join users _user on (_user.id = e.user_id) 
-						where '$currTime' <= e.date order by id desc limit $this->limit");
+						where '$currTime' <= e.date group by e.id order by id desc limit $this->limit");
 			
 			
 			$data = array();

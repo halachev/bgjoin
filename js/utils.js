@@ -48,7 +48,7 @@ function CheckServerError(obj) {
 			   case "MAX_EVENT_NAME" : err = 'Максимална дължина на заглавие 50 знака!';
 			   break;
 			   
-			   case "MAX_EVENT_DESCR" : err = 'Максимална дължина на описание 250 знака';
+			   case "MAX_EVENT_DESCR" : err = 'Максимална дължина на описание 500 знака';
 			   break;
 			   
 			   case "EXIST_EVENT" : err = 'Вече има събитие със същото име!';

@@ -90,13 +90,11 @@ var user = {
 						_descr = _user.descr;
 					
 					var imgSize = "160";
-					if (IsMyProfile)
-						imgSize = "75";
 					
 					if (_user.ThumbName != null)
-						html += '<a href="' + _user.ImageName + '" id="image-dialog"><img src="' + _user.ThumbName + '" width=' + imgSize + '/></a>';
+						html += '<a href="' + _user.ImageName + '" id="image-dialog"><img class="border" src="' + _user.ThumbName + '" width=' + imgSize + '/></a>';
 					else
-						html += '<img src="images/empty-image.png" width="' + imgSize + '"/>';
+						html += '<img class="border" src="images/empty-image.png" width="' + imgSize + '"/>';
 					
 				}
 				
@@ -478,7 +476,6 @@ var user = {
 		
 		if (data.date.length <= 0) {
 			
-
 			system.error($('#event-date'), '<p>Моля, изберете дата!</p>');
 			return false;
 		}
@@ -505,15 +502,19 @@ var user = {
 			user.my_events();
 			$('#modal-form').dialog("close");
 			
-			//update image objectid and type by event
-			//read eventResponse from localStorage
-			var eventResponse = localStorage.getItem('eventResponse');
-			if (eventResponse != null)
-				user.updateImage(eventResponse, event.id, event_image);
-			//
-			
+			user.myEventResponse(event.id);
 			
 		});
+	},
+	
+	myEventResponse : function (objectId) {
+		
+		//update image objectid and type by event
+		//read eventResponse from localStorage		
+		var eventResponse = localStorage.getItem('eventResponse');
+		if (eventResponse != null)
+			user.updateImage(eventResponse, objectId, event_image);
+		
 	},
 	
 	my_events : function (e) {
@@ -626,8 +627,13 @@ var user = {
 				
 			});
 			
+			
+			$('#edit-add-event-image').click(function () {				
+				user.addImage(event_image);
+			});
+			
 			$('#btn-edit-event').click(function () {
-				
+			
 				$('#event-detail').append('<h1>Успешна редакция!</h1>');
 				
 				var user_id = localStorage.getItem('user_id');
@@ -644,9 +650,10 @@ var user = {
 				
 				myAjax('event.php', data, function (_data) {
 					
-					if (!CheckServerError(_data))
-						return;
+					if (!CheckServerError(_data)) return;					
 					$('#modal-form').dialog("close");
+					
+					user.myEventResponse(_eventId);
 					user.my_events(_eventId);
 				});
 			});
@@ -689,28 +696,35 @@ var user = {
 			var image = "";
 			myAjax("event.php", data, function (_data) {
 				
-				var event = $.parseJSON(JSON.stringify(_data))[0];
+				//first read all images of event
+				for (i in _data)
+				{
+					var imgEvent = $.parseJSON(JSON.stringify(_data))[i];
+					if ((imgEvent.ThumbName != null) && (imgEvent.type == 2))
+						image += '<a href="' + imgEvent.ImageName + '" id="image-dialog"><img class="border" src="' + imgEvent.ThumbName + '" width="160"/></a>';
+					else
+						image = '<a href="images/empty-image.png" id="image-dialog"><img class="border" src="images/empty-image.png" width="160"/></a><br/><br/>';
 				
-				if ((event.ThumbName != null) && (event.type == 2))
-					image += '<a href="' + event.ImageName + '" id="image-dialog"><img src="' + event.ThumbName + '" width="160"/></a><br/><br/>';
-				else
-					image += '<a href="images/empty-image.png" id="image-dialog"><img src="images/empty-image.png" width="160"/></a><br/><br/>';
+				}
+				
+				//get event object by index 0
+				var event = $.parseJSON(JSON.stringify(_data))[0];
+								
 				var _descr = ""
 					if (event.descr != null)
-						_descr = event.descr;
+						_descr = event.descr.replace(/\n/g, '<br/>');
 					
-					var html = '';
+				var html = '';
 				
 				if (event.user_id != user.currentUser().id)
 					html += '<a href="#make-event-request" class="button_view">Заявка</a>';
 				else {
 					html += '<a href="#remove-event-request" id="' + _eventId + '" class="button_view">Изтриване</a>';
-					html += '<a href="#edit-event-request" id="' + _eventId + '" class="button_view">Редакция</a>';
-					
+					html += '<a href="#edit-event-request" id="' + _eventId + '" class="button_view">Редакция</a>';					
 				}
 				
 				html +=
-				'<p class="text-1">' + event.name + '</p>' + image +
+				'<p class="text-1">' + event.name + '</p>' + image + '<br/>' + 
 				'<p class="p0"><b>Дата на събитие:</b><br/>' + event.date + '</p>' +
 				'<p class="p0"><b>Категория:</b><br/>' + event.int_name + '</p>' +
 				'<p class="p0"><b>Описание:</b><p class="text-1">' + _descr + '</p></p>' +
@@ -816,7 +830,7 @@ var user = {
 	},
 	
 	getMyRequests : function (e) {
-	
+		
 		$.get('ui/my-requests.html', function (login_data) {
 			
 			system.content().html(login_data);
@@ -882,7 +896,7 @@ var user = {
 	},
 	
 	ApplyRequest : function (_data, _id) {
-				
+		
 		system.content().html('<p class="text-1">Моля, изчакайте ...</p>');
 		system.Loader(true);
 		var reqData = null;
@@ -902,7 +916,7 @@ var user = {
 			'</p>Може да се свържете на: ' + reqData.myEmail + '</p>' +
 			'<p>Благодарим! oт екипа на <a href="http://bgjoin.com/">bgjoin</a></p>' +
 			'</body></html>';
-			
+		
 		var data = {
 			email : reqData.createdEmail,
 			emailSubject : 'Приета заявка от ' + user.currentUser().username + '',
@@ -912,7 +926,7 @@ var user = {
 		
 		myAjax("user.php", data, function (_data) {
 			
-			system.Loader(false);			
+			system.Loader(false);
 			if (_data.error_message == "EMAIL_RESPONSE") {
 				alert("Потребителя, ще бъде уведомен по емайл!");
 				user.DelRequest(_id);
@@ -933,7 +947,7 @@ var user = {
 		myAjax("request.php", data, function (_data) {
 			user.my_requests_count();
 			user.my_requests();
-
+			
 		});
 	},
 	
