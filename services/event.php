@@ -1,6 +1,7 @@
 ﻿<?php
-   
+     
 	include "connect.php";
+	include "base.php";
 	include "utils.php";
 	include "json_unicode.php";
 	
@@ -20,7 +21,7 @@
 	define ('MAX_EVENT_DESCR', MAX_EVENT_DESCR);
 	define ('EXIST_EVENT', EXIST_EVENT);
 	
-	class Event 
+	class Event extends Base 
 	{
 		private $id;
 		private $sessionId;
@@ -53,6 +54,8 @@
 			$this->user_id = $_user_id;
 			$this->limit = $_limit;			
 			$this->method = $_method;
+			
+			parent::__construct();      
 			
 			switch ($_method) {
 			  case insert:
@@ -122,6 +125,12 @@
 		function insert()
 		{
 			
+			if ($this->sessionId != $this->userSessionID)
+			{
+			    $data = array();
+				return json_safe_encode($data);				
+			}
+			
 			$name = convertToCyrillic(filter($this->name));
 			$date = date("Y-m-d H:i:s", strtotime($this->date));
 			$descr = convertToCyrillic(filter($this->descr));
@@ -174,21 +183,28 @@
 		function edit()
 		{
 		
-		  $id = $this->id;
-		  $name = convertToCyrillic(filter($this->name));		 
-		  $date = date("Y-m-d H:i:s", strtotime($this->date));
-		  $descr = filter($this->descr);	
-		  $descr = convertToCyrillic($descr);
-		  $int_id = $this->int_id; 
-		   
-		  $result = mysql_query("update events set name='$name', date='$date', descr='$descr', int_id='$int_id' where id='$id'");
-		 
-		  echo $this->getEventById($id);
+			if ($this->sessionId != $this->userSessionID)
+			{
+			    $data = array();
+				return json_safe_encode($data);				
+			}
+			
+			$id = $this->id;
+			$name = convertToCyrillic(filter($this->name));		 
+			$date = date("Y-m-d H:i:s", strtotime($this->date));
+			$descr = filter($this->descr);	
+			$descr = convertToCyrillic($descr);
+			$int_id = $this->int_id; 
+			   
+			$result = mysql_query("update events set name='$name', date='$date', descr='$descr', int_id='$int_id' where id='$id'");
+			 
+			echo $this->getEventById($id);
 		}
 		
 		function getEventById($id)
 		{
-			if (($this->sessionId == "") && ($this->method != insert))
+			
+			if ($this->sessionId != $this->userSessionID)
 			{
 			    $data = array();
 				return json_safe_encode($data);				
@@ -228,11 +244,18 @@
 		function delete()
 		{
 			
+			if ($this->sessionId != $this->userSessionID)
+			{
+			    $data = array();
+				echo json_safe_encode($data);					
+				exit;
+			}
+			
 			if (($this->id <= 0) || ($this->sessionId == null))
 			{
-			    $data = array("error_message" => "Invalid event object!");
-				
-				return json_safe_encode($data);				
+			    $data = array("error_message" => "Invalid event object!");				
+				echo json_safe_encode($data);		
+				exit;
 			}
 			
 			$id = $this->id;
@@ -255,9 +278,17 @@
 			echo json_encode($data);			
 		}
 		
+		
+		
 		function MyEvents()
 		{
-		
+			
+			if ($this->sessionId != $this->userSessionID)
+			{
+			    $data = array();
+				return json_safe_encode($data);				
+			}
+			
 			echo $this->getEventByUserId($this->user_id);
 			
 		}
@@ -265,7 +296,8 @@
 		
 		function getEventByUserId($id)
 		{
-			if ($this->sessionId == "")
+			
+			if ($this->sessionId != $this->userSessionID)
 			{
 			    $data = array();
 				return json_safe_encode($data);				

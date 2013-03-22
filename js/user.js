@@ -347,7 +347,7 @@ var user = {
 		$.get('ui/edit.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			
-			var data = {
+			var data = {				
 				username : $('#edit-user'),
 				descr : $('#edit-descr')
 			};
@@ -358,16 +358,16 @@ var user = {
 			data.descr.val(_user.descr);
 			
 			$('#btnEdit').click(function (e) {
-				
+								
 				var editData = {
 					id : _user.id,
-					sessionId : sessionId,
-					username : data.username.val(),
+					sessionId : sessionId,					
 					descr : data.descr.val(),
 					method : "edit"
 				};
 				
 				myAjax("user.php", editData, function (_data) {
+					
 					user.UserStorage(_data, false);
 					$('#modal-form').dialog("close");
 				});
@@ -520,9 +520,7 @@ var user = {
 	
 	my_events : function (e) {
 		
-		user.GetMyEvents();
-		e.stopImmediatePropagation();
-		
+		user.GetMyEvents();		
 	},
 	
 	GetMyEvents : function (e) {
@@ -1035,8 +1033,9 @@ var user = {
 		if (!CheckServerError(_data))
 			return;
 		
-		var user = _data[0];
-		sessionId = $.sha1(user.username + user.password);
+		var user = _data[0];	
+	
+		var sessionId = user.sessionID;//$.sha1(user.username + user.password);
 		localStorage.setItem('sessionId', sessionId);
 		localStorage.setItem('profileId', JSON.stringify(user));
 		

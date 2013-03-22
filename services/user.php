@@ -1,6 +1,7 @@
 ﻿<?php
    
 	include "connect.php";
+	include "base.php";
 	include "utils.php";
 	include "json_unicode.php";
 	include "email/class.phpmailer.php";    
@@ -16,14 +17,17 @@
 	define ('GetUsersByText', GetUsersByText);
 	define ('SetNewPassword', SetNewPassword);
 	define ('sendMail', sendMail);
+	define ('forgetPass', forgetPass);
+	
 	
 	define ('REQUARED_FIELDS', REQUARED_FIELDS);
 	define ('EXIST_USERNAME', EXIST_USERNAME);
 	define ('INVALID_USERNAME', INVALID_USERNAME);
 	define ('EMAIL_RESPONSE', EMAIL_RESPONSE);
+	define ('ERROR_EMAIL_RESPONSE', ERROR_EMAIL_RESPONSE);
 
 
-	class User 
+	class User extends Base      
 	{
 		private $id;
 		private $sessionId;
@@ -51,6 +55,7 @@
 			$_emailSubject,
 			$_method) {
 			
+			
 			$this->id = $_id;
 			$this->sessionId = $_sessionId;
 			$this->username = $_username;
@@ -63,7 +68,7 @@
 			$this->emailSubject = $_emailSubject;
 			$this->method = $_method;
 			
-			//$method = $_SERVER['REQUEST_METHOD'];
+			parent::__construct();      
 			
 			switch ($_method) {
 			  case insert:
@@ -93,7 +98,9 @@
 			case GetUsersByText:
 				echo $this->GetUsersByText($_username);  
 				break;
-				
+			case forgetPass:
+				echo $this->forgetPass();  
+				break;	
 		     case SetNewPassword:
 				echo $this->SetNewPassword();  
 				break;	
@@ -106,6 +113,24 @@
 				break;
 			}
 			
+		}
+		
+		function getSessionByUserID($id)
+		{
+			$results = mysql_query("select sessionID from users where id='$id'");
+				
+			if (!$results) exit;
+			
+			$data = array();
+					
+			while ($row = mysql_fetch_assoc($results)) {
+				$data[] = $row;
+			}
+			
+			$row = $data[0];   
+			$sessionID = $row['sessionID'];
+			
+			return $sessionID;
 		}
 		
 		function users()
@@ -155,7 +180,8 @@
 			
 			else
 			{
-				$results = mysql_query("insert into users (username, password, email) values('$username', '$password', '$email') ");
+				$sessionID = generateGuid();	
+				$results = mysql_query("insert into users (username, password, email, sessionID) values('$username', '$password', '$email', '$sessionID') ");
 			
 				$this->sendMail();
 				
@@ -168,24 +194,31 @@
 		
 		function edit()
 		{
-		  $id = $this->id;		  
-		  $descr = filter($this->descr);	
-		  $descr = convertToCyrillic($descr);
-		   
-		  $result = mysql_query("update users set descr='$descr', where id='$id'");
-		 
-		  echo $this->getUserById($id);
+			
+			if ($this->sessionId != $this->userSessionID)
+			{
+			    $data = array();
+				return json_safe_encode($data);				
+			}
+		
+			$id = $this->id;		  
+			$descr = filter($this->descr);	
+			$descr = convertToCyrillic($descr);
+			   
+			$result = mysql_query("update users set descr='$descr' where id='$id'");
+			 
+			echo $this->getUserById($id);
 		}
 		
 		function getUserById($id)
 		{		   
-			if (($this->sessionId == "") && ($this->method != insert))
+			if ($this->sessionId != $this->userSessionID)
 			{
 			    $data = array();
 				return json_safe_encode($data);				
 			}
 			
-			$results = mysql_query("select u.id, u.username, u.descr,  
+			$results = mysql_query("select u.id, u.username, u.descr, u.sessionID, 
 						i.objectid, 
 						i.ImageName, 
 						i.ThumbName, 
@@ -204,13 +237,13 @@
 		
 		function getUserByName($_name)
 		{		   
-			if (($this->sessionId == "") && ($this->method != insert))
-			{
-			    $data = array();
-				return json_safe_encode($data);				
-			}
 			
-			$results = mysql_query("select u.id, u.username, u.descr,  
+			
+			//first we must to generate new GUID ...
+			$sessionID = generateGuid();					
+			$sql = mysql_query("update users set sessionID = '$sessionID' where username='$_name' ");  
+			
+			$results = mysql_query("select u.id, u.username, u.descr, u.sessionID, 
 						i.objectid, i.ImageName, i.ThumbName, i.type from users u
 						left outer join images  i on (i.objectid = u.id) where u.username='$_name'");
 			
@@ -219,7 +252,10 @@
 			while ($row = mysql_fetch_assoc($results)) {
 			   $data[] = $row;
 			}
-		   		    
+		   	
+			//store login 
+			$_SESSION['userID'] = $data[0]['id'];
+			
 			return json_safe_encode($data);
 		}
 		
@@ -227,13 +263,20 @@
 		{	
 			$username = convertToCyrillic(filter($this->username));
 			$password = filter(md5($this->password));
+						
+			//first we must to generate new GUID ...
+			$sessionID = generateGuid();					
+			$sql = mysql_query("update users set sessionID = '$sessionID' where username='$username' and password='$password' ");  
 			
-			$results = mysql_query("select u.id, u.username, u.descr,  
+			
+			//then result json object to user ...
+			$results = mysql_query("select u.id, u.username, u.descr, u.sessionID,  
 						i.objectid, i.ImageName, 
 						i.ThumbName, 
 						i.type 
 						from users u
 						left outer join images  i on (i.objectid = u.id) where u.username='$username' and u.password='$password' ");
+			
 			$count = mysql_num_rows($results);
 			if (!$count) 
 			{
@@ -247,8 +290,10 @@
 			while ($row = mysql_fetch_assoc($results)) {
 			   $data[] = $row;
 			}
-		   				
 				
+			//store login 
+			$_SESSION['userID'] = $data[0]['id'];
+			
 			echo json_safe_encode($data);
 				
 		}
@@ -261,8 +306,7 @@
 		}
 		
 		function GetUsersByText()
-		{
-						
+		{		
 			$username = $this->username;
 			
 			$sql = mysql_query("select u.id, u.username, u.descr,  i.objectid, i.ImageName, i.ThumbName, i.type from users u
@@ -347,9 +391,52 @@
 			
 		}
 		
+		
+		
+		function forgetPass()
+		{
+			$email = $this->email;
+			
+			if (!$email)
+				$sql = ""; //mysql_query("SELECT id, username, email, password from users");
+			else
+				$sql = mysql_query("SELECT id, username, email, password from users where email='$email'");
+			
+			$count = mysql_num_rows($sql);
+			
+			if (!$count)
+			{
+				$data = array("error_message" => ERROR_EMAIL_RESPONSE);				
+				echo json_safe_encode($data);
+				exit;
+			}
+			
+			$data = array();
+			
+			while($row=mysql_fetch_array($sql))
+			{		
+				  $pass = rand_string();
+				  $hashPass = md5($pass); 
+				  
+				  $id = $row['id'];
+				  $result = mysql_query("update users set password = '$hashPass' where id='$id'");
+							  
+				  $obj = array(
+					"id"=> $id,
+					"username"=>$row['username'],
+					"password"=> $pass,
+					"email"=>$row['email']
+				  );	
+				  
+				  $data[] = $obj;
+			} 
+			
+			echo json_safe_encode($data);
+		}
+		
 		function SetNewPassword()
 		{
-			if ($this->sessionId == "")
+			if ($this->sessionId != $this->userSessionID)
 			{
 			    $data = array();
 				return json_safe_encode($data);				

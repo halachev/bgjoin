@@ -30,7 +30,6 @@ var system = {
 		
 		system.initContent();
 		
-		
 	},
 	
 	currentUser : function () {
@@ -91,6 +90,20 @@ var system = {
 				onLogin();
 			});
 			
+			$('#canForgotPass').click(function (e) {
+				
+				var html = '<p>Въведете email</p>' +
+					'<input type="text" id="forget-pass" /><br/>' +
+					'<input type="submit" id="send-forget-pass" class="button_view" value="Изпрати" />';
+				
+				$('#error-message').html(html);
+				
+			});
+			
+			$('#send-forget-pass').live("click", function (e) {
+				getForgetPass();
+			});
+			
 		});
 		
 		system.ShowDialog($('#modal-form'), 'Вход');
@@ -110,6 +123,54 @@ var system = {
 				user.UserStorage(_data, true);
 			});
 			
+		}
+		
+		function getForgetPass() {
+						
+			var myEmail = $('#forget-pass').val();
+			
+			if (!system.testEmail(myEmail)) {
+				alert('Невалиден email адрес!');
+				return false;
+			};
+			
+			system.Loader(true);
+			var data = {
+				email : myEmail,
+				method : "forgetPass"
+			};
+			
+			myAjax("user.php", data, function (_data) {
+				
+				if (_data.error_message == "ERROR_EMAIL_RESPONSE") {
+					alert("Email адреса не е регистриран при нас!");	
+					system.Loader(false);					
+					return false;
+				}
+					
+				$('#send-forget-pass').attr("disabled", "disabled");				
+				var text = "";
+				var obj = _data[0];
+				
+				text = "<br/>Данни за вашия акаунт: " +
+					"<br/>Потребител: " + obj.username +
+					"<br/>Парола: " + obj.password + '<br/>';
+				
+				var data = {
+					email : obj.email,
+					emailSubject : 'Забравена парола!',
+					emailBody : text,
+					method : "sendMail"
+				};
+				
+				myAjax("user.php", data, function (_data) {
+					
+					system.Loader(false);
+					alert("Изпратихме парола на посочения email!");						
+					location = pageUrl;
+				});
+				
+			});
 		}
 		
 	},
@@ -203,17 +264,14 @@ var system = {
 			FB.api('/me', function (resp) {
 				var access_token = FB.getAuthResponse()['accessToken'];
 				
-				sessionId = $.sha1(resp.name + resp.email);
-				localStorage.setItem('sessionId', sessionId);
-				
 				var data = {
-					sessionId : sessionId,
 					username : resp.name,
 					email : resp.email,
 					method : 'getUserByName'
 				};
 				
 				myAjax("user.php", data, function (_data) {
+					
 					if (_data.length <= 0)
 						registerUser(resp);
 					else

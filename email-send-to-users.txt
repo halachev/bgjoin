@@ -1,0 +1,39 @@
+/*
+	test();
+	function test()
+	{
+		$.get('ui/how-it-works.html', function (login_data) {
+						
+			myAjax("user.php", {method: "SpamUser"}, function (_data) {
+				alert(JSON.stringify(_data));
+				for (i in _data)
+				{
+					obj = _data[i];
+					
+					var text = "";
+					
+					text = "<br/>Данни за вашия акаунт: " + 
+					"<br/>Потребител: " + obj.username + 
+					"<br/>Парола: " + obj.password + '<br/><br/>';
+					
+					text += login_data;
+										
+					var data = {				
+						email : obj.email,
+						emailSubject : 'BG JOIN - Сподели ме!',
+						emailBody : text,
+						method : "sendMail"
+					};
+					
+					myAjax("user.php", data, function (_data) {
+						//
+					});
+					
+					
+				}
+			});			
+				
+	   });
+   }
+	
+  */
