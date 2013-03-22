@@ -12,10 +12,13 @@ pageUrl = 'http://bgjoin.com';
 //global session
 var sessionId = localStorage.getItem('sessionId');
 var currUser = localStorage.getItem('profileId');
-localStorage.removeItem('lastId');
+
+localStorage.removeItem('User-Last-ID');
+localStorage.removeItem('Event-Last-ID');
+
 
 FIRST_MAX_USERS = 10;
-FIRST_MAX_EVENTS = 30;
+FIRST_MAX_EVENTS = 20;
 
 var ERROR_INSERT_EXIST_NAME = 1;
 var ERROR_INSERT_REQUARED = 2;
@@ -29,7 +32,7 @@ $(document).ready(function () {
 	
 	//start application
 	system.init();
-	
+
 	//handle main user events
 	$('#home-id').click(function (e) {
 		system.init();		
@@ -87,7 +90,11 @@ $(document).ready(function () {
 		system.terms();		
 	});
 	
-	$("a[href=#LoadMore]").live("click", function (e) {
+	$("a[href=#LoadMore-events]").live("click", function (e) {
+		user.lastUserEvents();
+	});
+	
+	$("a[href=#LoadMore-users]").live("click", function (e) {
 		user.lastUserPosts();
 	});
 	

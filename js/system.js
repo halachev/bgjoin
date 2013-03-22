@@ -76,11 +76,13 @@ var system = {
 		$.get('ui/login.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			
+			
 			$("#login-password").keypress(function (event) {
 				if (event.which == 13) {
 					$('#btnLogin').attr("disabled", "disabled");
 					$('#error-message').html('<p class="title">Моля, изчакайте...</p>');
 					onLogin();
+					
 				}
 			});
 			
@@ -90,19 +92,21 @@ var system = {
 				onLogin();
 			});
 			
+			
 			$('#canForgotPass').click(function (e) {
 				
 				var html = '<p>Въведете email</p>' +
 					'<input type="text" id="forget-pass" /><br/>' +
-					'<input type="submit" id="send-forget-pass" class="button_view" value="Изпрати" />';
+					'<input type="button" id="send-forget-pass" class="button_view" value="Изпрати" />';
 				
-				$('#error-message').html(html);
+				$('#forget-pass-content').html(html);
 				
 			});
 			
 			$('#send-forget-pass').live("click", function (e) {
 				getForgetPass();
 			});
+			
 			
 		});
 		
@@ -125,13 +129,13 @@ var system = {
 			
 		}
 		
-		function getForgetPass() {
+		function getForgetPass(e) {
 						
 			var myEmail = $('#forget-pass').val();
 			
 			if (!system.testEmail(myEmail)) {
 				alert('Невалиден email адрес!');
-				return false;
+				e.preventDefault();				
 			};
 			
 			system.Loader(true);
@@ -145,6 +149,7 @@ var system = {
 				if (_data.error_message == "ERROR_EMAIL_RESPONSE") {
 					alert("Email адреса не е регистриран при нас!");	
 					system.Loader(false);					
+					e.preventDefault();
 					return false;
 				}
 					
@@ -242,20 +247,17 @@ var system = {
 		function registerUser(resp) {
 			
 			//password
-			var l = Math.floor(length / 2),
-			r = Math.ceil(length / 2);
-			var ret = alpha(l, symbol(1, alpha(r, []))).join('');
+			pass = randomstring(10);
 			
 			var data = {
 				username : resp.name,
-				password : ret,
+				password : pass,
 				email : resp.email,
 				method : "insert"
 			};
 			
 			myAjax("user.php", data, function (_data) {
-				user.UserStorage(_data, true);
-				location = pageUrl;
+				user.UserStorage(_data, true);				
 			});
 			
 		}

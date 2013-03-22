@@ -30,6 +30,7 @@
 		private $descr;
 		private $int_id;		
 		private $user_id;
+		private $eventLastId;
 		private $limit;
 		private $method;
 		
@@ -42,6 +43,7 @@
 			$_descr, 			
 			$_int_id,
 			$_user_id,
+			$_eventLastId,
 			$_limit,
 			$_method) {
 			
@@ -52,6 +54,7 @@
 			$this->descr = $_descr;
 			$this->int_id = $_int_id;
 			$this->user_id = $_user_id;
+			$this->eventLastId = $_eventLastId;			
 			$this->limit = $_limit;			
 			$this->method = $_method;
 			
@@ -95,19 +98,27 @@
 		
 		function events()
 		{
-			
+		  
 			$currTime = date("Y-m-d H:i:s", time());
 			
 			if ($this->limit > 0)
-				$results = mysql_query("select e.*,  
+				$results = mysql_query("select 
+						e.id, e.name, 
+						e.date, e.int_id, 
+						e.user_id,  
+						
 						i.objectid, 
 						i.ImageName, 
 						i.ThumbName, 
 						i.type,
+						
 						_user.username as username
+						
 						from events e						
+						
 						left outer join images  i on (i.objectid = e.id) 
 						left outer join users _user on (_user.id = e.user_id) 
+						
 						where '$currTime' <= e.date group by e.id order by id desc limit $this->limit");
 			
 			
@@ -337,7 +348,7 @@
 						left outer join images  i on (i.objectid = e.id) 
 						left outer join users _user on (_user.id = e.user_id) 
 						left outer join interests  ints on (ints.id = e.int_id)  
-						where e.int_id='$id'");
+						where e.int_id='$id' group by e.id order by e.id desc");
 			
 			$data = array();
 			
@@ -379,8 +390,19 @@
 		
 		function LoadMore()
 		{
-			$last_id = $this->userLastId;
-			$sql = mysql_query("SELECT * FROM events WHERE id < '$last_id' ORDER BY id desc LIMIT $this->limit");
+			$last_id = $this->eventLastId;
+			$sql = mysql_query("
+			select e.*,  
+						i.objectid, 
+						i.ImageName, 
+						i.ThumbName, 
+						i.type,
+						_user.username as username
+						from events e						
+						left outer join images  i on (i.objectid = e.id) 
+						left outer join users _user on (_user.id = e.user_id) 
+						WHERE e.id < '$last_id' ORDER BY id desc LIMIT $this->limit");
+			
 			
 			$data = array();
 			
@@ -402,6 +424,7 @@
 	$date = $_POST['date'];
 	$descr = $_POST['descr'];
 	$int_id = $_POST['int_id'];	
+	$eventLastId = $_POST['eventLastId'];	
 	$user_id = $_POST['user_id'];	
 	$limit = $_POST['limit'];		
 	$method = $_POST['method'];
@@ -414,6 +437,7 @@
 				$descr, 
 				$int_id, 				
 				$user_id,
+				$eventLastId,
 				$limit,
 				$method);	
 ?>

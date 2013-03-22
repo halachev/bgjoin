@@ -186,7 +186,11 @@
 				$this->sendMail();
 				
 				// връщаме новия обект на клиента
-				$newId = mysql_insert_id();							
+				$newId = mysql_insert_id();		
+				
+				//store login 
+				$_SESSION['userID'] = $newId;
+							
 				echo $this->getUserById($newId);
 			}
 		}
@@ -238,11 +242,6 @@
 		function getUserByName($_name)
 		{		   
 			
-			
-			//first we must to generate new GUID ...
-			$sessionID = generateGuid();					
-			$sql = mysql_query("update users set sessionID = '$sessionID' where username='$_name' ");  
-			
 			$results = mysql_query("select u.id, u.username, u.descr, u.sessionID, 
 						i.objectid, i.ImageName, i.ThumbName, i.type from users u
 						left outer join images  i on (i.objectid = u.id) where u.username='$_name'");
@@ -263,11 +262,6 @@
 		{	
 			$username = convertToCyrillic(filter($this->username));
 			$password = filter(md5($this->password));
-						
-			//first we must to generate new GUID ...
-			$sessionID = generateGuid();					
-			$sql = mysql_query("update users set sessionID = '$sessionID' where username='$username' and password='$password' ");  
-			
 			
 			//then result json object to user ...
 			$results = mysql_query("select u.id, u.username, u.descr, u.sessionID,  

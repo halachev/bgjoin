@@ -24,7 +24,7 @@ var user = {
 			
 			var html = user.ShowUsers(_data);
 			system.content().html(html);
-			system.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');
+			system.content().append('<a href="#LoadMore-users" class="button_view">Показване на още</a>');
 			system.Loader(false);
 			
 		});
@@ -42,6 +42,10 @@ var user = {
 			
 			var html = user.ShowUserEvents(_data);
 			system.content().html(html);
+			
+			if (_data.length > FIRST_MAX_EVENTS)
+				system.content().append('<a href="#LoadMore-events" class="button_view">Показване на още</a>');
+			
 			system.Loader(false);
 		});
 	},
@@ -120,7 +124,7 @@ var user = {
 				});
 				
 				$("a[href=#user-events]").live("click", function () {
-					var userId = $(this).attr('id');					
+					var userId = $(this).attr('id');
 					user.UserEventsView(userId);
 				});
 				
@@ -175,7 +179,7 @@ var user = {
 		
 		system.Loader(true);
 		
-		var lastId = localStorage.getItem('lastId');
+		var lastId = localStorage.getItem('User-Last-ID');
 		
 		if (lastId == null) {
 			// for the first time we have to store last id
@@ -189,7 +193,7 @@ var user = {
 					id = user.id;
 				}
 				
-				localStorage.setItem('lastId', id);
+				localStorage.setItem('User-Last-ID', id);
 				LoadMore(id);
 			});
 		} else {
@@ -205,20 +209,90 @@ var user = {
 			}
 			
 			myAjax("user.php", data, function (_data) {
+					
+				if (_data.length <= 0) 
+				{
+					location = pageUrl;
+					return false;
+				}
 				
 				var html = user.ShowUsers(_data);
 				
 				system.content().html(html);
 				system.content().hide();
 				system.content().fadeIn(1000);
-				system.content().append('<a href="#LoadMore" class="button_view">Показване на още</a>');
+				system.content().append('<a href="#LoadMore-users" class="button_view">Показване на още</a>');
+				
 				var id = 0;
 				for (i in _data) {
 					var u = _data[i];
 					id = u.id;
 				}
 				
-				localStorage.setItem('lastId', id);
+				localStorage.setItem('User-Last-ID', id);
+				system.Loader(false);
+			})
+		}
+		
+	},
+	
+	
+	
+	lastUserEvents : function () {
+		
+		system.Loader(true);
+		
+		var lastId = localStorage.getItem('Event-Last-ID');
+		
+		if (lastId == null) {
+			// for the first time we have to store last id
+			myAjax("event.php", {
+				limit : FIRST_MAX_EVENTS,
+				method : "events"
+			}, function (_data) {
+				var id = 0;
+				
+				for (i in _data) {
+					var event = _data[i];
+					id = event.id;
+				}
+				
+				localStorage.setItem('Event-Last-ID', id);
+				LoadMore(id);
+			});
+		} else {
+			LoadMore(lastId);
+		}
+		
+		function LoadMore(_lastId) {
+			
+			var data = {
+				limit : FIRST_MAX_EVENTS,
+				eventLastId : _lastId,
+				method : 'LoadMore'
+			}
+			
+			myAjax("event.php", data, function (_data) {
+				
+				if (_data.length <= 0) 
+				{
+					location = pageUrl;
+					return false;
+				}
+				
+				var html = user.ShowUserEvents(_data);
+				
+				system.content().html(html);
+				system.content().hide();
+				system.content().fadeIn(1000);
+				system.content().append('<a href="#LoadMore-events" class="button_view">Показване на още</a>');
+				var id = 0;
+				for (i in _data) {
+					var u = _data[i];
+					id = u.id;
+				}
+				
+				localStorage.setItem('Event-Last-ID', id);
 				system.Loader(false);
 			})
 		}
@@ -347,7 +421,7 @@ var user = {
 		$.get('ui/edit.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			
-			var data = {				
+			var data = {
 				username : $('#edit-user'),
 				descr : $('#edit-descr')
 			};
@@ -358,10 +432,10 @@ var user = {
 			data.descr.val(_user.descr);
 			
 			$('#btnEdit').click(function (e) {
-								
+				
 				var editData = {
 					id : _user.id,
-					sessionId : sessionId,					
+					sessionId : sessionId,
 					descr : data.descr.val(),
 					method : "edit"
 				};
@@ -520,7 +594,7 @@ var user = {
 	
 	my_events : function (e) {
 		
-		user.GetMyEvents();		
+		user.GetMyEvents();
 	},
 	
 	GetMyEvents : function (e) {
@@ -586,6 +660,7 @@ var user = {
 				
 				user.kendoGrid(system.content(), eventsData);
 				system.Loader(false);
+				e.preventDefault();
 			})
 			
 			$('#add-event-id').click(function () {
@@ -790,6 +865,7 @@ var user = {
 				//edit mode
 				$("a[href=#edit-event-request]").live("click", function (e) {
 					user.editEvent(_eventId);
+					е.preventDefault();
 					
 				});
 				
@@ -803,11 +879,14 @@ var user = {
 						user.delEvent(_id);
 					}
 					
+					е.preventDefault();
+					
 				});
 				
 				//request mode
 				$("a[href=#make-event-request]").live("click", function (e) {
 					user.MakeRequest(_eventId);
+					е.preventDefault();
 				});
 				
 			})
@@ -1033,9 +1112,8 @@ var user = {
 		if (!CheckServerError(_data))
 			return;
 		
-		var user = _data[0];	
-	
-		var sessionId = user.sessionID;//$.sha1(user.username + user.password);
+		var user = _data[0];		
+		var sessionId = user.sessionID; //$.sha1(user.username + user.password);
 		localStorage.setItem('sessionId', sessionId);
 		localStorage.setItem('profileId', JSON.stringify(user));
 		

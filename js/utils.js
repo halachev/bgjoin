@@ -79,7 +79,7 @@ $(window).scroll(function () {
 	
 	if ($(window).scrollTop() == $(document).height() - $(window).height()) {
 		
-		//user.lastUserPosts();
+		//user.lastUserEvents();
 		
 	}
 });
@@ -148,22 +148,14 @@ function getUrlVars() {
 	return vars;
 }
 
-//password functions
-var rand = function (str) {
-	return str[Math.floor(Math.random() * str.length)];
-};
-
-var get = function (source, len, a) {
-	for (var i = 0; i < len; i++)
-		a.push(rand(source));
-	return a;
-};
-
-var alpha = function (len, a) {
-	return get("A1BCD2EFG3HIJ4KLM5NOP6QRS7TUV8WXY9Z", len, a);
-};
-var symbol = function (len, a) {
-	return get("-:;_$!", len, a);
-};
-
-//end password functions
+function randomstring(L){
+    var s= '';
+    var randomchar=function(){
+    	var n= Math.floor(Math.random()*62);
+    	if(n<10) return n; //1-10
+    	if(n<36) return String.fromCharCode(n+55); //A-Z
+    	return String.fromCharCode(n+61); //a-z
+    }
+    while(s.length< L) s+= randomchar();
+    return s;
+}
