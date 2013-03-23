@@ -49,17 +49,16 @@ var system = {
 		gethash();
 		system.search();
 		
-		//check for hash string ???
-		var hash = window.location.hash; // get !#
-		id = hash.slice(1).replace('!', ''); // replace
-		
-		//at the moment we have only event view ...
-		if (id > 0)
-			$('#main-content').load('/ui/view-event.php?_escaped_fragment_=' + id + '');
-		else {
+		var home = location.hash.substring(1);
+		if ((home == 'home') || (home == ''))
 			user.GetLastUserEvents(); // first load events
+		else {
+			//check for hash string ???
+			var hash = window.location.hash; // get !#
+			id = hash.slice(1).replace('!', ''); // replace
+			
+			$('#main-content').load('/ui/view-event.php?_escaped_fragment_=' + id + '');
 		}
-		
 	},
 	
 	Loader : function (state) {
@@ -76,7 +75,6 @@ var system = {
 		$.get('ui/login.html', function (login_data) {
 			$('#modal-form').html(login_data);
 			
-			
 			$("#login-password").keypress(function (event) {
 				if (event.which == 13) {
 					$('#btnLogin').attr("disabled", "disabled");
@@ -92,7 +90,6 @@ var system = {
 				onLogin();
 			});
 			
-			
 			$('#canForgotPass').click(function (e) {
 				
 				var html = '<p>Въведете email</p>' +
@@ -106,7 +103,6 @@ var system = {
 			$('#send-forget-pass').live("click", function (e) {
 				getForgetPass();
 			});
-			
 			
 		});
 		
@@ -130,12 +126,12 @@ var system = {
 		}
 		
 		function getForgetPass(e) {
-						
+			
 			var myEmail = $('#forget-pass').val();
 			
 			if (!system.testEmail(myEmail)) {
 				alert('Невалиден email адрес!');
-				e.preventDefault();				
+				e.preventDefault();
 			};
 			
 			system.Loader(true);
@@ -147,13 +143,13 @@ var system = {
 			myAjax("user.php", data, function (_data) {
 				
 				if (_data.error_message == "ERROR_EMAIL_RESPONSE") {
-					alert("Email адреса не е регистриран при нас!");	
-					system.Loader(false);					
+					alert("Email адреса не е регистриран при нас!");
+					system.Loader(false);
 					e.preventDefault();
 					return false;
 				}
-					
-				$('#send-forget-pass').attr("disabled", "disabled");				
+				
+				$('#send-forget-pass').attr("disabled", "disabled");
 				var text = "";
 				var obj = _data[0];
 				
@@ -171,7 +167,7 @@ var system = {
 				myAjax("user.php", data, function (_data) {
 					
 					system.Loader(false);
-					alert("Изпратихме парола на посочения email!");						
+					alert("Изпратихме парола на посочения email!");
 					location = pageUrl;
 				});
 				
@@ -257,7 +253,7 @@ var system = {
 			};
 			
 			myAjax("user.php", data, function (_data) {
-				user.UserStorage(_data, true);				
+				user.UserStorage(_data, true);
 			});
 			
 		}

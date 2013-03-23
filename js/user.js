@@ -859,8 +859,15 @@ var user = {
 				
 				$('#event-detail').html(html);
 				system.Loader(false);
+				
+				//модофицираме събитието
+				//за да може да се предава като параметър за _escaped_fragment_
+				
 				localStorage.setItem('user_id', event.user_id);
-				window.history.pushState("!", "", '#!' + _eventId + '');
+				var key = event.name.replace(/ /g,"-");				
+				window.history.pushState("!", "", '#!' + key + '');
+				
+				// край 
 				
 				//edit mode
 				$("a[href=#edit-event-request]").live("click", function (e) {

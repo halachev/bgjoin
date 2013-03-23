@@ -91,7 +91,7 @@ function gethash() {
 		
 		switch (hash) {
 		case 'home':
-			system.init();
+			user.GetLastUserEvents();
 			break;
 			
 		case 'my-events':
@@ -159,3 +159,4 @@ function randomstring(L){
     while(s.length< L) s+= randomchar();
     return s;
 }
+

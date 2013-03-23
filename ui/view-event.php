@@ -6,8 +6,13 @@
 	include "../services/connect.php";
 	
 	$id = $_GET['_escaped_fragment_'];
-
-	$results = mysql_query("select e.*,  
+	
+	//хмм конвертиране cp1251 към utf8
+	$name = str_replace('-', ' ', $id);	
+	$name = mb_convert_encoding($name,'cp1251','utf8');		
+	mb_internal_encoding('cp1251');
+	
+	$sql = "select e.*,  
 		i.objectid, 
 		i.ImageName , 
 		i.ThumbName, 
@@ -18,9 +23,11 @@
 		left outer join images  i on (i.objectid = e.id) 
 		left outer join users _user on (_user.id = e.user_id) 
 		left outer join interests  ints on (ints.id = e.int_id)  
-		where e.id='$id'");
-			
+		where e.name='$name'";
+	
 
+	$results = mysql_query($sql);
+			
 	if (!$results) exit;
 			
 	$events = array();
